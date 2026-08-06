@@ -1,7 +1,7 @@
 .winner-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(255, 42, 42, 0.95);
+  background: rgba(10, 10, 10, 0.90);
   backdrop-filter: blur(10px);
   z-index: 9999;
   display: flex;
@@ -18,67 +18,6 @@
   100% { opacity: 0; }
 }
 
-.car-container {
-  position: absolute;
-  top: 50%;
-  left: -50vw;
-  width: 800px;
-  height: 400px;
-  transform: translateY(-50%);
-  animation: driveBy 1.5s cubic-bezier(0.1, 0.7, 1.0, 0.1) forwards;
-  z-index: 5;
-  mix-blend-mode: multiply; /* Esto debe estar en el contenedor para mezclar con el fondo rojo */
-}
-
-.car-image {
-  width: 100%;
-  height: 100%;
-  background-image: url('/vw_fox_side.jpg');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-@keyframes driveBy {
-  0% { left: -50vw; }
-  100% { left: 150vw; }
-}
-
-.smoke-layer {
-  position: absolute;
-  bottom: 15%;
-  left: 0;
-  width: 100%;
-  height: 500px;
-  pointer-events: none;
-  z-index: 4;
-}
-
-.smoke-puff {
-  position: absolute;
-  bottom: 0;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.9) 0%, rgba(40, 40, 40, 0.6) 40%, transparent 70%);
-  border-radius: 50%;
-  filter: blur(30px);
-  opacity: 0;
-  transform: scale(0.2);
-}
-
-.smoke-puff:nth-child(1) { left: -10%; animation: puffGrow 2s 0.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
-.smoke-puff:nth-child(2) { left: 10%; bottom: 50px; animation: puffGrow 2s 0.3s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
-.smoke-puff:nth-child(3) { left: 30%; animation: puffGrow 2s 0.4s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
-.smoke-puff:nth-child(4) { left: 50%; bottom: -30px; animation: puffGrow 2s 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
-.smoke-puff:nth-child(5) { left: 70%; animation: puffGrow 2s 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
-.smoke-puff:nth-child(6) { left: 90%; bottom: 40px; animation: puffGrow 2s 1.0s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
-
-@keyframes puffGrow {
-  0% { opacity: 0; transform: scale(0.2) translateY(50px); }
-  20% { opacity: 0.9; transform: scale(1.5) translateY(-20px); }
-  100% { opacity: 0; transform: scale(3.5) translateY(-250px); }
-}
-
 .neon-winner-text {
   font-family: 'Anton', sans-serif;
   font-size: 8rem;
@@ -92,8 +31,7 @@
     0 0 120px var(--primary-color);
   opacity: 0;
   transform: scale(0.5);
-  animation: popWinner 3.5s ease-out forwards;
-  animation-delay: 1s; /* Espera a que pase el auto */
+  animation: popWinner 4.5s ease-out forwards;
   z-index: 10;
   text-align: center;
 }

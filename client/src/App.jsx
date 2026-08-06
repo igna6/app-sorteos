@@ -76,6 +76,14 @@ function App() {
     // Mostrar overlay
     setActiveWinner(winner);
 
+    // Disparar confeti (estilo explosivo)
+    confetti({
+      particleCount: 150,
+      spread: 100,
+      origin: { y: 0.6 },
+      colors: ['#ff2a2a', '#ffffff', '#000000']
+    });
+
     // Mover de lista de participantes a ganadores inmediatamente por detrás
     setParticipants((prev) => prev.filter((_, i) => i !== randomIndex));
     setWinners((prev) => [...prev, winner]);
@@ -234,19 +242,6 @@ function App() {
       {/* Overlay de la animación del ganador */}
       {activeWinner && (
         <div className="winner-overlay">
-          <div className="smoke-layer">
-            <div className="smoke-puff"></div>
-            <div className="smoke-puff"></div>
-            <div className="smoke-puff"></div>
-            <div className="smoke-puff"></div>
-            <div className="smoke-puff"></div>
-            <div className="smoke-puff"></div>
-          </div>
-          
-          <div className="car-container">
-            <div className="car-image"></div>
-          </div>
-          
           <div className="neon-winner-text">
             {activeWinner.username}
           </div>
