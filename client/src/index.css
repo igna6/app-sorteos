@@ -368,3 +368,57 @@ body::before {
     transform: scale(1);
   }
 }
+
+.multiplier-options {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.multiplier-btn {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  text-align: center;
+}
+
+.multiplier-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.multiplier-btn.active {
+  background: var(--primary-color);
+  color: #000;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px rgba(255, 42, 42, 0.3);
+}
+
+.multiplier-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.participant-item.is-sub {
+  border-color: rgba(255, 215, 0, 0.3);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), transparent);
+}
+
+.participant-item.is-sub span {
+  font-weight: 600;
+  color: #FFD700;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.2);
+}
+
+.winner-item.is-sub-winner {
+  border-color: #FFD700;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 42, 42, 0.05));
+}

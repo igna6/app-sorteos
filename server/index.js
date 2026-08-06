@@ -46,10 +46,20 @@ io.on('connection', (socket) => {
       
       // Si el mensaje contiene la palabra clave (ignorando mayusculas/minusculas)
       if (content.includes(currentWord)) {
+        
+        // Detectar si el usuario es suscriptor o VIP/fundador
+        let isSubscriber = false;
+        if (message.sender.identity && Array.isArray(message.sender.identity.badges)) {
+          isSubscriber = message.sender.identity.badges.some(badge => 
+            badge.type === 'subscriber' || badge.type === 'founder'
+          );
+        }
+
         // Emitimos al frontend que alguien ingreso la palabra
         io.emit('participant_joined', {
           id: message.sender.id,
           username: message.sender.username,
+          isSubscriber: isSubscriber
         });
       }
     });

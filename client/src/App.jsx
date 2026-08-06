@@ -13,6 +13,7 @@ function App() {
   const [winners, setWinners] = useState([]);
   const [error, setError] = useState('');
   const [activeWinner, setActiveWinner] = useState(null); // Para el overlay
+  const [subMultiplier, setSubMultiplier] = useState(1); // Multiplicador de subs
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -36,12 +37,15 @@ function App() {
         if (alreadyExists) return prev;
         
         // Tampoco agregarlo si ya es un ganador
+        let isAlreadyWinner = false;
         setWinners((prevWinners) => {
           if (prevWinners.some((w) => w.username === user.username)) {
-            return prevWinners;
+            isAlreadyWinner = true;
           }
           return prevWinners;
         });
+
+        if (isAlreadyWinner) return prev;
 
         return [...prev, user];
       });
@@ -69,8 +73,28 @@ function App() {
   const drawWinner = () => {
     if (participants.length === 0) return;
 
-    // Pick a random winner
-    const randomIndex = Math.floor(Math.random() * participants.length);
+    // Crear un arreglo de "boletos" (tickets)
+    let tickets = [];
+    participants.forEach((p, index) => {
+      let chances = 1; // Usuario normal tiene 1 chance
+      if (p.isSubscriber) {
+        chances = subMultiplier; // Suscriptor tiene X chances (0, 1, 2, 3...)
+      }
+      
+      // Agregar el índice del participante tantas veces como chances tenga
+      for (let i = 0; i < chances; i++) {
+        tickets.push(index);
+      }
+    });
+
+    if (tickets.length === 0) {
+      alert("No hay participantes válidos (por ejemplo, si excluiste a los subs y todos son subs).");
+      return;
+    }
+
+    // Pick a random winner from the tickets array
+    const winningTicket = Math.floor(Math.random() * tickets.length);
+    const randomIndex = tickets[winningTicket];
     const winner = participants[randomIndex];
 
     // Mostrar overlay
@@ -147,6 +171,37 @@ function App() {
           />
         </div>
 
+        <div className="input-group">
+          <label>Ventaja para Suscriptores (Multiplicador)</label>
+          <div className="multiplier-options">
+            <button 
+              className={`multiplier-btn ${subMultiplier === 1 ? 'active' : ''}`}
+              onClick={() => setSubMultiplier(1)}
+              disabled={isListening}
+            >x1</button>
+            <button 
+              className={`multiplier-btn ${subMultiplier === 2 ? 'active' : ''}`}
+              onClick={() => setSubMultiplier(2)}
+              disabled={isListening}
+            >x2</button>
+            <button 
+              className={`multiplier-btn ${subMultiplier === 3 ? 'active' : ''}`}
+              onClick={() => setSubMultiplier(3)}
+              disabled={isListening}
+            >x3</button>
+            <button 
+              className={`multiplier-btn ${subMultiplier === 5 ? 'active' : ''}`}
+              onClick={() => setSubMultiplier(5)}
+              disabled={isListening}
+            >x5</button>
+            <button 
+              className={`multiplier-btn ${subMultiplier === 0 ? 'active' : ''}`}
+              onClick={() => setSubMultiplier(0)}
+              disabled={isListening}
+            >x0 (Excluir)</button>
+          </div>
+        </div>
+
         {error && <p style={{ color: '#ff4444', fontSize: '0.9rem', textAlign: 'center' }}>{error}</p>}
         {isListening && <p style={{ color: 'var(--primary-color)', fontSize: '1rem', textAlign: 'center', fontWeight: '600' }}>✅ ¡Conectado al chat de {channel}!</p>}
 
@@ -185,8 +240,8 @@ function App() {
               </div>
             ) : (
               participants.map((p, index) => (
-                <div key={p.id || index} className="participant-item">
-                  <span>{p.username}</span>
+                <div key={p.id || index} className={`participant-item ${p.isSubscriber ? 'is-sub' : ''}`}>
+                  <span>{p.isSubscriber ? '⭐ ' : ''}{p.username}</span>
                   <button 
                     className="action-btn" 
                     onClick={() => removeParticipant(index)}
@@ -222,9 +277,9 @@ function App() {
               </div>
             ) : (
               winners.map((w, index) => (
-                <div key={`win-${w.id || index}`} className="winner-item">
+                <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''}`}>
                   <div className="winner-number">{index + 1}</div>
-                  <span>{w.username}</span>
+                  <span>{w.isSubscriber ? '⭐ ' : ''}{w.username}</span>
                   <button 
                     className="action-btn" 
                     onClick={() => moveWinnerToParticipants(index)}
