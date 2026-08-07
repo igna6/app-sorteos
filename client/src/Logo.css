@@ -1,0 +1,89 @@
+.custom-logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Anton', sans-serif;
+  transform: skewX(-10deg);
+  margin-bottom: 1rem;
+  user-select: none;
+  filter: drop-shadow(0 10px 15px rgba(255, 42, 42, 0.4));
+  animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.logo-top {
+  font-size: 4rem;
+  line-height: 0.8;
+  color: #FFFFFF;
+  letter-spacing: 2px;
+  /* Massive black outline */
+  text-shadow: 
+    -5px -5px 0 #111, 5px -5px 0 #111, -5px 5px 0 #111, 5px 5px 0 #111,
+    -6px 0 0 #111, 6px 0 0 #111, 0 -6px 0 #111, 0 6px 0 #111,
+    0px 7px 0px #111, 0px 8px 0px #111, 0px 9px 0px #111;
+  z-index: 2;
+  margin-left: -15px;
+}
+
+.logo-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7.5rem;
+  line-height: 0.8;
+  color: #FFFFFF;
+  letter-spacing: -2px;
+  /* Massive black outline for F and X */
+  text-shadow: 
+    -6px -6px 0 #111, 6px -6px 0 #111, -6px 6px 0 #111, 6px 6px 0 #111,
+    -7px 0 0 #111, 7px 0 0 #111, 0 -7px 0 #111, 0 7px 0 #111,
+    0px 9px 0px #111, 0px 11px 0px #111, 0px 13px 0px #111;
+  margin-top: -15px;
+  z-index: 1;
+}
+
+.vw-logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #111; /* Acts as the black outline and inner background */
+  border-radius: 50%;
+  width: 105px;
+  height: 105px;
+  margin: 0 -8px; /* Negative margin to overlap with F and X, connecting the black borders */
+  /* Undo the skew for the logo itself to keep it perfectly round */
+  transform: skewX(10deg);
+  z-index: 3;
+}
+
+.vw-svg {
+  width: 95px;
+  height: 95px;
+}
+
+.letter-f {
+  margin-right: 15px;
+}
+
+.letter-x {
+  margin-left: 15px;
+}
+
+/* Adjust sizes for mobile devices */
+@media (max-width: 600px) {
+  .logo-top {
+    font-size: 3rem;
+  }
+  .logo-bottom {
+    font-size: 5.5rem;
+  }
+  .vw-logo-wrapper {
+    width: 80px;
+    height: 80px;
+    margin: 0 -12px;
+  }
+  .vw-svg {
+    width: 72px;
+    height: 72px;
+  }
+}

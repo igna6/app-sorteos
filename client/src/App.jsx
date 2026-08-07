@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import confetti from 'canvas-confetti';
 import './winner-animations.css';
+import Logo from './Logo';
 
 const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
 
@@ -143,7 +144,7 @@ function App() {
   return (
     <div className="app-container">
       <div className="header">
-        <img src="/logo.png" alt="El del Fox Giveaway" className="main-logo" />
+        <Logo />
         <p>Sorteos en tiempo real con el chat de Kick</p>
       </div>
 
