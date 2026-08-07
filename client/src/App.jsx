@@ -142,10 +142,10 @@ function App() {
 
   return (
     <div className="app-container">
-      <header className="header">
-        <h1>EL DEL FOX Giveaway</h1>
+      <div className="header">
+        <img src="/logo.png" alt="El del Fox Giveaway" className="main-logo" />
         <p>Sorteos en tiempo real con el chat de Kick</p>
-      </header>
+      </div>
 
       <div className="glass-panel setup-panel">
         <div className="input-group">
