@@ -16,7 +16,7 @@ export default function Logo({ isChonaMode }) {
         }}>
           CHHONAA
         </h1>
-        <img src="/boca.svg" alt="Boca Juniors" style={{ width: '120px', height: '120px', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.5))' }} />
+        <img src="/boca.png" alt="Boca Juniors" style={{ width: '120px', height: '120px', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.5))' }} />
       </div>
     );
   }

@@ -19,6 +19,14 @@ function App() {
   const socketRef = useRef(null);
 
   useEffect(() => {
+    if (isChonaMode) {
+      document.documentElement.classList.add('chona-active');
+    } else {
+      document.documentElement.classList.remove('chona-active');
+    }
+  }, [isChonaMode]);
+
+  useEffect(() => {
     // Initialize socket connection
     socketRef.current = io(SOCKET_URL);
 

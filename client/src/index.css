@@ -411,24 +411,32 @@ body::before {
 }
 
 /* Chona Mode Styles */
-.chona-mode {
-  background: radial-gradient(circle at center, #001233 0%, #000000 100%);
-  position: relative;
-  overflow: hidden;
+html.chona-active::before,
+html.chona-active::after {
+  display: none !important;
 }
 
-.chona-mode::before {
+html.chona-active {
+  background: radial-gradient(circle at center, #001233 0%, #000000 100%) !important;
+  min-height: 100vh;
+}
+
+html.chona-active body {
+  background: transparent !important;
+}
+
+html.chona-active body::after {
   content: '';
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 80vmin;
   height: 80vmin;
-  background: url('/boca.svg') center/contain no-repeat;
+  background: url('/boca.png') center/contain no-repeat;
   opacity: 0.15;
   filter: drop-shadow(0 0 30px #00529F) drop-shadow(0 0 60px #00529F);
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   animation: neon-pulse 3s infinite alternate;
 }
