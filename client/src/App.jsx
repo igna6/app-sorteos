@@ -59,11 +59,11 @@ function App() {
 
   const handleStart = () => {
     if (!channel || !keyword) {
-      setError('Por favor, ingresa el canal y la palabra clave.');
+      setError('Por favor, ingresa el ID del chatroom y la palabra clave');
       return;
     }
     setError('');
-    socketRef.current.emit('start_listening', { channel, keyword });
+    socketRef.current.emit('start_listening', { roomId: channel, keyword });
   };
 
   const handleStop = () => {
@@ -150,15 +150,17 @@ function App() {
 
       <div className="glass-panel setup-panel">
         <div className="input-group">
-          <label htmlFor="channel">Nombre del Canal</label>
-          <input
-            id="channel"
-            type="text"
-            placeholder="Ej. mi_canal_kick"
-            value={channel}
+          <label>ID de Chatroom de Kick</label>
+          <input 
+            type="text" 
+            placeholder="Ej: 1234567" 
+            value={channel} 
             onChange={(e) => setChannel(e.target.value)}
             disabled={isListening}
           />
+          <small style={{ color: '#aaa', marginTop: '5px', display: 'block', fontSize: '0.8rem' }}>
+            Para encontrar tu ID: Entra a <a href="https://kick.com/api/v2/channels/TU_CANAL" target="_blank" style={{color: '#ff2a2a'}}>kick.com/api/v2/channels/TU_CANAL</a> y busca el número en <code>"chatroom":&#123;"id": NUMERO&#125;</code>.
+          </small>
         </div>
         <div className="input-group">
           <label htmlFor="keyword">Palabra Clave</label>

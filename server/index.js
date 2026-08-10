@@ -22,8 +22,8 @@ let currentChannel = "";
 io.on('connection', (socket) => {
   console.log('A client connected:', socket.id);
 
-  socket.on('start_listening', ({ channel, keyword }) => {
-    console.log(`Starting to listen on ${channel} for keyword: ${keyword}`);
+  socket.on('start_listening', ({ roomId, keyword }) => {
+    console.log(`Starting to listen on room ${roomId} for keyword: ${keyword}`);
     
     // Si ya habia uno, lo desconectamos
     if (kickClient) {
@@ -34,14 +34,14 @@ io.on('connection', (socket) => {
       }
     }
 
-    currentChannel = channel;
+    currentChannel = roomId;
     currentWord = keyword.trim().toLowerCase();
 
-    // Iniciar KickLive Connector
-    kickClient = new KickConnection(channel);
+    // Iniciar KickLive Connector con el ID
+    kickClient = new KickConnection(roomId);
 
     kickClient.on('chatMessage', (message) => {
-      // console.log(`[${channel}] ${message.sender.username}: ${message.content}`);
+      // console.log(`[${roomId}] ${message.sender.username}: ${message.content}`);
       const content = message.content.trim().toLowerCase();
       
       // Si el mensaje contiene la palabra clave (ignorando mayusculas/minusculas)
@@ -65,12 +65,12 @@ io.on('connection', (socket) => {
     });
 
     kickClient.on('connected', () => {
-      console.log(`Successfully connected to ${channel}`);
-      socket.emit('listening_started', { success: true, channel });
+      console.log(`Successfully connected to room ${roomId}`);
+      socket.emit('listening_started', { success: true, channel: roomId });
     });
 
     kickClient.on('error', (err) => {
-      console.error(`Error connecting to Kick channel ${channel}:`, err);
+      console.error(`Error connecting to Kick room ${roomId}:`, err);
       socket.emit('listening_started', { success: false, error: err.message });
     });
 
@@ -79,12 +79,12 @@ io.on('connection', (socket) => {
       const connectPromise = kickClient.connect();
       if (connectPromise && typeof connectPromise.catch === 'function') {
         connectPromise.catch((err) => {
-          console.error(`Promise rejection connecting to Kick channel ${channel}:`, err);
+          console.error(`Promise rejection connecting to Kick room ${roomId}:`, err);
           socket.emit('listening_started', { success: false, error: typeof err === 'string' ? err : (err.message || 'Streamer is offline or error connecting') });
         });
       }
     } catch (err) {
-      console.error(`Error connecting to Kick channel ${channel}:`, err);
+      console.error(`Error connecting to Kick room ${roomId}:`, err);
       socket.emit('listening_started', { success: false, error: err.message || err });
     }
   });
