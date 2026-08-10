@@ -16,6 +16,7 @@ function App() {
   const [activeWinner, setActiveWinner] = useState(null); // Para el overlay
   const [subMultiplier, setSubMultiplier] = useState(1); // Multiplicador de subs
   const [isChonaMode, setIsChonaMode] = useState(false);
+  const [themeSelected, setThemeSelected] = useState(false);
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -150,13 +151,38 @@ function App() {
     }
   };
 
+  if (!themeSelected) {
+    return (
+      <div className="theme-selector-container">
+        <h1 className="theme-title">Elegí tu Temática</h1>
+        <div className="theme-cards">
+          <div className="theme-card fox-card" onClick={() => { setIsChonaMode(false); setThemeSelected(true); }}>
+            <h2>EL DEL FOX</h2>
+            <div className="theme-preview">
+              <div className="vw-circle"></div>
+              <p>Tuning / Fox</p>
+            </div>
+          </div>
+          
+          <div className="theme-card chona-card" onClick={() => { setIsChonaMode(true); setThemeSelected(true); }}>
+            <h2 className="chona-text">CHHONAA</h2>
+            <div className="theme-preview">
+              <img src="/boca.png" alt="Boca" className="boca-preview" />
+              <p>Boquita / Neón</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`app-container ${isChonaMode ? 'chona-mode' : ''}`}>
       <button 
         className="chona-btn" 
-        onClick={() => setIsChonaMode(!isChonaMode)}
+        onClick={() => setThemeSelected(false)}
       >
-        {isChonaMode ? 'Volver a Normal' : 'Chona'}
+        ← Cambiar Tema
       </button>
       <div className="header">
         <Logo isChonaMode={isChonaMode} />
