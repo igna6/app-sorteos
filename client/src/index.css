@@ -468,3 +468,26 @@ html.chona-active body::after {
   transform: scale(1.05);
   box-shadow: 0 0 20px #F9B233;
 }
+
+/* Chona Mode Button Overrides */
+html.chona-active .btn:not(.btn-secondary),
+html.chona-active .multiplier-btn.active {
+  background: #F9B233 !important; /* Amarillo Boca */
+  color: #001233 !important;
+  box-shadow: 0 4px 15px rgba(249, 178, 51, 0.4) !important;
+}
+
+html.chona-active .multiplier-btn.active {
+  border-color: #F9B233 !important;
+}
+
+html.chona-active .btn:disabled:not(.btn-secondary) {
+  background: rgba(249, 178, 51, 0.4) !important;
+  color: rgba(0, 18, 51, 0.5) !important;
+  box-shadow: none !important;
+}
+
+html.chona-active .badge {
+  background: rgba(249, 178, 51, 0.2);
+  color: #F9B233;
+}
