@@ -412,17 +412,30 @@ body::before {
 
 /* Chona Mode Styles */
 .chona-mode {
-  background: url('/buda.png') center/cover no-repeat;
+  background: radial-gradient(circle at center, #001233 0%, #000000 100%);
   position: relative;
+  overflow: hidden;
 }
 
 .chona-mode::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 82, 159, 0.5); /* Blue Boca tint */
-  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vmin;
+  height: 80vmin;
+  background: url('/boca.svg') center/contain no-repeat;
+  opacity: 0.15;
+  filter: drop-shadow(0 0 30px #00529F) drop-shadow(0 0 60px #00529F);
+  z-index: 0;
   pointer-events: none;
+  animation: neon-pulse 3s infinite alternate;
+}
+
+@keyframes neon-pulse {
+  0% { filter: drop-shadow(0 0 20px #00529F) drop-shadow(0 0 40px #00529F); opacity: 0.1; }
+  100% { filter: drop-shadow(0 0 40px #00529F) drop-shadow(0 0 80px #00529F) drop-shadow(0 0 120px #0088FF); opacity: 0.25; }
 }
 
 .chona-btn {
@@ -438,10 +451,12 @@ body::before {
   cursor: pointer;
   z-index: 100;
   transition: all 0.3s ease;
+  box-shadow: 0 0 10px #00529F;
 }
 
 .chona-btn:hover {
   background: #F9B233;
   color: #00529F;
   transform: scale(1.05);
+  box-shadow: 0 0 20px #F9B233;
 }
