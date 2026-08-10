@@ -15,6 +15,7 @@ function App() {
   const [error, setError] = useState('');
   const [activeWinner, setActiveWinner] = useState(null); // Para el overlay
   const [subMultiplier, setSubMultiplier] = useState(1); // Multiplicador de subs
+  const [isChonaMode, setIsChonaMode] = useState(false);
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -142,9 +143,15 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${isChonaMode ? 'chona-mode' : ''}`}>
+      <button 
+        className="chona-btn" 
+        onClick={() => setIsChonaMode(!isChonaMode)}
+      >
+        {isChonaMode ? 'Volver a Normal' : 'Chona'}
+      </button>
       <div className="header">
-        <Logo />
+        <Logo isChonaMode={isChonaMode} />
         <p>Sorteos en tiempo real con el chat de Kick</p>
       </div>
 

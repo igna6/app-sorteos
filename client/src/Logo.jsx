@@ -1,6 +1,26 @@
 import React from 'react';
 
-export default function Logo() {
+export default function Logo({ isChonaMode }) {
+  if (isChonaMode) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', width: '100%', alignItems: 'center' }}>
+        <h1 style={{
+          fontFamily: "'Anton', sans-serif",
+          fontSize: '6rem',
+          color: '#F9B233', // Amarillo Boca
+          textTransform: 'uppercase',
+          textShadow: '-4px -4px 0 #00529F, 4px -4px 0 #00529F, -4px 4px 0 #00529F, 4px 4px 0 #00529F, 0px 8px 15px rgba(0,0,0,0.5)', // Azul Boca
+          margin: 0,
+          marginRight: '20px',
+          fontStyle: 'italic'
+        }}>
+          CHHONAA
+        </h1>
+        <img src="/boca.svg" alt="Boca Juniors" style={{ width: '120px', height: '120px', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.5))' }} />
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', width: '100%' }}>
       <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', maxWidth: '550px', filter: 'drop-shadow(0 10px 15px rgba(255,42,42,0.4))' }}>

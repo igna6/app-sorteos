@@ -409,3 +409,39 @@ body::before {
   border-color: #FFD700;
   background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 42, 42, 0.05));
 }
+
+/* Chona Mode Styles */
+.chona-mode {
+  background: url('/buda.png') center/cover no-repeat;
+  position: relative;
+}
+
+.chona-mode::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 82, 159, 0.5); /* Blue Boca tint */
+  z-index: -1;
+  pointer-events: none;
+}
+
+.chona-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #00529F;
+  color: #F9B233;
+  border: 2px solid #F9B233;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.chona-btn:hover {
+  background: #F9B233;
+  color: #00529F;
+  transform: scale(1.05);
+}
