@@ -1,0 +1,116 @@
+.tournament-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 2rem 0;
+  margin-top: 2rem;
+}
+
+.bracket-scroll-area {
+  display: flex;
+  min-width: max-content;
+  gap: 3rem;
+  padding: 1rem;
+}
+
+.bracket-round {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 1.5rem;
+  min-width: 220px;
+}
+
+.bracket-match {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.bracket-match::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -3rem;
+  width: 3rem;
+  height: 2px;
+  background: var(--glass-border);
+  z-index: -1;
+}
+
+.bracket-round:last-child .bracket-match::after {
+  display: none;
+}
+
+.bracket-slot {
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  min-height: 48px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.bracket-slot:first-child {
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.bracket-slot:hover:not(.empty-slot) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.bracket-slot.empty-slot {
+  cursor: not-allowed;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.bracket-slot.is-winner {
+  background: rgba(46, 213, 115, 0.2);
+  color: #2ed573;
+}
+
+.bracket-slot.is-loser {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.chona-mode .bracket-slot.is-winner {
+  background: rgba(249, 178, 51, 0.2);
+  color: #F9B233;
+}
+
+.slot-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.winner-crown {
+  margin-left: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.tournament-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.tournament-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 1px;
+}

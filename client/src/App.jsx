@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import confetti from 'canvas-confetti';
 import './winner-animations.css';
 import Logo from './Logo';
+import TournamentBracket from './TournamentBracket';
 import './App.css';
 
 const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
@@ -30,6 +31,13 @@ function App() {
   const [subMultiplier, setSubMultiplier] = useState(1); // Multiplicador de subs
   const [isChonaMode, setIsChonaMode] = useState(false);
   const [themeSelected, setThemeSelected] = useState(false);
+  
+  // Tournament states
+  const [isTournamentMode, setIsTournamentMode] = useState(false);
+  const [tournamentSize, setTournamentSize] = useState(0);
+  const [tournamentBracket, setTournamentBracket] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -164,6 +172,70 @@ function App() {
     }
   };
 
+  const generateEmptyBracket = (size) => {
+    const rounds = [];
+    let currentMatches = size / 2;
+    while (currentMatches >= 1) {
+      const round = [];
+      for (let i = 0; i < currentMatches; i++) {
+        round.push({ player1: null, player2: null, winner: null });
+      }
+      rounds.push(round);
+      currentMatches = currentMatches / 2;
+    }
+    return rounds;
+  };
+
+  const startTournament = (size) => {
+    setIsTournamentMode(true);
+    setTournamentSize(size);
+    setTournamentBracket(generateEmptyBracket(size));
+    setIsMenuOpen(false);
+  };
+
+  const fillTournament = () => {
+    if (participants.length < tournamentSize) {
+      alert(`Necesitas al menos ${tournamentSize} participantes para iniciar este torneo. (Actuales: ${participants.length})`);
+      return;
+    }
+    
+    const shuffled = [...participants].sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, tournamentSize);
+    
+    const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
+    const firstRound = newBracket[0];
+    for (let i = 0; i < firstRound.length; i++) {
+      firstRound[i].player1 = selected[i * 2];
+      firstRound[i].player2 = selected[i * 2 + 1];
+    }
+    setTournamentBracket(newBracket);
+  };
+
+  const advanceTournament = (roundIndex, matchIndex, playerKey) => {
+    const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
+    const match = newBracket[roundIndex][matchIndex];
+    const winner = match[playerKey];
+    
+    if (!winner) return;
+    
+    match.winner = winner;
+    
+    if (roundIndex + 1 < newBracket.length) {
+      const nextMatchIndex = Math.floor(matchIndex / 2);
+      const isPlayer1 = matchIndex % 2 === 0;
+      
+      const nextMatch = newBracket[roundIndex + 1][nextMatchIndex];
+      if (isPlayer1) {
+        nextMatch.player1 = winner;
+      } else {
+        nextMatch.player2 = winner;
+      }
+      nextMatch.winner = null;
+    }
+    
+    setTournamentBracket(newBracket);
+  };
+
   if (!themeSelected) {
     return (
       <div className="theme-selector-container">
@@ -200,12 +272,43 @@ function App() {
 
   return (
     <div className={`app-container ${isChonaMode ? 'chona-mode' : ''}`}>
-      <button 
-        className="chona-btn" 
-        onClick={() => setThemeSelected(false)}
-      >
-        ← Cambiar Tema
-      </button>
+      <div className="top-bar">
+        <button 
+          className="chona-btn" 
+          onClick={() => setThemeSelected(false)}
+        >
+          ← Cambiar Tema
+        </button>
+        
+        <div className="tournament-menu-container">
+          <button 
+            className="chona-btn" 
+            style={{ marginLeft: '10px' }}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            ⚙️ Formato Torneo
+          </button>
+          
+          {isMenuOpen && (
+            <div className="tournament-dropdown">
+              {!isTournamentMode ? (
+                <>
+                  <p>Seleccionar tamaño:</p>
+                  <button onClick={() => startTournament(32)}>16avos (32)</button>
+                  <button onClick={() => startTournament(16)}>8vos (16)</button>
+                  <button onClick={() => startTournament(8)}>4tos (8)</button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => { setIsTournamentMode(false); setIsMenuOpen(false); }}>
+                    Volver a Normal
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
       <div className="header">
         <Logo isChonaMode={isChonaMode} />
         <p>Sorteos en tiempo real con el chat de Kick</p>
@@ -330,35 +433,54 @@ function App() {
           </button>
         </div>
 
-        <div className="glass-panel">
-          <div className="list-header">
-            <h2>Ganadores</h2>
-            <span className="badge">{winners.length}</span>
-          </div>
-          
-          <div className="participants-list">
-            {winners.length === 0 ? (
-              <div className="empty-state">
-                Aún no hay ganadores.
-              </div>
-            ) : (
-              winners.map((w, index) => (
-                <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''}`}>
-                  <div className="winner-number">{index + 1}</div>
-                  <span>{w.isSubscriber ? '⭐ ' : ''}{w.username}</span>
-                  <button 
-                    className="action-btn" 
-                    onClick={() => moveWinnerToParticipants(index)}
-                    title="Volver a los participantes"
-                  >
-                    ➕
-                  </button>
+        {!isTournamentMode ? (
+          <div className="glass-panel">
+            <div className="list-header">
+              <h2>Ganadores</h2>
+              <span className="badge">{winners.length}</span>
+            </div>
+            
+            <div className="participants-list">
+              {winners.length === 0 ? (
+                <div className="empty-state">
+                  Aún no hay ganadores.
                 </div>
-              ))
-            )}
+              ) : (
+                winners.map((w, index) => (
+                  <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''}`}>
+                    <div className="winner-number">{index + 1}</div>
+                    <span>{w.isSubscriber ? '⭐ ' : ''}{w.username}</span>
+                    <button 
+                      className="action-btn" 
+                      onClick={() => moveWinnerToParticipants(index)}
+                      title="Volver a los participantes"
+                    >
+                      ➕
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="glass-panel tournament-panel">
+            <div className="list-header">
+              <h2>Torneo de {tournamentSize}</h2>
+              <button className="btn" onClick={fillTournament}>
+                Llenar Llaves 🎲
+              </button>
+            </div>
+            <p style={{fontSize: '0.9rem', color: '#ccc', marginBottom: '1rem'}}>
+              Haz clic en el participante que quieres que avance a la siguiente ronda.
+            </p>
+          </div>
+        )}
       </div>
+      
+      {isTournamentMode && (
+        <TournamentBracket bracket={tournamentBracket} onAdvance={advanceTournament} />
+      )}
+
 
       {/* Overlay de la animación del ganador */}
       {activeWinner && (
