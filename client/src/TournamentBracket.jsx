@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './TournamentBracket.css';
 
-const TournamentBracket = ({ bracket, onAdvance, onUpdatePlayer }) => {
+const TournamentBracket = ({ bracket, onAdvance, onUndoAdvance, onUpdatePlayer }) => {
   const [editingSlot, setEditingSlot] = useState(null); // { rIndex, mIndex, playerKey }
   const [editName, setEditName] = useState('');
   const [editExtra, setEditExtra] = useState('');
@@ -71,7 +71,9 @@ const TournamentBracket = ({ bracket, onAdvance, onUpdatePlayer }) => {
       <div 
         className={`bracket-slot ${!player ? 'empty-slot' : ''} ${isWinner ? 'is-winner' : (isLoser ? 'is-loser' : '')}`}
         onClick={() => {
-          if (player && !winner) {
+          if (isWinner) {
+            if (onUndoAdvance) onUndoAdvance(rIndex, mIndex);
+          } else if (player && !winner) {
             // Let the player advance even if there is no opponent (e.g. a bye)
             onAdvance(rIndex, mIndex, playerKey);
           }

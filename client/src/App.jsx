@@ -240,6 +240,46 @@ function App() {
     setTournamentBracket(newBracket);
   };
 
+  const undoTournamentAdvance = (roundIndex, matchIndex) => {
+    const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
+    const match = newBracket[roundIndex][matchIndex];
+    const playerToUndo = match.winner;
+    
+    if (!playerToUndo) return;
+
+    match.winner = null;
+    
+    let currentRound = roundIndex;
+    let currentMatch = matchIndex;
+    
+    // Propagate the removal to subsequent rounds
+    while (currentRound + 1 < newBracket.length) {
+      const nextMatchIndex = Math.floor(currentMatch / 2);
+      const isPlayer1 = currentMatch % 2 === 0;
+      const nextMatch = newBracket[currentRound + 1][nextMatchIndex];
+      
+      const nextSlotPlayer = isPlayer1 ? nextMatch.player1 : nextMatch.player2;
+      
+      if (nextSlotPlayer && nextSlotPlayer.id === playerToUndo.id) {
+        if (isPlayer1) nextMatch.player1 = null;
+        else nextMatch.player2 = null;
+        
+        if (nextMatch.winner && nextMatch.winner.id === playerToUndo.id) {
+           nextMatch.winner = null;
+        } else {
+           break;
+        }
+      } else {
+        break;
+      }
+      
+      currentRound++;
+      currentMatch = nextMatchIndex;
+    }
+
+    setTournamentBracket(newBracket);
+  };
+
   const updateTournamentPlayer = (roundIndex, matchIndex, playerKey, updatedData) => {
     const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
     const match = newBracket[roundIndex][matchIndex];
@@ -520,6 +560,7 @@ function App() {
             <TournamentBracket 
               bracket={tournamentBracket} 
               onAdvance={advanceTournament} 
+              onUndoAdvance={undoTournamentAdvance}
               onUpdatePlayer={updateTournamentPlayer} 
             />
           )}
