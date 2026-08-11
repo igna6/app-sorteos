@@ -3,8 +3,21 @@ import { io } from 'socket.io-client';
 import confetti from 'canvas-confetti';
 import './winner-animations.css';
 import Logo from './Logo';
+import './App.css';
 
 const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+
+const DonationSection = () => (
+  <div className="donation-container">
+    <p className="donation-title">Donaciones</p>
+    <div className="donation-details">
+      <p className="alias-text" onClick={() => {
+        navigator.clipboard.writeText('ignacio.bruzzesi.mp');
+        alert('Alias copiado al portapapeles!');
+      }}>ignacio.bruzzesi.mp</p>
+    </div>
+  </div>
+);
 
 function App() {
   const [channel, setChannel] = useState('');
@@ -180,16 +193,7 @@ function App() {
             </div>
           </div>
         </div>
-        
-        <div className="donation-container">
-          <p className="donation-title">Donaciones</p>
-          <div className="donation-details">
-            <p className="alias-text" onClick={() => {
-              navigator.clipboard.writeText('ignacio.bruzzesi.mp');
-              alert('Alias copiado al portapapeles!');
-            }}>ignacio.bruzzesi.mp</p>
-          </div>
-        </div>
+        <DonationSection />
       </div>
     );
   }
@@ -364,6 +368,8 @@ function App() {
           </div>
         </div>
       )}
+
+      <DonationSection />
     </div>
   );
 }
