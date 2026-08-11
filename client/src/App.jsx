@@ -240,6 +240,21 @@ function App() {
     setTournamentBracket(newBracket);
   };
 
+  const updateTournamentPlayer = (roundIndex, matchIndex, playerKey, updatedData) => {
+    const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
+    const match = newBracket[roundIndex][matchIndex];
+    
+    if (!match[playerKey]) {
+      // If it was empty, create a new participant object
+      match[playerKey] = { id: Date.now(), ...updatedData };
+    } else {
+      // If it exists, update it
+      match[playerKey] = { ...match[playerKey], ...updatedData };
+    }
+    
+    setTournamentBracket(newBracket);
+  };
+
   if (!themeSelected) {
     return (
       <div className="theme-selector-container">
@@ -502,9 +517,12 @@ function App() {
           </div>
           
           {isTournamentMode && (
-            <TournamentBracket bracket={tournamentBracket} onAdvance={advanceTournament} />
+            <TournamentBracket 
+              bracket={tournamentBracket} 
+              onAdvance={advanceTournament} 
+              onUpdatePlayer={updateTournamentPlayer} 
+            />
           )}
-
 
           {/* Overlay de la animación del ganador */}
           {activeWinner && (

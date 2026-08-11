@@ -1,8 +1,109 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './TournamentBracket.css';
 
-const TournamentBracket = ({ bracket, onAdvance }) => {
+const TournamentBracket = ({ bracket, onAdvance, onUpdatePlayer }) => {
+  const [editingSlot, setEditingSlot] = useState(null); // { rIndex, mIndex, playerKey }
+  const [editName, setEditName] = useState('');
+  const [editExtra, setEditExtra] = useState('');
+
   if (!bracket || bracket.length === 0) return null;
+
+  const startEdit = (e, rIndex, mIndex, playerKey, player) => {
+    e.stopPropagation(); // prevent advancing
+    setEditingSlot({ rIndex, mIndex, playerKey });
+    setEditName(player ? player.username : '');
+    setEditExtra(player && player.extraText ? player.extraText : '');
+  };
+
+  const handleSaveEdit = (e) => {
+    e.stopPropagation();
+    if (!editingSlot) return;
+    
+    if (editName.trim() !== '') {
+      onUpdatePlayer(editingSlot.rIndex, editingSlot.mIndex, editingSlot.playerKey, {
+        username: editName.trim(),
+        extraText: editExtra.trim()
+      });
+    }
+    setEditingSlot(null);
+  };
+
+  const handleCancelEdit = (e) => {
+    e.stopPropagation();
+    setEditingSlot(null);
+  };
+
+  const renderSlot = (rIndex, mIndex, playerKey, player, winner) => {
+    const isWinner = winner && player && winner.id === player.id;
+    const isLoser = winner && (!player || winner.id !== player.id);
+    const isEditing = editingSlot && 
+                      editingSlot.rIndex === rIndex && 
+                      editingSlot.mIndex === mIndex && 
+                      editingSlot.playerKey === playerKey;
+
+    if (isEditing) {
+      return (
+        <div className="bracket-slot edit-mode" onClick={(e) => e.stopPropagation()}>
+          <div className="edit-inputs">
+            <input 
+              type="text" 
+              placeholder="Nombre" 
+              value={editName} 
+              onChange={(e) => setEditName(e.target.value)}
+              autoFocus
+            />
+            <input 
+              type="text" 
+              placeholder="Info Extra (opcional)" 
+              value={editExtra} 
+              onChange={(e) => setEditExtra(e.target.value)}
+            />
+          </div>
+          <div className="edit-actions">
+            <button className="action-btn" onClick={handleSaveEdit} title="Guardar">💾</button>
+            <button className="action-btn" onClick={handleCancelEdit} title="Cancelar">❌</button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div 
+        className={`bracket-slot ${!player ? 'empty-slot' : ''} ${isWinner ? 'is-winner' : (isLoser ? 'is-loser' : '')}`}
+        onClick={() => {
+          if (player && !winner) {
+            // Can only advance if there's an opponent in the first round or just normally? 
+            // The original code was: if (p1 && !winner && p2)
+            // But let's keep original logic for advancing
+            const match = bracket[rIndex][mIndex];
+            const opponent = playerKey === 'player1' ? match.player2 : match.player1;
+            if (opponent) onAdvance(rIndex, mIndex, playerKey);
+          }
+        }}
+      >
+        <div className="slot-info">
+          <span className="slot-name">
+            {player ? (player.isSubscriber ? `⭐ ${player.username}` : player.username) : 'Esperando...'}
+          </span>
+          {player && player.extraText && (
+            <span className="slot-extra">{player.extraText}</span>
+          )}
+        </div>
+        <div className="slot-right">
+          {isWinner && <span className="winner-crown">👑</span>}
+          {!winner && (
+            <button 
+              className="edit-slot-btn" 
+              onClick={(e) => startEdit(e, rIndex, mIndex, playerKey, player)}
+              title="Editar manualmente"
+            >
+              ✏️
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="tournament-container">
@@ -19,29 +120,8 @@ const TournamentBracket = ({ bracket, onAdvance }) => {
               
               return (
                 <div key={`match-${rIndex}-${mIndex}`} className="bracket-match">
-                  <div 
-                    className={`bracket-slot ${!p1 ? 'empty-slot' : ''} ${isP1Winner ? 'is-winner' : (winner ? 'is-loser' : '')}`}
-                    onClick={() => {
-                      if (p1 && !winner && p2) onAdvance(rIndex, mIndex, 'player1');
-                    }}
-                  >
-                    <span className="slot-name">
-                      {p1 ? (p1.isSubscriber ? `⭐ ${p1.username}` : p1.username) : 'Esperando...'}
-                    </span>
-                    {isP1Winner && <span className="winner-crown">👑</span>}
-                  </div>
-                  
-                  <div 
-                    className={`bracket-slot ${!p2 ? 'empty-slot' : ''} ${isP2Winner ? 'is-winner' : (winner ? 'is-loser' : '')}`}
-                    onClick={() => {
-                      if (p2 && !winner && p1) onAdvance(rIndex, mIndex, 'player2');
-                    }}
-                  >
-                    <span className="slot-name">
-                      {p2 ? (p2.isSubscriber ? `⭐ ${p2.username}` : p2.username) : 'Esperando...'}
-                    </span>
-                    {isP2Winner && <span className="winner-crown">👑</span>}
-                  </div>
+                  {renderSlot(rIndex, mIndex, 'player1', p1, winner)}
+                  {renderSlot(rIndex, mIndex, 'player2', p2, winner)}
                 </div>
               );
             })}
