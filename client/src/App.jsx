@@ -9,18 +9,6 @@ import './App.css';
 
 const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
 
-const DonationSection = () => (
-  <div className="donation-container">
-    <p className="donation-title">Donaciones</p>
-    <div className="donation-details">
-      <p className="alias-text" onClick={() => {
-        navigator.clipboard.writeText('ignacio.bruzzesi.mp');
-        alert('Alias copiado al portapapeles!');
-      }}>ignacio.bruzzesi.mp</p>
-    </div>
-  </div>
-);
-
 function App() {
   const [channel, setChannel] = useState('');
   const [keyword, setKeyword] = useState('');
@@ -494,6 +482,201 @@ function App() {
             )}
           </div>
           
+<button className="dropdown-action-btn danger-btn" onClick={() => { setIsRouletteMode(false); setIsMenuOpen(false); }}>
+                  ❌ Desactivar Ruleta
+                </button>
+              )}
+
+              <div className="dropdown-divider"></div>
+              
+              <p>FORMATO TORNEO</p>
+              {!isTournamentMode ? (
+                <div className="tournament-sizes">
+                  <button onClick={() => { startTournament(32); setIsRouletteMode(false); }}>32 (16avos)</button>
+                  <button onClick={() => { startTournament(16); setIsRouletteMode(false); }}>16 (8vos)</button>
+                  <button onClick={() => { startTournament(8); setIsRouletteMode(false); }}>8 (4tos)</button>
+                </div>
+              ) : (
+                <button className="dropdown-action-btn danger-btn" onClick={() => { setIsTournamentMode(false); setIsMenuOpen(false); }}>
+                  ❌ Desactivar Torneo
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="header">
+        <Logo isChonaMode={isChonaMode} />
+        <p>Sorteos en tiempo real con el chat de Kick</p>
+      </div>
+
+      {isRouletteMode ? (
+        <RouletteMode />
+      ) : (
+        <>
+          <div className="glass-panel setup-panel">
+            <div className="input-group">
+              <label>ID de Chatroom de Kick</label>
+              <input 
+                type="text" 
+                placeholder="Ej: 1234567" 
+                value={channel} 
+                onChange={(e) => setChannel(e.target.value)}
+                disabled={isListening}
+              />
+              <small style={{ color: '#aaa', marginTop: '5px', display: 'block', fontSize: '0.8rem' }}>
+                Para encontrar tu ID: Entra a <a href="https://kick.com/api/v2/channels/TU_CANAL" target="_blank" style={{color: '#ff2a2a'}}>kick.com/api/v2/channels/TU_CANAL</a> y busca el número en <code>"chatroom":&#123;"id": NUMERO&#125;</code>.
+              </small>
+            </div>
+            <div className="input-group">
+              <label htmlFor="keyword">Palabra Clave</label>
+              <input
+                id="keyword"
+                type="text"
+                placeholder="Ej. !sorteo"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                disabled={isListening}
+              />
+            </div>
+
+            <div className="input-group">
+              <label>Ventaja para Suscriptores (Multiplicador)</label>
+              <div className="multiplier-options">
+                <button 
+                  className={`multiplier-btn ${subMultiplier === 1 ? 'active' : ''}`}
+                  onClick={() => setSubMultiplier(1)}
+                  disabled={isListening}
+                >x1</button>
+                <button 
+                  className={`multiplier-btn ${subMultiplier === 2 ? 'active' : ''}`}
+                  onClick={() => setSubMultiplier(2)}
+                  disabled={isListening}
+                >x2</button>
+                <button 
+                  className={`multiplier-btn ${subMultiplier === 3 ? 'active' : ''}`}
+                  onClick={() => setSubMultiplier(3)}
+                  disabled={isListening}
+                >x3</button>
+                <button 
+                  className={`multiplier-btn ${subMultiplier === 5 ? 'active' : ''}`}
+                  onClick={() => setSubMultiplier(5)}
+                  disabled={isListening}
+                >x5</button>
+                <button 
+                  className={`multiplier-btn ${subMultiplier === 0 ? 'active' : ''}`}
+                  onClick={() => setSubMultiplier(0)}
+                  disabled={isListening}
+                >x0 (Excluir)</button>
+              </div>
+            </div>
+
+            {error && <p style={{ color: '#ff4444', fontSize: '0.9rem', textAlign: 'center' }}>{error}</p>}
+            {isListening && <p style={{ color: 'var(--primary-color)', fontSize: '1rem', textAlign: 'center', fontWeight: '600' }}>✅ ¡Conectado al chat de {channel}!</p>}
+
+            {!isListening ? (
+              <button className="btn" onClick={handleStart}>
+                Conectar y Escuchar
+              </button>
+            ) : (
+              <button className="btn btn-secondary" onClick={handleStop}>
+                Detener Sorteo
+              </button>
+            )}
+            
+            {(participants.length > 0 || winners.length > 0) && (
+              <button 
+                className="btn btn-secondary" 
+                style={{ borderColor: 'rgba(255, 68, 68, 0.5)', color: '#ff4444' }} 
+                onClick={resetGiveaway}
+              >
+                Reiniciar Sorteo (Borrar Todo)
+              </button>
+            )}
+          </div>
+
+          <div className="content-grid">
+            <div className="glass-panel">
+              <div className="list-header">
+                <h2>Participantes</h2>
+                <span className="badge">{participants.length}</span>
+              </div>
+              
+              <div className="participants-list">
+                {participants.length === 0 ? (
+                  <div className="empty-state">
+                    Esperando a que los espectadores escriban la palabra clave...
+                  </div>
+                ) : (
+                  participants.map((p, index) => (
+                    <div key={p.id || index} className={`participant-item ${p.isSubscriber ? 'is-sub' : ''}`}>
+                      <span>{p.isSubscriber ? '⭐ ' : ''}{p.username}</span>
+                      <button 
+                        className="action-btn" 
+                        onClick={() => removeParticipant(index)}
+                        title="Eliminar de la lista"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <button 
+                className="btn" 
+                style={{ width: '100%', marginTop: '1.5rem' }}
+                onClick={drawWinner}
+                disabled={participants.length === 0}
+              >
+                Sortear Ganador 🎁
+              </button>
+            </div>
+
+            {!isTournamentMode ? (
+              <div className="glass-panel">
+                <div className="list-header">
+                  <h2>Ganadores</h2>
+                  <span className="badge">{winners.length}</span>
+                </div>
+                
+                <div className="participants-list">
+                  {winners.length === 0 ? (
+                    <div className="empty-state">
+                      Aún no hay ganadores.
+                    </div>
+                  ) : (
+                    winners.map((w, index) => (
+                      <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''}`}>
+                        <div className="winner-number">{index + 1}</div>
+                        <span>{w.isSubscriber ? '⭐ ' : ''}{w.username}</span>
+                        <button 
+                          className="action-btn" 
+                          onClick={() => moveWinnerToParticipants(index)}
+                          title="Volver a los participantes"
+                        >
+                          ➕
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="glass-panel tournament-panel">
+                <div className="list-header">
+                  <h2>Torneo de {tournamentSize}</h2>
+                  <button className="btn" onClick={fillTournament}>
+                    Llenar Llaves 🎲
+                  </button>
+                </div>
+                <p style={{fontSize: '0.9rem', color: '#ccc', marginBottom: '1rem'}}>
+                  Haz clic en el participante que quieres que avance a la siguiente ronda.
+                </p>
+              </div>
+            )}
+          </div>
+          
           {isTournamentMode && (
             <TournamentBracket bracket={tournamentBracket} onAdvance={advanceTournament} />
           )}
@@ -509,8 +692,6 @@ function App() {
           )}
         </>
       )}
-
-      <DonationSection />
     </div>
   );
 }
