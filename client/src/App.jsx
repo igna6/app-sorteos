@@ -273,37 +273,33 @@ function App() {
   return (
     <div className={`app-container ${isChonaMode ? 'chona-mode' : ''}`}>
       <div className="top-bar">
-        <button 
-          className="chona-btn" 
-          onClick={() => setThemeSelected(false)}
-        >
-          ← Cambiar Tema
-        </button>
-        
-        <div className="tournament-menu-container">
+        <div className="settings-menu-container">
           <button 
-            className="chona-btn" 
-            style={{ marginLeft: '10px' }}
+            className="settings-btn" 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            ⚙️ Formato Torneo
+            ⚙️ Opciones
           </button>
           
           {isMenuOpen && (
-            <div className="tournament-dropdown">
+            <div className="settings-dropdown">
+              <button className="dropdown-action-btn" onClick={() => { setThemeSelected(false); setIsMenuOpen(false); }}>
+                🔄 Cambiar Tema
+              </button>
+              
+              <div className="dropdown-divider"></div>
+              
+              <p>FORMATO TORNEO</p>
               {!isTournamentMode ? (
-                <>
-                  <p>Seleccionar tamaño:</p>
-                  <button onClick={() => startTournament(32)}>16avos (32)</button>
-                  <button onClick={() => startTournament(16)}>8vos (16)</button>
-                  <button onClick={() => startTournament(8)}>4tos (8)</button>
-                </>
+                <div className="tournament-sizes">
+                  <button onClick={() => startTournament(32)}>32 (16avos)</button>
+                  <button onClick={() => startTournament(16)}>16 (8vos)</button>
+                  <button onClick={() => startTournament(8)}>8 (4tos)</button>
+                </div>
               ) : (
-                <>
-                  <button onClick={() => { setIsTournamentMode(false); setIsMenuOpen(false); }}>
-                    Volver a Normal
-                  </button>
-                </>
+                <button className="dropdown-action-btn danger-btn" onClick={() => { setIsTournamentMode(false); setIsMenuOpen(false); }}>
+                  ❌ Desactivar Torneo
+                </button>
               )}
             </div>
           )}
