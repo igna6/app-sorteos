@@ -772,3 +772,94 @@ html.chona-active .badge {
   align-items: center;
   text-align: center;
 }
+
+/* Tooltip Styles */
+.label-with-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.label-with-info label {
+  margin-bottom: 0 !important;
+}
+
+.info-tooltip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: help;
+}
+
+.info-icon {
+  font-size: 1.1rem;
+  filter: grayscale(100%) brightness(1.5);
+  opacity: 0.7;
+  transition: all 0.2s;
+}
+
+.info-tooltip:hover .info-icon {
+  opacity: 1;
+  filter: grayscale(0%);
+}
+
+.tooltip-content {
+  visibility: hidden;
+  opacity: 0;
+  width: 320px;
+  background-color: rgba(15, 15, 15, 0.95);
+  color: #fff;
+  text-align: left;
+  border-radius: 8px;
+  padding: 1.2rem;
+  position: absolute;
+  z-index: 999;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.tooltip-content::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: rgba(15, 15, 15, 0.95) transparent transparent transparent;
+}
+
+.info-tooltip:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltip-content strong {
+  font-size: 1rem;
+  color: var(--primary-color);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+html.chona-active .tooltip-content strong {
+  color: #F9B233;
+}
+
+.tooltip-content ol {
+  padding-left: 1.2rem;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #ddd;
+}
+
+.tooltip-content li {
+  margin-bottom: 0.4rem;
+}

@@ -331,7 +331,22 @@ function App() {
         <>
           <div className="glass-panel setup-panel">
             <div className="input-group">
-              <label>ID de Chatroom de Kick</label>
+              <div className="label-with-info">
+                <label>ID de Chatroom de Kick</label>
+                <div className="info-tooltip">
+                  <span className="info-icon">ℹ️</span>
+                  <div className="tooltip-content">
+                    <strong>¿Cómo encontrar tu ID?</strong>
+                    <ol>
+                      <li>Abre el navegador web.</li>
+                      <li>Visita <a href="https://kick.com/api/v2/channels/TU_CANAL" target="_blank" rel="noreferrer" style={{color: '#ff2a2a'}}>kick.com/api/v2/channels/TU_CANAL</a> (reemplaza TU_CANAL con tu usuario).</li>
+                      <li>Verás código. Presiona <strong>Ctrl + F</strong> y busca la palabra <code>chatroom</code>.</li>
+                      <li>Allí verás algo como <code>"chatroom":&#123;"id": 1234567&#125;</code>.</li>
+                      <li>Copia <strong>SOLO el número</strong> y pégalo aquí.</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
               <input 
                 type="text" 
                 placeholder="Ej: 1234567" 
@@ -339,9 +354,6 @@ function App() {
                 onChange={(e) => setChannel(e.target.value)}
                 disabled={isListening}
               />
-              <small style={{ color: '#aaa', marginTop: '5px', display: 'block', fontSize: '0.8rem' }}>
-                Para encontrar tu ID: Entra a <a href="https://kick.com/api/v2/channels/TU_CANAL" target="_blank" style={{color: '#ff2a2a'}}>kick.com/api/v2/channels/TU_CANAL</a> y busca el número en <code>"chatroom":&#123;"id": NUMERO&#125;</code>.
-              </small>
             </div>
             <div className="input-group">
               <label htmlFor="keyword">Palabra Clave</label>
