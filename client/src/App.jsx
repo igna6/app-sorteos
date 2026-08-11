@@ -180,6 +180,17 @@ function App() {
             </div>
           </div>
         </div>
+        
+        <div className="donation-container">
+          <p className="donation-title">Donaciones</p>
+          <div className="donation-details">
+            <img src="/mp.png" alt="Mercado Pago" className="mp-logo" />
+            <p className="alias-text" onClick={() => {
+              navigator.clipboard.writeText('ignacio.bruzzesi.mp');
+              alert('Alias copiado al portapapeles!');
+            }}>ignacio.bruzzesi.mp</p>
+          </div>
+        </div>
       </div>
     );
   }

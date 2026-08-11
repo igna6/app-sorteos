@@ -601,3 +601,51 @@ html.chona-active .badge {
   height: auto;
   filter: drop-shadow(0 0 15px rgba(0, 82, 159, 0.8));
 }
+
+/* Donation Styles */
+.donation-container {
+  margin-top: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--glass-bg);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(5px);
+}
+
+.donation-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.donation-details {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.mp-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.alias-text {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #009EE3; /* MercadoPago Blue */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.alias-text:hover {
+  color: #00B1FF;
+  text-decoration: underline;
+  transform: scale(1.05);
+}
