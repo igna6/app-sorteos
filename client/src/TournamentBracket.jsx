@@ -72,12 +72,8 @@ const TournamentBracket = ({ bracket, onAdvance, onUpdatePlayer }) => {
         className={`bracket-slot ${!player ? 'empty-slot' : ''} ${isWinner ? 'is-winner' : (isLoser ? 'is-loser' : '')}`}
         onClick={() => {
           if (player && !winner) {
-            // Can only advance if there's an opponent in the first round or just normally? 
-            // The original code was: if (p1 && !winner && p2)
-            // But let's keep original logic for advancing
-            const match = bracket[rIndex][mIndex];
-            const opponent = playerKey === 'player1' ? match.player2 : match.player1;
-            if (opponent) onAdvance(rIndex, mIndex, playerKey);
+            // Let the player advance even if there is no opponent (e.g. a bye)
+            onAdvance(rIndex, mIndex, playerKey);
           }
         }}
       >
