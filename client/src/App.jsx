@@ -257,7 +257,6 @@ function App() {
                   </g>
                 </svg>
               </div>
-              <p>Tuning / Fox</p>
             </div>
           </div>
           
@@ -265,7 +264,6 @@ function App() {
             <h2 className="chona-text">CHHONAA</h2>
             <div className="theme-preview">
               <img src="/boca.png" alt="Boca" className="boca-preview" />
-              <p>Boquita / Neón</p>
             </div>
           </div>
         </div>
