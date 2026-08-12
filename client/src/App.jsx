@@ -703,48 +703,101 @@ function App() {
               </button>
             </div>
 
-            {!isTournamentMode ? (
-              <div className="glass-panel">
-                <div className="list-header">
-                  <h2>Ganadores</h2>
-                  <span className="badge">{winners.length}</span>
-                </div>
-                
-                <div className="participants-list">
-                  {winners.length === 0 ? (
-                    <div className="empty-state">
-                      Aún no hay ganadores.
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                {/* Winner Verification Panel (Joquer Theme Only) */}
+                {appTheme === 'joquer' && showWinnerVerification && activeWinner && (
+                  <div className="glass-panel" style={{
+                    border: `2px solid ${isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
+                    boxShadow: `0 0 30px ${isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+                    position: 'relative'
+                  }}>
+                    <button 
+                      onClick={() => {
+                        setShowWinnerVerification(false);
+                        setActiveWinner(null);
+                        activeWinnerRef.current = null;
+                        if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
+                      }}
+                      style={{
+                        position: 'absolute', top: '15px', right: '15px', background: 'transparent', 
+                        border: 'none', color: '#ccc', cursor: 'pointer'
+                      }}
+                    >
+                      <XCircle size={28} />
+                    </button>
+                    
+                    <h2 style={{ textAlign: 'center', color: '#fff', fontSize: '2.5rem', margin: '1rem 0', textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>
+                      {activeWinner.username}
+                    </h2>
+                    
+                    <div style={{ textAlign: 'center', fontSize: '1.2rem', marginBottom: '1.5rem', color: isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
+                      {isWinnerPresent === 'success' ? '✔️ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
                     </div>
-                  ) : (
-                    winners.map((w, index) => (
-                      <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''}`}>
-                        <div className="winner-number">{index + 1}</div>
-                        <span style={{ display: 'flex', alignItems: 'center' }}>{w.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}{w.username}</span>
-                        <button 
-                          className="action-btn" 
-                          onClick={() => moveWinnerToParticipants(index)}
-                          title="Volver a los participantes"
-                        >
-                          <RotateCcw size={16} />
-                        </button>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="glass-panel tournament-panel">
-                <div className="list-header">
-                  <h2>Torneo de {tournamentSize}</h2>
-                  <button className="btn" onClick={fillTournament} style={{ display: 'flex', alignItems: 'center' }}>
-                    Llenar Llaves <Dices size={20} style={{ marginLeft: '8px' }} />
-                  </button>
-                </div>
-                <p style={{fontSize: '0.9rem', color: '#ccc', marginBottom: '1rem'}}>
-                  Haz clic en el participante que quieres que avance a la siguiente ronda.
-                </p>
-              </div>
-            )}
+                    
+                    <div className="chat-messages-container" style={{
+                      background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '1rem',
+                      height: '250px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
+                      border: '1px solid rgba(255,255,255,0.1)'
+                    }}>
+                      {winnerMessages.length === 0 ? (
+                        <div style={{ color: '#888', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
+                          Todavía no escribió nada desde que ganó...
+                        </div>
+                      ) : (
+                        winnerMessages.map((msg, idx) => (
+                          <div key={idx} style={{ background: 'rgba(255,255,255,0.1)', padding: '0.8rem', borderRadius: '8px', color: '#fff' }}>
+                            <span style={{ fontWeight: 'bold', color: '#a855f7' }}>{msg.username}: </span>
+                            <span>{msg.content}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {!isTournamentMode ? (
+                  <div className="glass-panel">
+                    <div className="list-header">
+                      <h2>Ganadores</h2>
+                      <span className="badge">{winners.length}</span>
+                    </div>
+                    
+                    <div className="participants-list">
+                      {winners.length === 0 ? (
+                        <div className="empty-state">
+                          Aún no hay ganadores.
+                        </div>
+                      ) : (
+                        winners.map((w, index) => (
+                          <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''}`}>
+                            <div className="winner-number">{index + 1}</div>
+                            <span style={{ display: 'flex', alignItems: 'center' }}>{w.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}{w.username}</span>
+                            <button 
+                              className="action-btn" 
+                              onClick={() => moveWinnerToParticipants(index)}
+                              title="Volver a los participantes"
+                            >
+                              <RotateCcw size={16} />
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="glass-panel tournament-panel">
+                    <div className="list-header">
+                      <h2>Torneo de {tournamentSize}</h2>
+                      <button className="btn" onClick={fillTournament} style={{ display: 'flex', alignItems: 'center' }}>
+                        Llenar Llaves <Dices size={20} style={{ marginLeft: '8px' }} />
+                      </button>
+                    </div>
+                    <p style={{fontSize: '0.9rem', color: '#ccc', marginBottom: '1rem'}}>
+                      Haz clic en el participante que quieres que avance a la siguiente ronda.
+                    </p>
+                  </div>
+                )}
+            </div>
           </div>
           
           {isTournamentMode && (
@@ -772,66 +825,6 @@ function App() {
             <div className="winner-overlay">
               <div className="neon-winner-text">
                 {activeWinner.username}
-              </div>
-            </div>
-          )}
-
-          {/* Winner Verification Modal (Joquer Theme Only) */}
-          {appTheme === 'joquer' && showWinnerVerification && activeWinner && (
-            <div className="verification-overlay" style={{
-              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-              zIndex: 10000,
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              fontFamily: "'Montserrat', sans-serif"
-            }}>
-              <div className="verification-modal" style={{
-                background: '#111111',
-                border: `2px solid ${isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
-                borderRadius: '16px', padding: '2rem', width: '90%', maxWidth: '600px',
-                boxShadow: `0 0 30px ${isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
-                display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative'
-              }}>
-                <button 
-                  onClick={() => {
-                    setShowWinnerVerification(false);
-                    setActiveWinner(null);
-                    activeWinnerRef.current = null;
-                    if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
-                  }}
-                  style={{
-                    position: 'absolute', top: '15px', right: '15px', background: 'transparent', 
-                    border: 'none', color: '#ccc', cursor: 'pointer'
-                  }}
-                >
-                  <XCircle size={28} />
-                </button>
-                
-                <h2 style={{ textAlign: 'center', color: '#fff', fontSize: '2.5rem', margin: 0, textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>
-                  {activeWinner.username}
-                </h2>
-                
-                <div style={{ textAlign: 'center', fontSize: '1.2rem', color: isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
-                  {isWinnerPresent === 'success' ? '✅ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
-                </div>
-                
-                <div className="chat-messages-container" style={{
-                  background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '1rem',
-                  height: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
-                  border: '1px solid rgba(255,255,255,0.1)'
-                }}>
-                  {winnerMessages.length === 0 ? (
-                    <div style={{ color: '#888', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
-                      Todavía no escribió nada desde que ganó...
-                    </div>
-                  ) : (
-                    winnerMessages.map((msg, idx) => (
-                      <div key={idx} style={{ background: 'rgba(255,255,255,0.1)', padding: '0.8rem', borderRadius: '8px', color: '#fff' }}>
-                        <span style={{ fontWeight: 'bold', color: '#a855f7' }}>{msg.username}: </span>
-                        <span>{msg.content}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
               </div>
             </div>
           )}
