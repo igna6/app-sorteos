@@ -89,7 +89,7 @@ const TournamentBracket = ({ bracket, onAdvance, onUndoAdvance, onUpdatePlayer }
         </div>
         <div className="slot-right">
           {isWinner && <span className="winner-crown">👑</span>}
-          {!winner && (
+          {!winner && rIndex === 0 && (
             <button 
               className="edit-slot-btn" 
               onClick={(e) => startEdit(e, rIndex, mIndex, playerKey, player)}
