@@ -39,11 +39,13 @@ function App() {
   // Winner Verification States (Joquer Only)
   const [showWinnerVerification, setShowWinnerVerification] = useState(false);
   const [winnerMessages, setWinnerMessages] = useState([]);
-  const [isWinnerPresent, setIsWinnerPresent] = useState(false);
-  const [verificationTimeLeft, setVerificationTimeLeft] = useState(60);
+  const [isWinnerPresent, setIsWinnerPresent] = useState('waiting');
+  const [verificationTimeLimit, setVerificationTimeLimit] = useState(30);
+  const [verificationStopwatch, setVerificationStopwatch] = useState(0);
   
   const activeWinnerRef = useRef(null);
   const verificationTimerRef = useRef(null);
+  const stopwatchRef = useRef(0);
 
   // Tournament states
   const [isTournamentMode, setIsTournamentMode] = useState(false);
@@ -95,7 +97,18 @@ function App() {
       // Si el ganador esta activo y el mensaje es de el
       if (activeWinnerRef.current && activeWinnerRef.current.username === msg.username) {
         setWinnerMessages((prev) => [...prev, msg]);
-        setIsWinnerPresent(true);
+        
+        setIsWinnerPresent(prevStatus => {
+          if (prevStatus === 'waiting') {
+            if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
+            if (stopwatchRef.current <= verificationTimeLimit) {
+              return 'success';
+            } else {
+              return 'failed';
+            }
+          }
+          return prevStatus;
+        });
       }
     });
 
@@ -185,18 +198,14 @@ function App() {
     if (appTheme === 'joquer') {
       setShowWinnerVerification(true);
       setWinnerMessages([]);
-      setIsWinnerPresent(false);
-      setVerificationTimeLeft(60);
+      setIsWinnerPresent('waiting');
+      setVerificationStopwatch(0);
+      stopwatchRef.current = 0;
       
       if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
       verificationTimerRef.current = setInterval(() => {
-        setVerificationTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(verificationTimerRef.current);
-            return 0;
-          }
-          return prev - 1;
-        });
+        stopwatchRef.current += 1;
+        setVerificationStopwatch(stopwatchRef.current);
       }, 1000);
     } else {
       // Ocultar overlay después de 5 segundos para otros perfiles
@@ -577,6 +586,20 @@ function App() {
                 </div>
               </details>
             </div>
+            
+            {appTheme === 'joquer' && (
+              <div className="input-group">
+                <label>Tiempo Límite de Respuesta (segundos)</label>
+                <input 
+                  type="number" 
+                  min="5" 
+                  value={verificationTimeLimit} 
+                  onChange={(e) => setVerificationTimeLimit(parseInt(e.target.value) || 30)}
+                  disabled={isListening}
+                />
+              </div>
+            )}
+
             <div className="input-group">
               <label htmlFor="keyword">Palabra Clave</label>
               <input
@@ -763,10 +786,10 @@ function App() {
               fontFamily: "'Montserrat', sans-serif"
             }}>
               <div className="verification-modal" style={{
-                background: 'linear-gradient(135deg, #1a0b2e 0%, #3a0d5c 100%)',
-                border: `2px solid ${isWinnerPresent ? '#4CAF50' : '#8a2be2'}`,
+                background: '#111111',
+                border: `2px solid ${isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
                 borderRadius: '16px', padding: '2rem', width: '90%', maxWidth: '600px',
-                boxShadow: `0 0 30px ${isWinnerPresent ? 'rgba(76, 175, 80, 0.5)' : 'rgba(138, 43, 226, 0.4)'}`,
+                boxShadow: `0 0 30px ${isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
                 display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative'
               }}>
                 <button 
@@ -778,18 +801,18 @@ function App() {
                   }}
                   style={{
                     position: 'absolute', top: '15px', right: '15px', background: 'transparent', 
-                    border: 'none', color: '#fff', cursor: 'pointer'
+                    border: 'none', color: '#ccc', cursor: 'pointer'
                   }}
                 >
                   <XCircle size={28} />
                 </button>
                 
-                <h2 style={{ textAlign: 'center', color: '#fff', fontSize: '2.5rem', margin: 0, textShadow: '0 0 10px rgba(255,255,255,0.5)' }}>
+                <h2 style={{ textAlign: 'center', color: '#fff', fontSize: '2.5rem', margin: 0, textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>
                   {activeWinner.username}
                 </h2>
                 
-                <div style={{ textAlign: 'center', fontSize: '1.2rem', color: isWinnerPresent ? '#4CAF50' : '#f9b233', fontWeight: 'bold' }}>
-                  {isWinnerPresent ? '¡GANADOR PRESENTE EN EL CHAT!' : `Esperando respuesta... ${verificationTimeLeft}s`}
+                <div style={{ textAlign: 'center', fontSize: '1.2rem', color: isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
+                  {isWinnerPresent === 'success' ? '✅ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
                 </div>
                 
                 <div className="chat-messages-container" style={{
