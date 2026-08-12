@@ -337,7 +337,16 @@ function App() {
           <div className="theme-card jack-card" onClick={() => { setAppTheme('jack'); setThemeSelected(true); }}>
             <h2 className="jack-text">JACK</h2>
             <div className="theme-preview">
-              <img src="/jack_bg.jpg" alt="Jack" className="jack-preview" />
+              <div className="jack-svg-preview" style={{ width: '120px', height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', filter: 'drop-shadow(0 0 15px rgba(0,243,255,0.6))' }}>
+                  <text x="50" y="85" textAnchor="middle" fill="#0b0f19" stroke="#00f3ff" strokeWidth="4" fontSize="100" fontFamily="'Anton', sans-serif" fontStyle="italic">
+                    J
+                  </text>
+                  <text x="50" y="85" textAnchor="middle" fill="#111" fontSize="100" fontFamily="'Anton', sans-serif" fontStyle="italic">
+                    J
+                  </text>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
