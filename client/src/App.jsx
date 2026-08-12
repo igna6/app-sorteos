@@ -30,6 +30,7 @@ function App() {
   const [isListening, setIsListening] = useState(false);
   const [participants, setParticipants] = useState([]);
   const [winners, setWinners] = useState([]);
+  const winnersRef = useRef([]);
   const [error, setError] = useState('');
   const [activeWinner, setActiveWinner] = useState(null); // Para el overlay
   const [subMultiplier, setSubMultiplier] = useState(1); // Multiplicador de subs
@@ -64,6 +65,10 @@ function App() {
   const socketRef = useRef(null);
 
 
+
+  useEffect(() => {
+    winnersRef.current = winners;
+  }, [winners]);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -119,14 +124,7 @@ function App() {
         if (alreadyExists) return prev;
         
         // Tampoco agregarlo si ya es un ganador
-        let isAlreadyWinner = false;
-        setWinners((prevWinners) => {
-          if (prevWinners.some((w) => w.username === user.username)) {
-            isAlreadyWinner = true;
-          }
-          return prevWinners;
-        });
-
+        const isAlreadyWinner = winnersRef.current.some((w) => w.username === user.username);
         if (isAlreadyWinner) return prev;
 
         return [...prev, user];
