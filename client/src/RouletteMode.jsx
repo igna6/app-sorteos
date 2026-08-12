@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RouletteWheel from './RouletteWheel';
 import confetti from 'canvas-confetti';
 import './RouletteMode.css';
 
-const RouletteMode = () => {
+const RouletteMode = ({ appTheme, isFixedMode }) => {
   const [participants, setParticipants] = useState([]);
   const [newName, setNewName] = useState('');
   const [newLives, setNewLives] = useState(1);
@@ -11,6 +11,25 @@ const RouletteMode = () => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [winnerResult, setWinnerResult] = useState(null);
+
+  useEffect(() => {
+    if (appTheme === 'joquer' && isFixedMode) {
+      const saved = localStorage.getItem('joquerFixedRouletteOptions');
+      if (saved) {
+        try {
+          setParticipants(JSON.parse(saved));
+        } catch (e) {
+          console.error('Failed to load saved roulette options', e);
+        }
+      }
+    }
+  }, [appTheme, isFixedMode]);
+
+  useEffect(() => {
+    if (appTheme === 'joquer' && isFixedMode) {
+      localStorage.setItem('joquerFixedRouletteOptions', JSON.stringify(participants));
+    }
+  }, [participants, appTheme, isFixedMode]);
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -73,6 +92,12 @@ const RouletteMode = () => {
   const handleModalClose = () => {
     if (!winnerResult) return;
     
+    // Si estamos en modo fijo, no eliminamos al ganador ni descontamos vidas
+    if (appTheme === 'joquer' && isFixedMode) {
+      setWinnerResult(null);
+      return;
+    }
+
     setParticipants(currentParticipants => {
       return currentParticipants.map(p => {
         if (p.id === winnerResult.id) {

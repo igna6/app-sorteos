@@ -53,6 +53,7 @@ function App() {
   
   // Roulette state
   const [isRouletteMode, setIsRouletteMode] = useState(false);
+  const [isRouletteFixedMode, setIsRouletteFixedMode] = useState(false);
   
   // Custom Password Modal state
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -509,9 +510,16 @@ function App() {
               
               <p>OTROS MODOS</p>
               {!isRouletteMode ? (
-                <button onClick={() => { setIsRouletteMode(true); setIsTournamentMode(false); setIsMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center' }}>
-                  <Gamepad2 size={16} style={{ marginRight: '8px' }} /> Modo Ruleta
-                </button>
+                <>
+                  <button onClick={() => { setIsRouletteMode(true); setIsRouletteFixedMode(false); setIsTournamentMode(false); setIsMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center' }}>
+                    <Gamepad2 size={16} style={{ marginRight: '8px' }} /> Modo Ruleta
+                  </button>
+                  {appTheme === 'joquer' && (
+                    <button onClick={() => { setIsRouletteMode(true); setIsRouletteFixedMode(true); setIsTournamentMode(false); setIsMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
+                      <Gamepad2 size={16} style={{ marginRight: '8px' }} /> Modo Ruleta (Fija)
+                    </button>
+                  )}
+                </>
               ) : (
                 <button className="dropdown-action-btn danger-btn" onClick={() => { setIsRouletteMode(false); setIsMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center' }}>
                   <XCircle size={16} style={{ marginRight: '8px' }} /> Desactivar Ruleta
@@ -542,7 +550,7 @@ function App() {
       </div>
 
       {isRouletteMode ? (
-        <RouletteMode />
+        <RouletteMode appTheme={appTheme} isFixedMode={isRouletteFixedMode} />
       ) : (
         <>
           <div className="glass-panel setup-panel">
