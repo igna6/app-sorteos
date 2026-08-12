@@ -5,6 +5,7 @@ import './winner-animations.css';
 import Logo from './Logo';
 import TournamentBracket from './TournamentBracket';
 import RouletteMode from './RouletteMode';
+import ConstellationBackground from './ConstellationBackground';
 import './App.css';
 
 const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
@@ -357,6 +358,7 @@ function App() {
 
   return (
     <div className={`app-container ${appTheme}-mode`}>
+      {appTheme === 'jack' && <ConstellationBackground />}
       <div className="top-bar">
         <div className="settings-menu-container">
           <button 
