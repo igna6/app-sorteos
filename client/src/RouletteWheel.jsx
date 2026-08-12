@@ -7,7 +7,7 @@ const COLORS = [
   '#E63946', '#F1FAEE', '#A8DADC', '#457B9D', '#1D3557'
 ];
 
-const JOQUER_COLORS = ['#6e4125', '#3a271d', '#54321c', '#4a2c18'];
+const JOQUER_COLORS = ['#6e4125', '#3a271d'];
 
 const RouletteWheel = ({ appTheme, isFixedMode, participants, rotation, isSpinning, onSpin }) => {
   const numSlices = participants.length || 1;
