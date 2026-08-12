@@ -42,10 +42,19 @@ io.on('connection', (socket) => {
 
     kickClient.on('chatMessage', (message) => {
       // console.log(`[${roomId}] ${message.sender.username}: ${message.content}`);
-      const content = message.content.trim().toLowerCase();
+      const content = message.content.trim();
+      const lowerContent = content.toLowerCase();
+      
+      // Emit every message for verification feature
+      io.emit('chat_message', {
+        id: message.id,
+        username: message.sender.username,
+        content: content,
+        timestamp: message.createdAt
+      });
       
       // Si el mensaje contiene la palabra clave (ignorando mayusculas/minusculas)
-      if (content.includes(currentWord)) {
+      if (lowerContent.includes(currentWord)) {
         
         // Detectar si el usuario es suscriptor o VIP/fundador
         let isSubscriber = false;

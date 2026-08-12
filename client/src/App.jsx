@@ -36,6 +36,15 @@ function App() {
   const [appTheme, setAppTheme] = useState('fox');
   const [themeSelected, setThemeSelected] = useState(false);
   
+  // Winner Verification States (Joquer Only)
+  const [showWinnerVerification, setShowWinnerVerification] = useState(false);
+  const [winnerMessages, setWinnerMessages] = useState([]);
+  const [isWinnerPresent, setIsWinnerPresent] = useState(false);
+  const [verificationTimeLeft, setVerificationTimeLeft] = useState(60);
+  
+  const activeWinnerRef = useRef(null);
+  const verificationTimerRef = useRef(null);
+
   // Tournament states
   const [isTournamentMode, setIsTournamentMode] = useState(false);
   const [tournamentSize, setTournamentSize] = useState(0);
@@ -77,6 +86,14 @@ function App() {
       } else {
         setIsListening(false);
         setError(data.error || 'Error al conectar al canal.');
+      }
+    });
+
+    socketRef.current.on('chat_message', (msg) => {
+      // Si el ganador esta activo y el mensaje es de el
+      if (activeWinnerRef.current && activeWinnerRef.current.username === msg.username) {
+        setWinnerMessages((prev) => [...prev, msg]);
+        setIsWinnerPresent(true);
       }
     });
 
@@ -149,6 +166,7 @@ function App() {
 
     // Mostrar overlay
     setActiveWinner(winner);
+    activeWinnerRef.current = winner;
 
     // Disparar confeti (estilo explosivo)
     confetti({
@@ -162,10 +180,29 @@ function App() {
     setParticipants((prev) => prev.filter((_, i) => i !== randomIndex));
     setWinners((prev) => [...prev, winner]);
 
-    // Ocultar overlay después de 5 segundos
-    setTimeout(() => {
-      setActiveWinner(null);
-    }, 5000);
+    if (appTheme === 'joquer') {
+      setShowWinnerVerification(true);
+      setWinnerMessages([]);
+      setIsWinnerPresent(false);
+      setVerificationTimeLeft(60);
+      
+      if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
+      verificationTimerRef.current = setInterval(() => {
+        setVerificationTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(verificationTimerRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      // Ocultar overlay después de 5 segundos para otros perfiles
+      setTimeout(() => {
+        setActiveWinner(null);
+        activeWinnerRef.current = null;
+      }, 5000);
+    }
   };
 
   const removeParticipant = (index) => {
@@ -700,10 +737,70 @@ function App() {
           )}
 
           {/* Overlay de la animación del ganador */}
-          {activeWinner && (
+          {activeWinner && !showWinnerVerification && (
             <div className="winner-overlay">
               <div className="neon-winner-text">
                 {activeWinner.username}
+              </div>
+            </div>
+          )}
+
+          {/* Winner Verification Modal (Joquer Theme Only) */}
+          {appTheme === 'joquer' && showWinnerVerification && activeWinner && (
+            <div className="verification-overlay" style={{
+              position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+              backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 10000,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              fontFamily: "'Montserrat', sans-serif"
+            }}>
+              <div className="verification-modal" style={{
+                background: 'linear-gradient(135deg, #1a0b2e 0%, #3a0d5c 100%)',
+                border: `2px solid ${isWinnerPresent ? '#4CAF50' : '#8a2be2'}`,
+                borderRadius: '16px', padding: '2rem', width: '90%', maxWidth: '600px',
+                boxShadow: `0 0 30px ${isWinnerPresent ? 'rgba(76, 175, 80, 0.5)' : 'rgba(138, 43, 226, 0.4)'}`,
+                display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative'
+              }}>
+                <button 
+                  onClick={() => {
+                    setShowWinnerVerification(false);
+                    setActiveWinner(null);
+                    activeWinnerRef.current = null;
+                    if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
+                  }}
+                  style={{
+                    position: 'absolute', top: '15px', right: '15px', background: 'transparent', 
+                    border: 'none', color: '#fff', cursor: 'pointer'
+                  }}
+                >
+                  <XCircle size={28} />
+                </button>
+                
+                <h2 style={{ textAlign: 'center', color: '#fff', fontSize: '2.5rem', margin: 0, textShadow: '0 0 10px rgba(255,255,255,0.5)' }}>
+                  {activeWinner.username}
+                </h2>
+                
+                <div style={{ textAlign: 'center', fontSize: '1.2rem', color: isWinnerPresent ? '#4CAF50' : '#f9b233', fontWeight: 'bold' }}>
+                  {isWinnerPresent ? '¡GANADOR PRESENTE EN EL CHAT!' : `Esperando respuesta... ${verificationTimeLeft}s`}
+                </div>
+                
+                <div className="chat-messages-container" style={{
+                  background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '1rem',
+                  height: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
+                  border: '1px solid rgba(255,255,255,0.1)'
+                }}>
+                  {winnerMessages.length === 0 ? (
+                    <div style={{ color: '#888', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
+                      Todavía no escribió nada desde que ganó...
+                    </div>
+                  ) : (
+                    winnerMessages.map((msg, idx) => (
+                      <div key={idx} style={{ background: 'rgba(255,255,255,0.1)', padding: '0.8rem', borderRadius: '8px', color: '#fff' }}>
+                        <span style={{ fontWeight: 'bold', color: '#a855f7' }}>{msg.username}: </span>
+                        <span>{msg.content}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           )}
