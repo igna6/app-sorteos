@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Trash2 } from 'lucide-react';
 import RouletteWheel from './RouletteWheel';
 import confetti from 'canvas-confetti';
 import './RouletteMode.css';
@@ -159,7 +160,7 @@ const RouletteMode = ({ appTheme, isFixedMode }) => {
                   title={(appTheme === 'joquer' && isFixedMode) ? "Eliminar opción" : "Eliminar participante"}
                   style={{background: 'rgba(255,0,0,0.2)'}}
                 >
-                  🗑️
+                  <Trash2 size={16} />
                 </button>
               </div>
             ))
