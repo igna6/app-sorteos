@@ -113,24 +113,26 @@ const RouletteMode = ({ appTheme, isFixedMode }) => {
   return (
     <div className="roulette-container">
       <div className="roulette-sidebar">
-        <h2>Participantes</h2>
+        <h2>{(appTheme === 'joquer' && isFixedMode) ? 'Opciones' : 'Participantes'}</h2>
         
         <form className="roulette-input-group" onSubmit={handleAdd}>
           <div className="roulette-input-row">
             <input 
               type="text" 
-              placeholder="Nombre del participante" 
+              placeholder={(appTheme === 'joquer' && isFixedMode) ? "Opción" : "Nombre del participante"} 
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
             />
-            <input 
-              type="number" 
-              min="1" 
-              placeholder="Oportunidades" 
-              title="Oportunidades (Vidas)"
-              value={newLives}
-              onChange={(e) => setNewLives(e.target.value)}
-            />
+            {!(appTheme === 'joquer' && isFixedMode) && (
+              <input 
+                type="number" 
+                min="1" 
+                placeholder="Oportunidades" 
+                title="Oportunidades (Vidas)"
+                value={newLives}
+                onChange={(e) => setNewLives(e.target.value)}
+              />
+            )}
           </div>
           <button type="submit" className="btn" style={{width: '100%', marginTop: '0.5rem'}}>
             Agregar a la Ruleta
@@ -139,18 +141,22 @@ const RouletteMode = ({ appTheme, isFixedMode }) => {
 
         <div className="roulette-list">
           {participants.length === 0 ? (
-            <p style={{color: '#ccc', textAlign: 'center'}}>No hay participantes aún.</p>
+            <p style={{color: '#ccc', textAlign: 'center'}}>{(appTheme === 'joquer' && isFixedMode) ? 'No hay opciones aún.' : 'No hay participantes aún.'}</p>
           ) : (
-            participants.map((p) => (
+            participants.map((p, idx) => (
               <div key={p.id} className="roulette-item">
                 <div className="roulette-item-info">
-                  <span className="roulette-item-name">{p.name}</span>
-                  <span className="roulette-item-lives">{p.lives} {p.lives === 1 ? 'vida' : 'vidas'}</span>
+                  <span className="roulette-item-name">
+                    {(appTheme === 'joquer' && isFixedMode) ? `${idx + 1}. ` : ''}{p.name}
+                  </span>
+                  {!(appTheme === 'joquer' && isFixedMode) && (
+                    <span className="roulette-item-lives">{p.lives} {p.lives === 1 ? 'vida' : 'vidas'}</span>
+                  )}
                 </div>
                 <button 
                   className="action-btn" 
                   onClick={() => handleRemove(p.id)}
-                  title="Eliminar participante"
+                  title={(appTheme === 'joquer' && isFixedMode) ? "Eliminar opción" : "Eliminar participante"}
                   style={{background: 'rgba(255,0,0,0.2)'}}
                 >
                   🗑️
@@ -175,16 +181,20 @@ const RouletteMode = ({ appTheme, isFixedMode }) => {
           <div className="winner-modal-content">
             <h2>🎉 ¡Salió en la ruleta! 🎉</h2>
             <h1>{winnerResult.name}</h1>
-            <p className="lives-update">
-              Pierde 1 oportunidad... (Quedan {winnerResult.lives - 1})
-            </p>
-            {winnerResult.lives - 1 === 0 && (
-              <p style={{color: '#ff4757', fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '1rem'}}>
-                ☠️ ¡Ha sido eliminado de la ruleta!
-              </p>
+            {!(appTheme === 'joquer' && isFixedMode) && (
+              <>
+                <p className="lives-update">
+                  Pierde 1 oportunidad... (Quedan {winnerResult.lives - 1})
+                </p>
+                {winnerResult.lives - 1 === 0 && (
+                  <p style={{color: '#ff4757', fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '1rem'}}>
+                    ☠️ ¡Ha sido eliminado de la ruleta!
+                  </p>
+                )}
+              </>
             )}
             <button className="btn" onClick={handleModalClose} style={{fontSize: '1.2rem', padding: '1rem 2rem'}}>
-              Aceptar y Continuar
+              Continuar
             </button>
           </div>
         </div>
