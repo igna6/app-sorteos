@@ -73,6 +73,7 @@ function App() {
       html.classList.add('jack-active');
     } else if (appTheme === 'joquer') {
       html.classList.add('joquer-active');
+      setChannel('25583107');
     }
   }, [appTheme]);
 
