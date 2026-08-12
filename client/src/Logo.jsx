@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default function Logo({ isChonaMode }) {
-  if (isChonaMode) {
+export default function Logo({ appTheme }) {
+  if (appTheme === 'chona') {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', width: '100%', alignItems: 'center' }}>
         <h1 style={{
@@ -17,6 +17,25 @@ export default function Logo({ isChonaMode }) {
           CHHONAA
         </h1>
         <img src="/boca.png" alt="Boca Juniors" style={{ width: '120px', height: '120px', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.5))' }} />
+      </div>
+    );
+  }
+
+  if (appTheme === 'jack') {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', width: '100%', alignItems: 'center' }}>
+        <h1 style={{
+          fontFamily: "'Anton', sans-serif",
+          fontSize: '7rem',
+          color: '#00f3ff', // Cyan Neon
+          textTransform: 'uppercase',
+          textShadow: '0 0 10px #00f3ff, 0 0 20px #00f3ff, 0 0 40px #b026ff, 0 0 80px #b026ff', // Neon Glow
+          margin: 0,
+          fontStyle: 'italic',
+          letterSpacing: '5px'
+        }}>
+          JACK
+        </h1>
       </div>
     );
   }

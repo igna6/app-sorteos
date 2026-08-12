@@ -30,7 +30,7 @@ function App() {
   const [error, setError] = useState('');
   const [activeWinner, setActiveWinner] = useState(null); // Para el overlay
   const [subMultiplier, setSubMultiplier] = useState(1); // Multiplicador de subs
-  const [isChonaMode, setIsChonaMode] = useState(false);
+  const [appTheme, setAppTheme] = useState('fox');
   const [themeSelected, setThemeSelected] = useState(false);
   
   // Tournament states
@@ -45,12 +45,32 @@ function App() {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    if (isChonaMode) {
-      document.documentElement.classList.add('chona-active');
-    } else {
-      document.documentElement.classList.remove('chona-active');
+    // Escuchar el evento de ganador de Pusher
+    const channelPusher = pusher.subscribe('sorteo-channel');
+    channelPusher.bind('nuevo-ganador', (data) => {
+      if (appTheme === 'chona') {
+        setChonaWinnerData(data);
+      } else {
+        setActiveWinner(data);
+      }
+    });
+
+    return () => {
+      channelPusher.unbind_all();
+      channelPusher.unsubscribe();
+    };
+  }, [appTheme]);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    html.classList.remove('chona-active', 'jack-active');
+    
+    if (appTheme === 'chona') {
+      html.classList.add('chona-active');
+    } else if (appTheme === 'jack') {
+      html.classList.add('jack-active');
     }
-  }, [isChonaMode]);
+  }, [appTheme]);
 
   useEffect(() => {
     // Initialize socket connection
@@ -307,7 +327,7 @@ function App() {
       <div className="theme-selector-container">
         <h1 className="theme-title">Elegí tu Temática</h1>
         <div className="theme-cards">
-          <div className="theme-card fox-card" onClick={() => { setIsChonaMode(false); setThemeSelected(true); }}>
+          <div className="theme-card fox-card" onClick={() => { setAppTheme('fox'); setThemeSelected(true); }}>
             <h2>EL DEL FOX</h2>
             <div className="theme-preview">
               <div className="vw-circle">
@@ -322,10 +342,17 @@ function App() {
             </div>
           </div>
           
-          <div className="theme-card chona-card" onClick={() => { setIsChonaMode(true); setThemeSelected(true); }}>
+          <div className="theme-card chona-card" onClick={() => { setAppTheme('chona'); setThemeSelected(true); }}>
             <h2 className="chona-text">CHHONAA</h2>
             <div className="theme-preview">
               <img src="/boca.png" alt="Boca" className="boca-preview" />
+            </div>
+          </div>
+
+          <div className="theme-card jack-card" onClick={() => { setAppTheme('jack'); setThemeSelected(true); }}>
+            <h2 className="jack-text">JACK</h2>
+            <div className="theme-preview">
+              <img src="/jack_bg.jpg" alt="Jack" className="jack-preview" />
             </div>
           </div>
         </div>
@@ -335,7 +362,7 @@ function App() {
   }
 
   return (
-    <div className={`app-container ${isChonaMode ? 'chona-mode' : ''}`}>
+    <div className={`app-container ${appTheme}-mode`}>
       <div className="top-bar">
         <div className="settings-menu-container">
           <button 
@@ -383,7 +410,7 @@ function App() {
         </div>
       </div>
       <div className="header">
-        <Logo isChonaMode={isChonaMode} />
+        <Logo appTheme={appTheme} />
         <p>Sorteos en tiempo real con el chat de Kick</p>
       </div>
 

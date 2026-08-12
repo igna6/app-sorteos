@@ -602,7 +602,32 @@ html.chona-active .badge {
   filter: drop-shadow(0 0 15px rgba(0, 82, 159, 0.8));
 }
 
-/* Donation Styles */
+/* Jack Theme Overrides */
+html.jack-active {
+  --primary-color: #00f3ff;
+  --bg-color: #0a0b16;
+}
+
+html.jack-active body {
+  background-image: url('/jack_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+html.jack-active body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 11, 22, 0.5);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Base App Styles */
 .donation-container {
   margin-top: 4rem;
   display: flex;
