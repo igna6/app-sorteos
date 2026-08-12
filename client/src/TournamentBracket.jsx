@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Save, X, Star, Trophy, Pencil } from 'lucide-react';
 import './TournamentBracket.css';
 
-const TournamentBracket = ({ bracket, onAdvance, onUndoAdvance, onUpdatePlayer }) => {
+const TournamentBracket = ({ appTheme, bracket, onAdvance, onUndoAdvance, onUpdatePlayer }) => {
   const [editingSlot, setEditingSlot] = useState(null); // { rIndex, mIndex, playerKey }
   const [editName, setEditName] = useState('');
   const [editExtra, setEditExtra] = useState('');
@@ -34,7 +34,34 @@ const TournamentBracket = ({ bracket, onAdvance, onUndoAdvance, onUpdatePlayer }
     setEditingSlot(null);
   };
 
-  const renderSlot = (rIndex, mIndex, playerKey, player, winner) => {
+  const handleScoreBlur = (e, rIndex, mIndex, playerKey, match) => {
+    e.stopPropagation();
+    const scoreVal = parseInt(e.target.value, 10);
+    if (isNaN(scoreVal)) return;
+
+    onUpdatePlayer(rIndex, mIndex, playerKey, { score: scoreVal });
+
+    // Automatic evaluation
+    const otherKey = playerKey === 'player1' ? 'player2' : 'player1';
+    const otherPlayer = match[otherKey];
+    
+    // Use the newly inputted score for the current player
+    const p1Score = playerKey === 'player1' ? scoreVal : (match.player1?.score !== undefined ? match.player1.score : null);
+    const p2Score = playerKey === 'player2' ? scoreVal : (match.player2?.score !== undefined ? match.player2.score : null);
+
+    // If both scores are present, evaluate
+    if (p1Score !== null && p2Score !== null) {
+      if (p1Score > p2Score) {
+        onAdvance(rIndex, mIndex, 'player1');
+      } else if (p2Score > p1Score) {
+        onAdvance(rIndex, mIndex, 'player2');
+      } else {
+        alert("¡Hay un empate en las cantidades! Ajustá un número para desempatar.");
+      }
+    }
+  };
+
+  const renderSlot = (rIndex, mIndex, playerKey, player, winner, match) => {
     const isWinner = winner && player && winner.id === player.id;
     const isLoser = winner && (!player || winner.id !== player.id);
     const isEditing = editingSlot && 
@@ -93,7 +120,30 @@ const TournamentBracket = ({ bracket, onAdvance, onUndoAdvance, onUpdatePlayer }
             <span className="slot-extra">{player.extraText}</span>
           )}
         </div>
-        <div className="slot-right">
+        <div className="slot-right" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {appTheme === 'joquer' && player && !winner && (
+            <input 
+              type="number" 
+              placeholder="0"
+              defaultValue={player.score !== undefined ? player.score : ''}
+              onBlur={(e) => handleScoreBlur(e, rIndex, mIndex, playerKey, match)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.target.blur();
+                }
+              }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: '60px', padding: '4px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)',
+                background: 'rgba(0,0,0,0.5)', color: '#fff', textAlign: 'center', fontSize: '14px'
+              }}
+            />
+          )}
+          {appTheme === 'joquer' && player && winner && player.score !== undefined && (
+            <span style={{ fontSize: '14px', fontWeight: 'bold', color: isWinner ? '#4CAF50' : '#ff4757', background: 'rgba(0,0,0,0.5)', padding: '2px 6px', borderRadius: '4px' }}>
+              {player.score}
+            </span>
+          )}
           {isWinner && <span className="winner-crown"><Trophy size={16} color="#f9b233" /></span>}
           {!winner && rIndex === 0 && (
             <button 
@@ -125,8 +175,8 @@ const TournamentBracket = ({ bracket, onAdvance, onUndoAdvance, onUpdatePlayer }
               
               return (
                 <div key={`match-${rIndex}-${mIndex}`} className="bracket-match">
-                  {renderSlot(rIndex, mIndex, 'player1', p1, winner)}
-                  {renderSlot(rIndex, mIndex, 'player2', p2, winner)}
+                  {renderSlot(rIndex, mIndex, 'player1', p1, winner, match)}
+                  {renderSlot(rIndex, mIndex, 'player2', p2, winner, match)}
                 </div>
               );
             })}

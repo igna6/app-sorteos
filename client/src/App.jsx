@@ -758,6 +758,7 @@ function App() {
                 </button>
               )}
               <TournamentBracket 
+                appTheme={appTheme}
                 bracket={tournamentBracket} 
                 onAdvance={advanceTournament} 
                 onUndoAdvance={undoTournamentAdvance}
