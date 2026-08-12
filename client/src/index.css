@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,400;0,600;0,800;1,400&display=swap');
+
+@font-face {
+  font-family: 'Bring Race';
+  src: url('/bring_race.otf') format('opentype');
+}
 
 :root {
   --primary-color: #FF2A2A;
@@ -567,8 +572,10 @@ html.chona-active .badge {
 }
 
 .fox-card h2 {
+  font-family: 'Bring Race', sans-serif;
   color: #fff;
   text-shadow: 2px 2px 0 #111;
+  font-size: 1.8rem;
 }
 
 .vw-circle {

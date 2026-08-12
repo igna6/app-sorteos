@@ -66,7 +66,7 @@ export default function Logo({ appTheme }) {
           <style>
             {`
               .text-font {
-                font-family: 'Anton', sans-serif;
+                font-family: 'Bring Race', sans-serif;
               }
               .vw-path {
                 fill: #3b65a5;
