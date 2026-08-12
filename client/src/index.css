@@ -659,7 +659,9 @@ html.jack-active::after,
 html.joquer-active::before,
 html.joquer-active::after,
 html.jack-active body::before,
-html.joquer-active body::before {
+html.joquer-active body::before,
+html.jack-active body::after,
+html.joquer-active body::after {
   display: none !important;
 }
 
