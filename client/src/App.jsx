@@ -228,6 +228,29 @@ function App() {
     setTournamentBracket(newBracket);
   };
 
+  const shuffleBracket = () => {
+    const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
+    if (!newBracket[0]) return;
+    
+    // Extract all players from round 0
+    let players = [];
+    for (const match of newBracket[0]) {
+      if (match.player1) players.push(match.player1);
+      if (match.player2) players.push(match.player2);
+    }
+    
+    // Shuffle
+    players = players.sort(() => 0.5 - Math.random());
+    
+    // Put them back
+    for (let i = 0; i < newBracket[0].length; i++) {
+      newBracket[0][i].player1 = players[i * 2] || null;
+      newBracket[0][i].player2 = players[i * 2 + 1] || null;
+    }
+    
+    setTournamentBracket(newBracket);
+  };
+
   const advanceTournament = (roundIndex, matchIndex, playerKey) => {
     const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
     const match = newBracket[roundIndex][matchIndex];
@@ -656,7 +679,7 @@ function App() {
                tournamentBracket[0].some(m => m.player1 || m.player2) && 
                !tournamentBracket[0].some(m => m.winner) &&
                (!tournamentBracket[1] || !tournamentBracket[1].some(m => m.player1 || m.player2)) && (
-                <button className="btn btn-secondary" onClick={fillTournament} style={{ marginBottom: '1rem', width: 'auto', padding: '10px 20px', fontSize: '1.1rem' }}>
+                <button className="btn btn-secondary" onClick={shuffleBracket} style={{ marginBottom: '1rem', width: 'auto', padding: '10px 20px', fontSize: '1.1rem' }}>
                   Mezclar Llaves 🔀
                 </button>
               )}
