@@ -639,21 +639,9 @@ function App() {
               <div className="glass-panel tournament-panel">
                 <div className="list-header">
                   <h2>Torneo de {tournamentSize}</h2>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    {(!tournamentBracket.length || !tournamentBracket[0].some(m => m.player1 || m.player2)) && (
-                      <button className="btn" onClick={fillTournament}>
-                        Llenar Llaves 🎲
-                      </button>
-                    )}
-                    {tournamentBracket.length > 0 && 
-                     tournamentBracket[0].some(m => m.player1 || m.player2) && 
-                     !tournamentBracket[0].some(m => m.winner) &&
-                     (!tournamentBracket[1] || !tournamentBracket[1].some(m => m.player1 || m.player2)) && (
-                      <button className="btn btn-secondary" onClick={fillTournament}>
-                        Mezclar Llaves 🔀
-                      </button>
-                    )}
-                  </div>
+                  <button className="btn" onClick={fillTournament}>
+                    Llenar Llaves 🎲
+                  </button>
                 </div>
                 <p style={{fontSize: '0.9rem', color: '#ccc', marginBottom: '1rem'}}>
                   Haz clic en el participante que quieres que avance a la siguiente ronda.
@@ -663,12 +651,22 @@ function App() {
           </div>
           
           {isTournamentMode && (
-            <TournamentBracket 
-              bracket={tournamentBracket} 
-              onAdvance={advanceTournament} 
-              onUndoAdvance={undoTournamentAdvance}
-              onUpdatePlayer={updateTournamentPlayer} 
-            />
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+              {tournamentBracket.length > 0 && 
+               tournamentBracket[0].some(m => m.player1 || m.player2) && 
+               !tournamentBracket[0].some(m => m.winner) &&
+               (!tournamentBracket[1] || !tournamentBracket[1].some(m => m.player1 || m.player2)) && (
+                <button className="btn btn-secondary" onClick={fillTournament} style={{ marginBottom: '1rem', width: 'auto', padding: '10px 20px', fontSize: '1.1rem' }}>
+                  Mezclar Llaves 🔀
+                </button>
+              )}
+              <TournamentBracket 
+                bracket={tournamentBracket} 
+                onAdvance={advanceTournament} 
+                onUndoAdvance={undoTournamentAdvance}
+                onUpdatePlayer={updateTournamentPlayer} 
+              />
+            </div>
           )}
 
           {/* Overlay de la animación del ganador */}
