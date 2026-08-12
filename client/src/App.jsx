@@ -779,8 +779,8 @@ function App() {
           {/* Winner Verification Modal (Joquer Theme Only) */}
           {appTheme === 'joquer' && showWinnerVerification && activeWinner && (
             <div className="verification-overlay" style={{
-              position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-              backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 10000,
+              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+              zIndex: 10000,
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               fontFamily: "'Montserrat', sans-serif"
             }}>
