@@ -232,7 +232,7 @@ html.chona-active .spin-btn {
   color: white;
   text-align: center;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
-  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: popInCenter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   padding: 20px;
   z-index: 100;
 }
@@ -269,7 +269,7 @@ html.chona-active .spin-btn {
   color: #000;
 }
 
-@keyframes popIn {
+@keyframes popInCenter {
   0% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.5);
