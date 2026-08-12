@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import confetti from 'canvas-confetti';
-import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle } from 'lucide-react';
+import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle, Palette, Gamepad2, XCircle } from 'lucide-react';
 import './winner-animations.css';
 import Logo from './Logo';
 import TournamentBracket from './TournamentBracket';
@@ -464,20 +464,20 @@ function App() {
           
           {isMenuOpen && (
             <div className="settings-dropdown">
-              <button className="dropdown-action-btn" onClick={() => { setThemeSelected(false); setIsMenuOpen(false); }}>
-                🔄 Cambiar Tema
+              <button className="dropdown-action-btn" onClick={() => { setThemeSelected(false); setIsMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center' }}>
+                <Palette size={16} style={{ marginRight: '8px' }} /> Cambiar Tema
               </button>
               
               <div className="dropdown-divider"></div>
               
               <p>OTROS MODOS</p>
               {!isRouletteMode ? (
-                <button onClick={() => { setIsRouletteMode(true); setIsTournamentMode(false); setIsMenuOpen(false); }}>
-                  🎡 Modo Ruleta
+                <button onClick={() => { setIsRouletteMode(true); setIsTournamentMode(false); setIsMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center' }}>
+                  <Gamepad2 size={16} style={{ marginRight: '8px' }} /> Modo Ruleta
                 </button>
               ) : (
-                <button className="dropdown-action-btn danger-btn" onClick={() => { setIsRouletteMode(false); setIsMenuOpen(false); }}>
-                  ❌ Desactivar Ruleta
+                <button className="dropdown-action-btn danger-btn" onClick={() => { setIsRouletteMode(false); setIsMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center' }}>
+                  <XCircle size={16} style={{ marginRight: '8px' }} /> Desactivar Ruleta
                 </button>
               )}
 
@@ -491,8 +491,8 @@ function App() {
                   <button onClick={() => { startTournament(8); setIsRouletteMode(false); }}>8 (4tos)</button>
                 </div>
               ) : (
-                <button className="dropdown-action-btn danger-btn" onClick={() => { setIsTournamentMode(false); setIsMenuOpen(false); }}>
-                  ❌ Desactivar Torneo
+                <button className="dropdown-action-btn danger-btn" onClick={() => { setIsTournamentMode(false); setIsMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center' }}>
+                  <XCircle size={16} style={{ marginRight: '8px' }} /> Desactivar Torneo
                 </button>
               )}
             </div>
