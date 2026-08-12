@@ -85,8 +85,8 @@ export default function Logo({ appTheme }) {
         {/* Text Black Outlines */}
         <g transform="skewX(-15) translate(40, 0)" fill="#111" stroke="#111" strokeWidth="28" strokeLinejoin="round">
           <text x="350" y="75" textAnchor="middle" fontSize="90" className="text-font">EL DEL</text>
-          <text x="235" y="215" textAnchor="end" fontSize="160" className="text-font">F</text>
-          <text x="465" y="215" textAnchor="start" fontSize="160" className="text-font">X</text>
+          <text x="235" y="222" textAnchor="end" fontSize="160" className="text-font">F</text>
+          <text x="465" y="222" textAnchor="start" fontSize="160" className="text-font">X</text>
         </g>
 
         {/* =========================================
@@ -94,8 +94,8 @@ export default function Logo({ appTheme }) {
             ========================================= */}
         <g transform="skewX(-15) translate(40, 0)" fill="#FFFFFF" stroke="none">
           <text x="350" y="75" textAnchor="middle" fontSize="90" className="text-font">EL DEL</text>
-          <text x="235" y="215" textAnchor="end" fontSize="160" className="text-font">F</text>
-          <text x="465" y="215" textAnchor="start" fontSize="160" className="text-font">X</text>
+          <text x="235" y="222" textAnchor="end" fontSize="160" className="text-font">F</text>
+          <text x="465" y="222" textAnchor="start" fontSize="160" className="text-font">X</text>
         </g>
 
         {/* =========================================
