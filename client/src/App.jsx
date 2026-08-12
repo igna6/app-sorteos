@@ -42,7 +42,7 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   // Roulette state
-  const [winnerAnimState, setWinnerAnimState] = useState(null); // 'spin' o null
+  const [isRouletteMode, setIsRouletteMode] = useState(false);
   
   // Custom Password Modal state
   const [showPasswordModal, setShowPasswordModal] = useState(false);
