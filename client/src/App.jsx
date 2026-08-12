@@ -357,26 +357,48 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="theme-card joquer-card" onClick={() => setShowPasswordModal(true)}>
-            <h2 className="joquer-text">JOQUER</h2>
-            <div className="theme-preview" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <img src="/joquer_icon.png" alt="Joquer" className="joquer-preview-icon" style={{ width: '110px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.5))' }} />
-            </div>
-          </div>
-        </div>
-        <DonationSection />
-
-        {showPasswordModal && (
-          <div className="password-modal-overlay">
-            <div className="password-modal">
-              <h3>🔒 Perfil Privado</h3>
-              <p>Ingresa la contraseña para acceder a JOQUER:</p>
-              <input 
-                type="password" 
-                value={passwordInput} 
-                onChange={(e) => setPasswordInput(e.target.value)} 
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+          <div 
+            className="theme-card joquer-card" 
+            onClick={() => { if (!showPasswordModal) setShowPasswordModal(true); }}
+            style={{ cursor: showPasswordModal ? 'default' : 'pointer', padding: showPasswordModal ? '15px' : '' }}
+          >
+            {!showPasswordModal ? (
+              <>
+                <h2 className="joquer-text">JOQUER</h2>
+                <div className="theme-preview" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <img src="/joquer_icon.png" alt="Joquer" className="joquer-preview-icon" style={{ width: '110px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.5))' }} />
+                </div>
+              </>
+            ) : (
+              <div className="inline-password-form" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', width: '100%' }}>
+                <h3 style={{ margin: 0, color: '#fff', fontSize: '18px' }}>🔒 Perfil Privado</h3>
+                <input 
+                  type="password" 
+                  placeholder="Contraseña"
+                  value={passwordInput} 
+                  onChange={(e) => setPasswordInput(e.target.value)} 
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (passwordInput === "joquertincho1122") {
+                        setAppTheme('joquer');
+                        setThemeSelected(true);
+                        setShowPasswordModal(false);
+                        setPasswordInput('');
+                      } else {
+                        alert("Contraseña incorrecta. Acceso denegado.");
+                        setPasswordInput('');
+                      }
+                    }
+                  }}
+                  autoFocus
+                  style={{
+                    width: '80%', padding: '8px', borderRadius: '5px', border: '1px solid #555',
+                    background: '#222', color: '#fff', textAlign: 'center', marginTop: '10px'
+                  }}
+                />
+                <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
+                  <button onClick={() => { setShowPasswordModal(false); setPasswordInput(''); }} style={{ padding: '5px 10px', border: 'none', background: 'transparent', color: '#aaa', cursor: 'pointer' }}>Cancelar</button>
+                  <button onClick={() => {
                     if (passwordInput === "joquertincho1122") {
                       setAppTheme('joquer');
                       setThemeSelected(true);
@@ -386,30 +408,13 @@ function App() {
                       alert("Contraseña incorrecta. Acceso denegado.");
                       setPasswordInput('');
                     }
-                  }
-                }}
-                autoFocus
-              />
-              <div className="password-modal-buttons">
-                <button onClick={() => {
-                  setShowPasswordModal(false);
-                  setPasswordInput('');
-                }}>Cancelar</button>
-                <button onClick={() => {
-                  if (passwordInput === "joquertincho1122") {
-                    setAppTheme('joquer');
-                    setThemeSelected(true);
-                    setShowPasswordModal(false);
-                    setPasswordInput('');
-                  } else {
-                    alert("Contraseña incorrecta. Acceso denegado.");
-                    setPasswordInput('');
-                  }
-                }}>Entrar</button>
+                  }} style={{ padding: '5px 15px', border: 'none', background: '#fff', color: '#000', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>Entrar</button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
-        )}
+        </div>
+        <DonationSection />
       </div>
     );
   }
