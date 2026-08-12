@@ -66,13 +66,18 @@ export default function ConstellationBackground() {
             value: 60,
           },
           opacity: {
-            value: 0.9,
+            value: 1,
           },
           shape: {
             type: "circle",
           },
           size: {
-            value: { min: 1, max: 3 },
+            value: { min: 2, max: 4.5 },
+          },
+          shadow: {
+            enable: true,
+            color: "#00f3ff",
+            blur: 8,
           },
         },
         detectRetina: true,
