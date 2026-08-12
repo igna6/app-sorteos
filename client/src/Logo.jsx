@@ -25,7 +25,8 @@ export default function Logo({ appTheme }) {
     return (
       <div className="logo-container">
         <h1 style={{
-          fontFamily: "'Anton', sans-serif",
+          fontFamily: "'Raleway', sans-serif",
+          fontWeight: 800,
           fontStyle: 'italic',
           fontSize: '72px',
           color: 'transparent',
