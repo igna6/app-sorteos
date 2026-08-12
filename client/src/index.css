@@ -575,7 +575,10 @@ html.chona-active .badge {
   font-family: 'Bring Race', sans-serif;
   color: #fff;
   text-shadow: 2px 2px 0 #111;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
+  text-align: center;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .vw-circle {
