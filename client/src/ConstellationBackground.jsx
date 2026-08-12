@@ -45,8 +45,8 @@ export default function ConstellationBackground() {
             color: "#00f3ff",
             distance: 150,
             enable: true,
-            opacity: 0.3,
-            width: 1,
+            opacity: 0.8,
+            width: 1.5,
           },
           move: {
             direction: "none",
@@ -66,7 +66,7 @@ export default function ConstellationBackground() {
             value: 60,
           },
           opacity: {
-            value: 0.5,
+            value: 0.9,
           },
           shape: {
             type: "circle",
