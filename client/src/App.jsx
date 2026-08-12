@@ -705,33 +705,18 @@ function App() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 {/* Winner Verification Panel (Joquer Theme Only) */}
-                {appTheme === 'joquer' && showWinnerVerification && activeWinner && (
+                {appTheme === 'joquer' && (
                   <div className="glass-panel" style={{
-                    border: `2px solid ${isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
-                    boxShadow: `0 0 30px ${isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+                    border: `2px solid ${!activeWinner ? '#333' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
+                    boxShadow: `0 0 30px ${!activeWinner ? 'rgba(0,0,0,0.5)' : isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
                     position: 'relative'
                   }}>
-                    <button 
-                      onClick={() => {
-                        setShowWinnerVerification(false);
-                        setActiveWinner(null);
-                        activeWinnerRef.current = null;
-                        if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
-                      }}
-                      style={{
-                        position: 'absolute', top: '15px', right: '15px', background: 'transparent', 
-                        border: 'none', color: '#ccc', cursor: 'pointer'
-                      }}
-                    >
-                      <XCircle size={28} />
-                    </button>
-                    
-                    <h2 style={{ textAlign: 'center', color: '#fff', fontSize: '2.5rem', margin: '1rem 0', textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>
-                      {activeWinner.username}
+                    <h2 style={{ textAlign: 'center', color: activeWinner ? '#fff' : '#666', fontSize: '2.5rem', margin: '1rem 0', textShadow: activeWinner ? '0 0 10px rgba(255,255,255,0.3)' : 'none' }}>
+                      {activeWinner ? activeWinner.username : 'Esperando...'}
                     </h2>
                     
-                    <div style={{ textAlign: 'center', fontSize: '1.2rem', marginBottom: '1.5rem', color: isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
-                      {isWinnerPresent === 'success' ? '✔️ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
+                    <div style={{ textAlign: 'center', fontSize: '1.2rem', marginBottom: '1.5rem', color: !activeWinner ? '#555' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
+                      {!activeWinner ? 'El chat del ganador aparecerá aquí' : isWinnerPresent === 'success' ? '✔️ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
                     </div>
                     
                     <div className="chat-messages-container" style={{
@@ -739,7 +724,11 @@ function App() {
                       height: '250px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
                       border: '1px solid rgba(255,255,255,0.1)'
                     }}>
-                      {winnerMessages.length === 0 ? (
+                      {!activeWinner ? (
+                        <div style={{ color: '#444', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
+                          Realiza un sorteo para iniciar la verificación
+                        </div>
+                      ) : winnerMessages.length === 0 ? (
                         <div style={{ color: '#888', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
                           Todavía no escribió nada desde que ganó...
                         </div>
