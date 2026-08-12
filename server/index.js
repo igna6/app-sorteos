@@ -15,38 +15,42 @@ const io = new Server(server, {
   }
 });
 
-let kickClient = null;
-let currentWord = "";
-let currentChannel = "";
+// Store connections per socket ID
+const clientConnections = new Map();
 
 io.on('connection', (socket) => {
   console.log('A client connected:', socket.id);
 
   socket.on('start_listening', ({ roomId, keyword }) => {
-    console.log(`Starting to listen on room ${roomId} for keyword: ${keyword}`);
+    console.log(`Starting to listen on room ${roomId} for keyword: ${keyword} [Socket: ${socket.id}]`);
     
-    // Si ya habia uno, lo desconectamos
-    if (kickClient) {
+    // Si este socket ya tenia una conexion, la desconectamos
+    if (clientConnections.has(socket.id)) {
       try {
-        kickClient.disconnect();
+        clientConnections.get(socket.id).kickClient.disconnect();
       } catch (e) {
         console.error("Error disconnecting previous client", e);
       }
     }
 
-    currentChannel = roomId;
-    currentWord = keyword.trim().toLowerCase();
+    const currentWord = keyword.trim().toLowerCase();
 
     // Iniciar KickLive Connector con el ID
-    kickClient = new KickConnection(roomId);
+    const kickClient = new KickConnection(roomId);
+    
+    // Guardar estado del cliente
+    clientConnections.set(socket.id, {
+      kickClient,
+      currentWord,
+      currentChannel: roomId
+    });
 
     kickClient.on('chatMessage', (message) => {
-      // console.log(`[${roomId}] ${message.sender.username}: ${message.content}`);
       const content = message.content.trim();
       const lowerContent = content.toLowerCase();
       
-      // Emit every message for verification feature
-      io.emit('chat_message', {
+      // Emit every message for verification feature only to THIS socket
+      socket.emit('chat_message', {
         id: message.id,
         username: message.sender.username,
         content: content,
@@ -54,7 +58,9 @@ io.on('connection', (socket) => {
       });
       
       // Si el mensaje contiene la palabra clave (ignorando mayusculas/minusculas)
-      if (lowerContent.includes(currentWord)) {
+      // Usamos el currentWord especifico de esta conexion
+      const connectionData = clientConnections.get(socket.id);
+      if (connectionData && lowerContent.includes(connectionData.currentWord)) {
         
         // Detectar si el usuario es suscriptor o VIP/fundador
         let isSubscriber = false;
@@ -64,8 +70,8 @@ io.on('connection', (socket) => {
           );
         }
 
-        // Emitimos al frontend que alguien ingreso la palabra
-        io.emit('participant_joined', {
+        // Emitimos al frontend que alguien ingreso la palabra, solo a ESTE socket
+        socket.emit('participant_joined', {
           id: message.sender.id,
           username: message.sender.username,
           isSubscriber: isSubscriber
@@ -99,19 +105,27 @@ io.on('connection', (socket) => {
   });
 
   socket.on('stop_listening', () => {
-    if (kickClient) {
-      console.log('Stopping Kick listener...');
+    if (clientConnections.has(socket.id)) {
+      console.log(`Stopping Kick listener for socket ${socket.id}...`);
       try {
-         kickClient.disconnect();
+         clientConnections.get(socket.id).kickClient.disconnect();
       } catch (e) {
         // ignore
       }
-      kickClient = null;
+      clientConnections.delete(socket.id);
     }
   });
 
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
+    if (clientConnections.has(socket.id)) {
+      try {
+         clientConnections.get(socket.id).kickClient.disconnect();
+      } catch (e) {
+        // ignore
+      }
+      clientConnections.delete(socket.id);
+    }
   });
 });
 
