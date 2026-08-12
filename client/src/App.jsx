@@ -235,6 +235,13 @@ function App() {
         nextMatch.player2 = winner;
       }
       nextMatch.winner = null;
+    } else {
+      // It's the final round, celebrate the tournament winner!
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
     }
     
     setTournamentBracket(newBracket);
