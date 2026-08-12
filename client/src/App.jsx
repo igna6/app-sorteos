@@ -42,7 +42,11 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   // Roulette state
-  const [isRouletteMode, setIsRouletteMode] = useState(false);
+  const [winnerAnimState, setWinnerAnimState] = useState(null); // 'spin' o null
+  
+  // Custom Password Modal state
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
   
   const socketRef = useRef(null);
 
@@ -353,15 +357,7 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="theme-card joquer-card" onClick={() => {
-            const pwd = window.prompt("Perfil Privado: Ingresa la contraseña para acceder a JOQUER");
-            if (pwd === "joquertincho1122") {
-              setAppTheme('joquer');
-              setThemeSelected(true);
-            } else if (pwd !== null) {
-              alert("Contraseña incorrecta. Acceso denegado.");
-            }
-          }}>
+          <div className="theme-card joquer-card" onClick={() => setShowPasswordModal(true)}>
             <h2 className="joquer-text">JOQUER</h2>
             <div className="theme-preview" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <img src="/joquer_icon.png" alt="Joquer" className="joquer-preview-icon" style={{ width: '110px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.5))' }} />
@@ -369,6 +365,51 @@ function App() {
           </div>
         </div>
         <DonationSection />
+
+        {showPasswordModal && (
+          <div className="password-modal-overlay">
+            <div className="password-modal">
+              <h3>🔒 Perfil Privado</h3>
+              <p>Ingresa la contraseña para acceder a JOQUER:</p>
+              <input 
+                type="password" 
+                value={passwordInput} 
+                onChange={(e) => setPasswordInput(e.target.value)} 
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    if (passwordInput === "joquertincho1122") {
+                      setAppTheme('joquer');
+                      setThemeSelected(true);
+                      setShowPasswordModal(false);
+                      setPasswordInput('');
+                    } else {
+                      alert("Contraseña incorrecta. Acceso denegado.");
+                      setPasswordInput('');
+                    }
+                  }
+                }}
+                autoFocus
+              />
+              <div className="password-modal-buttons">
+                <button onClick={() => {
+                  setShowPasswordModal(false);
+                  setPasswordInput('');
+                }}>Cancelar</button>
+                <button onClick={() => {
+                  if (passwordInput === "joquertincho1122") {
+                    setAppTheme('joquer');
+                    setThemeSelected(true);
+                    setShowPasswordModal(false);
+                    setPasswordInput('');
+                  } else {
+                    alert("Contraseña incorrecta. Acceso denegado.");
+                    setPasswordInput('');
+                  }
+                }}>Entrar</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
