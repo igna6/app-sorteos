@@ -580,6 +580,57 @@ html.chona-active .badge {
   box-shadow: 0 0 20px rgba(255, 42, 42, 0.5);
 }
 
+/* Jack Card Specifics */
+.jack-card {
+  border-color: rgba(0, 243, 255, 0.3);
+}
+
+.jack-card:hover {
+  box-shadow: 0 10px 40px rgba(176, 38, 255, 0.4);
+  border-color: #00f3ff;
+}
+
+.jack-card .jack-text {
+  color: #00f3ff;
+  text-shadow: 0 0 10px #00f3ff, 0 0 20px #b026ff;
+  font-style: italic;
+  letter-spacing: 3px;
+}
+
+.jack-preview {
+  width: 120px;
+  border-radius: 10px;
+  filter: drop-shadow(0 0 15px rgba(0,243,255,0.4));
+}
+
+/* Joquer Theme Overrides */
+html.joquer-active {
+  --primary-color: #ffffff;
+  --bg-color: #111111;
+  --glass-bg: rgba(20, 20, 20, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.2);
+}
+
+
+
+/* Joquer Card Specifics */
+.joquer-card {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.joquer-card:hover {
+  box-shadow: 0 10px 40px rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
+}
+
+.joquer-card .joquer-text {
+  color: transparent;
+  -webkit-text-stroke: 2px #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  letter-spacing: 4px;
+}
+
 /* Chona Card Specifics */
 .chona-card {
   border-color: rgba(0, 82, 159, 0.3);
@@ -604,7 +655,11 @@ html.chona-active .badge {
 
 /* Jack Theme Overrides */
 html.jack-active::before,
-html.jack-active::after {
+html.jack-active::after,
+html.joquer-active::before,
+html.joquer-active::after,
+html.jack-active body::before,
+html.joquer-active body::before {
   display: none !important;
 }
 

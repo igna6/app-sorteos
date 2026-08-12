@@ -6,6 +6,7 @@ import Logo from './Logo';
 import TournamentBracket from './TournamentBracket';
 import RouletteMode from './RouletteMode';
 import ConstellationBackground from './ConstellationBackground';
+import JoquerBackground from './JoquerBackground';
 import './App.css';
 
 const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
@@ -49,12 +50,14 @@ function App() {
 
   useEffect(() => {
     const html = document.documentElement;
-    html.classList.remove('chona-active', 'jack-active');
+    html.classList.remove('chona-active', 'jack-active', 'joquer-active');
     
     if (appTheme === 'chona') {
       html.classList.add('chona-active');
     } else if (appTheme === 'jack') {
       html.classList.add('jack-active');
+    } else if (appTheme === 'joquer') {
+      html.classList.add('joquer-active');
     }
   }, [appTheme]);
 
@@ -350,6 +353,12 @@ function App() {
               </div>
             </div>
           </div>
+          <div className="theme-card joquer-card" onClick={() => { setAppTheme('joquer'); setThemeSelected(true); }}>
+            <h2 className="joquer-text">JOQUER</h2>
+            <div className="theme-preview" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <img src="/joquer_icon.png" alt="Joquer" className="joquer-preview-icon" style={{ width: '110px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.5))' }} />
+            </div>
+          </div>
         </div>
         <DonationSection />
       </div>
@@ -359,6 +368,7 @@ function App() {
   return (
     <div className={`app-container ${appTheme}-mode`}>
       {appTheme === 'jack' && <ConstellationBackground />}
+      {appTheme === 'joquer' && <JoquerBackground />}
       <div className="top-bar">
         <div className="settings-menu-container">
           <button 

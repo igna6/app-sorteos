@@ -21,6 +21,25 @@ export default function Logo({ appTheme }) {
     );
   }
 
+  if (appTheme === 'joquer') {
+    return (
+      <div className="logo-container">
+        <h1 style={{
+          fontFamily: "'Anton', sans-serif",
+          fontStyle: 'italic',
+          fontSize: '72px',
+          color: 'transparent',
+          WebkitTextStroke: '2px #fff',
+          textShadow: '0 0 15px rgba(255,255,255,0.5)',
+          margin: 0,
+          letterSpacing: '5px'
+        }}>
+          JOQUER
+        </h1>
+      </div>
+    );
+  }
+
   if (appTheme === 'jack') {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', width: '100%', alignItems: 'center' }}>
