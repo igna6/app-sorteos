@@ -447,6 +447,9 @@ function App() {
 
   return (
     <div className={`app-container ${appTheme}-mode`}>
+      <div style={{ position: 'fixed', top: '30px', left: '40px', fontSize: '28px', fontWeight: '900', fontFamily: "'Montserrat', sans-serif", letterSpacing: '1px', userSelect: 'none', color: '#fff', textShadow: '0 0 10px rgba(255,255,255,0.3)', zIndex: 9999 }}>
+        IB.
+      </div>
       {appTheme === 'jack' && <ConstellationBackground />}
       {appTheme === 'joquer' && <JoquerBackground />}
       <div className="top-bar">
