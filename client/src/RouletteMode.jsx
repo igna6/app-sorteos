@@ -168,16 +168,26 @@ const RouletteMode = ({ appTheme, isFixedMode }) => {
         </div>
       </div>
 
-      <div className="roulette-main">
+      <div className="roulette-main" style={{ position: 'relative' }}>
         <RouletteWheel 
           participants={participants} 
           rotation={rotation} 
           isSpinning={isSpinning}
           onSpin={handleSpin}
+          appTheme={appTheme}
+          isFixedMode={isFixedMode}
         />
+
+        {winnerResult && appTheme === 'joquer' && isFixedMode && (
+          <div className="joquer-wheel-winner">
+            <h2>¡Salió!</h2>
+            <h1>{winnerResult.name}</h1>
+            <button className="btn" onClick={handleModalClose}>Continuar</button>
+          </div>
+        )}
       </div>
 
-      {winnerResult && (
+      {winnerResult && !(appTheme === 'joquer' && isFixedMode) && (
         <div className="winner-modal">
           <div className="winner-modal-content">
             <h2>🎉 ¡Salió en la ruleta! 🎉</h2>

@@ -7,7 +7,9 @@ const COLORS = [
   '#E63946', '#F1FAEE', '#A8DADC', '#457B9D', '#1D3557'
 ];
 
-const RouletteWheel = ({ participants, rotation, isSpinning, onSpin }) => {
+const JOQUER_COLORS = ['#6e4125', '#3a271d', '#54321c', '#4a2c18'];
+
+const RouletteWheel = ({ appTheme, isFixedMode, participants, rotation, isSpinning, onSpin }) => {
   const numSlices = participants.length || 1;
   const sliceAngle = 360 / numSlices;
   
@@ -50,18 +52,23 @@ const RouletteWheel = ({ participants, rotation, isSpinning, onSpin }) => {
           ) : (
             participants.map((p, i) => {
               const textRotation = (i * sliceAngle) + (sliceAngle / 2);
+              const isJoquerFixed = appTheme === 'joquer' && isFixedMode;
+              const fillColors = isJoquerFixed ? JOQUER_COLORS : COLORS;
+              const fillColor = fillColors[i % fillColors.length];
+              const textColor = isJoquerFixed ? '#fff' : '#000';
+
               return (
                 <g key={`slice-${p.id}-${i}`}>
                   <path 
                     d={getSlicePath(i)} 
-                    fill={COLORS[i % COLORS.length]} 
-                    stroke="rgba(0,0,0,0.2)"
+                    fill={fillColor} 
+                    stroke={isJoquerFixed ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.2)"}
                     strokeWidth="0.5"
                   />
                   <text
                     x="100"
                     y="30"
-                    fill="#000"
+                    fill={textColor}
                     fontSize={numSlices > 10 ? "8" : "12"}
                     fontWeight="bold"
                     textAnchor="middle"
