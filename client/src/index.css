@@ -603,6 +603,11 @@ html.chona-active .badge {
 }
 
 /* Jack Theme Overrides */
+html.jack-active::before,
+html.jack-active::after {
+  display: none !important;
+}
+
 html.jack-active {
   --primary-color: #00f3ff;
   --bg-color: #0a0b16;
