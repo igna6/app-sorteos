@@ -353,7 +353,15 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="theme-card joquer-card" onClick={() => { setAppTheme('joquer'); setThemeSelected(true); }}>
+          <div className="theme-card joquer-card" onClick={() => {
+            const pwd = window.prompt("Perfil Privado: Ingresa la contraseña para acceder a JOQUER");
+            if (pwd === "joquertincho1122") {
+              setAppTheme('joquer');
+              setThemeSelected(true);
+            } else if (pwd !== null) {
+              alert("Contraseña incorrecta. Acceso denegado.");
+            }
+          }}>
             <h2 className="joquer-text">JOQUER</h2>
             <div className="theme-preview" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <img src="/joquer_icon.png" alt="Joquer" className="joquer-preview-icon" style={{ width: '110px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.5))' }} />
