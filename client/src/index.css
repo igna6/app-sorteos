@@ -659,9 +659,7 @@ html.jack-active::after,
 html.joquer-active::before,
 html.joquer-active::after,
 html.jack-active body::before,
-html.joquer-active body::before,
-html.jack-active body::after,
-html.joquer-active body::after {
+html.joquer-active body::before {
   display: none !important;
 }
 
@@ -684,7 +682,7 @@ html.jack-active body::after {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(10, 11, 22, 0.5);
+  background: rgba(0, 0, 0, 0.75); /* Darker overlay to improve readability */
   pointer-events: none;
   z-index: -1;
 }
