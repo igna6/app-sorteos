@@ -340,7 +340,10 @@ function App() {
 
   if (!themeSelected) {
     return (
-      <div className="theme-selector-container">
+      <div className="theme-selector-container" style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', top: '30px', left: '40px', fontSize: '28px', fontWeight: '900', fontFamily: "'Montserrat', sans-serif", letterSpacing: '1px', userSelect: 'none', color: '#fff', textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>
+          IB.
+        </div>
         <h1 className="theme-title">Elegí tu Temática</h1>
         <div className="theme-cards">
           <div className="theme-card fox-card" onClick={() => { setAppTheme('fox'); setThemeSelected(true); }}>
