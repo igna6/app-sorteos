@@ -44,22 +44,7 @@ function App() {
   
   const socketRef = useRef(null);
 
-  useEffect(() => {
-    // Escuchar el evento de ganador de Pusher
-    const channelPusher = pusher.subscribe('sorteo-channel');
-    channelPusher.bind('nuevo-ganador', (data) => {
-      if (appTheme === 'chona') {
-        setChonaWinnerData(data);
-      } else {
-        setActiveWinner(data);
-      }
-    });
 
-    return () => {
-      channelPusher.unbind_all();
-      channelPusher.unsubscribe();
-    };
-  }, [appTheme]);
 
   useEffect(() => {
     const html = document.documentElement;
