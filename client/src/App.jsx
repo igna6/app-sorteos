@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import confetti from 'canvas-confetti';
+import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle } from 'lucide-react';
 import './winner-animations.css';
 import Logo from './Logo';
 import TournamentBracket from './TournamentBracket';
@@ -458,7 +459,7 @@ function App() {
             className="settings-btn" 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            ⚙️ Opciones
+            <Settings size={24} />
           </button>
           
           {isMenuOpen && (
@@ -574,7 +575,7 @@ function App() {
             </div>
 
             {error && <p style={{ color: '#ff4444', fontSize: '0.9rem', textAlign: 'center' }}>{error}</p>}
-            {isListening && <p style={{ color: 'var(--primary-color)', fontSize: '1rem', textAlign: 'center', fontWeight: '600' }}>✅ ¡Conectado al chat de {channel}!</p>}
+            {isListening && <p style={{ color: 'var(--primary-color)', fontSize: '1rem', textAlign: 'center', fontWeight: '600' }}><CheckCircle2 size={18} style={{ verticalAlign: 'text-bottom', marginRight: '6px' }} /> ¡Conectado al chat de {channel}!</p>}
 
             {!isListening ? (
               <button className="btn" onClick={handleStart}>
@@ -612,13 +613,13 @@ function App() {
                 ) : (
                   participants.map((p, index) => (
                     <div key={p.id || index} className={`participant-item ${p.isSubscriber ? 'is-sub' : ''}`}>
-                      <span>{p.isSubscriber ? '⭐ ' : ''}{p.username}</span>
+                      <span style={{ display: 'flex', alignItems: 'center' }}>{p.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}{p.username}</span>
                       <button 
                         className="action-btn" 
                         onClick={() => removeParticipant(index)}
                         title="Eliminar de la lista"
                       >
-                        🗑️
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   ))
@@ -627,11 +628,11 @@ function App() {
 
               <button 
                 className="btn" 
-                style={{ width: '100%', marginTop: '1.5rem' }}
+                style={{ width: '100%', marginTop: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 onClick={drawWinner}
                 disabled={participants.length === 0}
               >
-                Sortear Ganador 🎁
+                Sortear Ganador <Gift size={20} style={{ marginLeft: '8px' }} />
               </button>
             </div>
 
@@ -651,13 +652,13 @@ function App() {
                     winners.map((w, index) => (
                       <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''}`}>
                         <div className="winner-number">{index + 1}</div>
-                        <span>{w.isSubscriber ? '⭐ ' : ''}{w.username}</span>
+                        <span style={{ display: 'flex', alignItems: 'center' }}>{w.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}{w.username}</span>
                         <button 
                           className="action-btn" 
                           onClick={() => moveWinnerToParticipants(index)}
                           title="Volver a los participantes"
                         >
-                          ➕
+                          <RotateCcw size={16} />
                         </button>
                       </div>
                     ))
@@ -668,8 +669,8 @@ function App() {
               <div className="glass-panel tournament-panel">
                 <div className="list-header">
                   <h2>Torneo de {tournamentSize}</h2>
-                  <button className="btn" onClick={fillTournament}>
-                    Llenar Llaves 🎲
+                  <button className="btn" onClick={fillTournament} style={{ display: 'flex', alignItems: 'center' }}>
+                    Llenar Llaves <Dices size={20} style={{ marginLeft: '8px' }} />
                   </button>
                 </div>
                 <p style={{fontSize: '0.9rem', color: '#ccc', marginBottom: '1rem'}}>
@@ -685,8 +686,8 @@ function App() {
                tournamentBracket[0].some(m => m.player1 || m.player2) && 
                !tournamentBracket[0].some(m => m.winner) &&
                (!tournamentBracket[1] || !tournamentBracket[1].some(m => m.player1 || m.player2)) && (
-                <button className="btn btn-secondary" onClick={shuffleBracket} style={{ marginBottom: '1rem', width: 'auto', padding: '10px 20px', fontSize: '1.1rem' }}>
-                  Mezclar Llaves 🔀
+                <button className="btn btn-secondary" onClick={shuffleBracket} style={{ marginBottom: '1rem', width: 'auto', padding: '10px 20px', fontSize: '1.1rem', display: 'flex', alignItems: 'center' }}>
+                  Mezclar Llaves <Shuffle size={20} style={{ marginLeft: '8px' }} />
                 </button>
               )}
               <TournamentBracket 

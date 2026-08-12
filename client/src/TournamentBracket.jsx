@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Save, X, Star, Trophy, Pencil } from 'lucide-react';
 import './TournamentBracket.css';
 
 const TournamentBracket = ({ bracket, onAdvance, onUndoAdvance, onUpdatePlayer }) => {
@@ -60,8 +61,8 @@ const TournamentBracket = ({ bracket, onAdvance, onUndoAdvance, onUpdatePlayer }
             />
           </div>
           <div className="edit-actions">
-            <button className="action-btn" onClick={handleSaveEdit} title="Guardar">💾</button>
-            <button className="action-btn" onClick={handleCancelEdit} title="Cancelar">❌</button>
+            <button className="action-btn" onClick={handleSaveEdit} title="Guardar"><Save size={16} /></button>
+            <button className="action-btn" onClick={handleCancelEdit} title="Cancelar"><X size={16} /></button>
           </div>
         </div>
       );
@@ -80,22 +81,28 @@ const TournamentBracket = ({ bracket, onAdvance, onUndoAdvance, onUpdatePlayer }
         }}
       >
         <div className="slot-info">
-          <span className="slot-name">
-            {player ? (player.isSubscriber ? `⭐ ${player.username}` : player.username) : 'Esperando...'}
+          <span className="slot-name" style={{ display: 'flex', alignItems: 'center' }}>
+            {player ? (
+              <>
+                {player.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}
+                {player.username}
+              </>
+            ) : 'Esperando...'}
           </span>
           {player && player.extraText && (
             <span className="slot-extra">{player.extraText}</span>
           )}
         </div>
         <div className="slot-right">
-          {isWinner && <span className="winner-crown">👑</span>}
+          {isWinner && <span className="winner-crown"><Trophy size={16} color="#f9b233" /></span>}
           {!winner && rIndex === 0 && (
             <button 
               className="edit-slot-btn" 
               onClick={(e) => startEdit(e, rIndex, mIndex, playerKey, player)}
               title="Editar manualmente"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              ✏️
+              <Pencil size={14} />
             </button>
           )}
         </div>
