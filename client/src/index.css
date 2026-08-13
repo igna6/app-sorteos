@@ -916,3 +916,45 @@ html.jack-active body::after {
 .id-help-content li {
   margin-bottom: 0.4rem;
 }
+
+/* Pato Theme Overrides */
+html.pato-active::before,
+html.pato-active::after,
+html.pato-active body::before {
+  display: none !important;
+}
+
+html.pato-active {
+  --primary-color: #ff9900;
+  --bg-color: #0d131f;
+}
+
+html.pato-active body {
+  background-image: url('/pato_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+html.pato-active body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.pato-card {
+  border-color: rgba(255, 153, 0, 0.3);
+}
+
+.pato-card:hover {
+  box-shadow: 0 10px 40px rgba(255, 153, 0, 0.4);
+  border-color: #FFD700;
+  transform: translateY(-5px);
+}
+

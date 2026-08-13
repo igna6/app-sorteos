@@ -102,7 +102,7 @@ function App() {
 
   useEffect(() => {
     const html = document.documentElement;
-    html.classList.remove('chona-active', 'jack-active', 'joquer-active');
+    html.classList.remove('chona-active', 'jack-active', 'joquer-active', 'pato-active');
     
     if (appTheme === 'chona') {
       html.classList.add('chona-active');
@@ -111,6 +111,8 @@ function App() {
     } else if (appTheme === 'joquer') {
       html.classList.add('joquer-active');
       setChannel('25583107');
+    } else if (appTheme === 'pato') {
+      html.classList.add('pato-active');
     }
   }, [appTheme]);
 
@@ -442,6 +444,13 @@ function App() {
             <h2 className="chona-text">CHHONAA</h2>
             <div className="theme-preview">
               <img src="/boca.png" alt="Boca" className="boca-preview" />
+            </div>
+          </div>
+
+          <div className="theme-card pato-card" onClick={() => { setAppTheme('pato'); setThemeSelected(true); }}>
+            <h2 className="pato-text" style={{ color: '#FFD700', textShadow: '0 0 10px rgba(255, 153, 0, 0.8)' }}>EL PATO</h2>
+            <div className="theme-preview">
+              <div style={{ fontSize: '80px', filter: 'drop-shadow(0 0 15px rgba(255,153,0,0.6))' }}>🦆</div>
             </div>
           </div>
 
