@@ -72,8 +72,14 @@ const RouletteMode = ({ appTheme, isFixedMode }) => {
     
     // We want the wheel to spin multiple times (e.g., 5 full rotations = 1800deg)
     const baseSpins = 360 * 5;
-    // We subtract sliceMiddleAngle because we need to move that slice backwards to 0 (top)
-    const finalRotation = rotation + baseSpins + (360 - (sliceMiddleAngle % 360)) - (rotation % 360);
+    
+    let targetAngle = 360 - (sliceMiddleAngle % 360);
+    if (appTheme === 'joquer' && isFixedMode) {
+      // Pointer is at 90 degrees (right side)
+      targetAngle = (90 - (sliceMiddleAngle % 360) + 360) % 360;
+    }
+    
+    const finalRotation = rotation + baseSpins + targetAngle - (rotation % 360);
 
     setRotation(finalRotation);
 

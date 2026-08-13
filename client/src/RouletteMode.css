@@ -280,3 +280,11 @@ html.chona-active .spin-btn {
   }
 }
 
+
+.wheel-pointer-right {
+  top: 50% !important;
+  right: -15px !important;
+  left: auto !important;
+  transform: translateY(-50%) rotate(90deg) !important;
+}
+

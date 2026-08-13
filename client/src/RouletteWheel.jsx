@@ -31,7 +31,7 @@ const RouletteWheel = ({ appTheme, isFixedMode, participants, rotation, isSpinni
 
   return (
     <div className="wheel-container">
-      <div className="wheel-pointer"></div>
+      <div className={`wheel-pointer ${appTheme === 'joquer' && isFixedMode ? 'wheel-pointer-right' : ''}`}></div>
       <button 
         className="spin-btn" 
         onClick={onSpin}
