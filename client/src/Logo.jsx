@@ -60,6 +60,25 @@ export default function Logo({ appTheme }) {
     );
   }
 
+  if (appTheme === 'pato') {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', width: '100%', alignItems: 'center' }}>
+        <h1 style={{
+          fontFamily: "'Anton', sans-serif",
+          fontSize: '7rem',
+          color: '#FFD700',
+          textTransform: 'uppercase',
+          textShadow: '0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 40px #FF9900, 0 0 80px #FF9900',
+          margin: 0,
+          fontStyle: 'italic',
+          letterSpacing: '5px'
+        }}>
+          PATO
+        </h1>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', width: '100%' }}>
       <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', maxWidth: '550px', filter: 'drop-shadow(0 10px 15px rgba(255,42,42,0.4))' }}>
