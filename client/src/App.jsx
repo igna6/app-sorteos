@@ -825,21 +825,24 @@ function App() {
               left: `${panelPos.x}px`,
               top: `${panelPos.y}px`,
               width: '350px',
+              height: '450px',
+              display: 'flex',
+              flexDirection: 'column',
               zIndex: 9999,
               cursor: isDraggingPanel ? 'grabbing' : 'grab',
               userSelect: 'none'
             }}>
-              <h2 style={{ textAlign: 'center', color: activeWinner ? '#fff' : '#666', fontSize: '2.5rem', margin: '1rem 0', textShadow: activeWinner ? '0 0 10px rgba(255,255,255,0.3)' : 'none' }}>
+              <h2 style={{ textAlign: 'center', color: activeWinner ? '#fff' : '#666', fontSize: '2.5rem', margin: '0 0 0.5rem 0', textShadow: activeWinner ? '0 0 10px rgba(255,255,255,0.3)' : 'none' }}>
                 {activeWinner ? activeWinner.username : 'Esperando ganador...'}
               </h2>
               
-              <div style={{ textAlign: 'center', fontSize: '1.2rem', marginBottom: '1.5rem', color: !activeWinner ? '#555' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
+              <div style={{ textAlign: 'center', fontSize: '1rem', minHeight: '3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', color: !activeWinner ? '#555' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
                 {!activeWinner ? 'Inicia un sorteo para el chat de validación' : isWinnerPresent === 'success' ? '✔️ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
               </div>
               
               <div className="chat-messages-container" style={{
                 background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '1rem',
-                height: '250px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
+                flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
                 border: '1px solid rgba(255,255,255,0.1)',
                 cursor: 'auto'
               }}>
