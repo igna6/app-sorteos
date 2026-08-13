@@ -824,7 +824,7 @@ function App() {
               position: 'fixed',
               left: `${panelPos.x}px`,
               top: `${panelPos.y}px`,
-              width: '350px',
+              width: '380px',
               height: '450px',
               display: 'flex',
               flexDirection: 'column',
@@ -836,7 +836,7 @@ function App() {
                 {activeWinner ? activeWinner.username : 'Esperando ganador...'}
               </h2>
               
-              <div style={{ textAlign: 'center', fontSize: '1rem', minHeight: '3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', color: !activeWinner ? '#555' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
+              <div style={{ textAlign: 'center', fontSize: '0.95rem', whiteSpace: 'nowrap', minHeight: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', color: !activeWinner ? '#555' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
                 {!activeWinner ? 'Inicia un sorteo para el chat de validación' : isWinnerPresent === 'success' ? '✔️ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
               </div>
               
