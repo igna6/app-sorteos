@@ -448,7 +448,7 @@ function App() {
           </div>
 
           <div className="theme-card pato-card" onClick={() => { setAppTheme('pato'); setThemeSelected(true); }}>
-            <h2 className="pato-text" style={{ color: '#FFD700', textShadow: '0 0 10px rgba(255, 153, 0, 0.8)' }}>EL PATO</h2>
+            <h2 className="pato-text" style={{ color: '#FFD700', textShadow: '0 0 10px rgba(255, 153, 0, 0.8)' }}>PATO</h2>
             <div className="theme-preview">
               <div style={{ fontSize: '80px', filter: 'drop-shadow(0 0 15px rgba(255,153,0,0.6))' }}>🦆</div>
             </div>
