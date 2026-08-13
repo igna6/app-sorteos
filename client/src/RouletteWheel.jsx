@@ -47,6 +47,11 @@ const RouletteWheel = ({ appTheme, isFixedMode, participants, rotation, isSpinni
         }}
       >
         <svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <pattern id="woodPattern" patternUnits="userSpaceOnUse" width="200" height="200" x="0" y="0">
+              <image href="/wood_texture.jpg" x="0" y="0" width="200" height="200" preserveAspectRatio="xMidYMid slice" />
+            </pattern>
+          </defs>
           {participants.length === 0 ? (
             <circle cx="100" cy="100" r="100" fill="#333" />
           ) : (
@@ -59,11 +64,18 @@ const RouletteWheel = ({ appTheme, isFixedMode, participants, rotation, isSpinni
 
               return (
                 <g key={`slice-${p.id}-${i}`}>
+                  {isJoquerFixed && (
+                    <path 
+                      d={getSlicePath(i)} 
+                      fill="url(#woodPattern)" 
+                    />
+                  )}
                   <path 
                     d={getSlicePath(i)} 
                     fill={fillColor} 
                     stroke={isJoquerFixed ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.2)"}
                     strokeWidth="0.5"
+                    opacity={isJoquerFixed ? 0.75 : 1}
                   />
                   <text
                     x="100"
