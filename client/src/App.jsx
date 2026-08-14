@@ -74,7 +74,14 @@ function App() {
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isDraggingPanel) return;
-      setPanelPos({ x: e.clientX - panelDragStart.x, y: e.clientY - panelDragStart.y });
+      
+      const newX = e.clientX - panelDragStart.x;
+      const newY = e.clientY - panelDragStart.y;
+      
+      setPanelPos({ 
+        x: Math.max(0, Math.min(newX, window.innerWidth - 380)), 
+        y: Math.max(0, Math.min(newY, window.innerHeight - 450)) 
+      });
     };
     const handleMouseUp = () => {
       setIsDraggingPanel(false);
