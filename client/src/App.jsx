@@ -135,6 +135,8 @@ function App() {
     } else if (appTheme === 'joquer') {
       html.classList.add('joquer-active');
       setChannel('25583107');
+    } else if (appTheme === 'fox') {
+      setChannel('17912002');
     } else if (appTheme === 'pato') {
       html.classList.add('pato-active');
     }
