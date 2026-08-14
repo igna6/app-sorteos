@@ -54,7 +54,20 @@ function App() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setPanelPos({ x: window.innerWidth - 450, y: 150 });
+      const handleResize = () => {
+        setPanelPos(prev => ({
+          x: Math.max(0, Math.min(prev.x, window.innerWidth - 380)),
+          y: Math.max(0, Math.min(prev.y, window.innerHeight - 450))
+        }));
+      };
+
+      setPanelPos({ 
+        x: Math.max(0, window.innerWidth - 450), 
+        y: 150 
+      });
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
 
@@ -895,7 +908,7 @@ function App() {
               cursor: isDraggingPanel ? 'grabbing' : 'grab',
               userSelect: 'none'
             }}>
-              <h2 style={{ textAlign: 'center', color: activeWinner ? '#fff' : '#666', fontSize: '2.5rem', margin: '0 0 0.5rem 0', textShadow: activeWinner ? '0 0 10px rgba(255,255,255,0.3)' : 'none' }}>
+              <h2 style={{ textAlign: 'center', color: activeWinner ? '#fff' : '#666', fontSize: '1.8rem', margin: '0 0 0.5rem 0', textShadow: activeWinner ? '0 0 10px rgba(255,255,255,0.3)' : 'none' }}>
                 {activeWinner ? activeWinner.username : 'Esperando ganador...'}
               </h2>
               
