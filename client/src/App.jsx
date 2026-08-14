@@ -959,8 +959,8 @@ function App() {
             <div 
               className="glass-panel" 
               onMouseDown={(e) => {
-                // Si hacemos clic en el contenedor de mensajes, no arrastramos (para poder scrollear)
-                if (e.target.closest('.chat-messages-container') || e.target.closest('button')) return;
+                // Si hacemos clic en el contenedor de mensajes, un boton o el nombre, no arrastramos (para poder scrollear/seleccionar)
+                if (e.target.closest('.chat-messages-container') || e.target.closest('button') || e.target.closest('h2')) return;
                 setIsDraggingPanel(true);
                 setPanelDragStart({ x: e.clientX - panelPos.x, y: e.clientY - panelPos.y });
               }}
@@ -977,7 +977,7 @@ function App() {
               flexDirection: 'column',
               zIndex: 9999,
               cursor: isDraggingPanel ? 'grabbing' : 'grab',
-              userSelect: 'none'
+              userSelect: isDraggingPanel ? 'none' : 'auto'
             }}>
                 <button 
                   onClick={() => {
