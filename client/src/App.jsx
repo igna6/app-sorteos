@@ -91,6 +91,8 @@ function App() {
   // Custom Password Modal state
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
+  const [showFoxPasswordModal, setShowFoxPasswordModal] = useState(false);
+  const [foxPasswordInput, setFoxPasswordInput] = useState('');
   
   const socketRef = useRef(null);
 
@@ -224,16 +226,16 @@ function App() {
     // Mover de lista de participantes a ganadores inmediatamente por detrás
     setParticipants((prev) => prev.filter((_, i) => i !== randomIndex));
     setWinners((prev) => [...prev, winner]);
-
-    if (appTheme === 'joquer') {
-      setShowWinnerVerification(true);
-      setWinnerMessages([]);
+  
+      if (appTheme === 'joquer' || appTheme === 'fox') {
+        setShowWinnerVerification(true);
+        setWinnerMessages([]);
       setIsWinnerPresent('waiting');
       setVerificationStopwatch(0);
       stopwatchRef.current = 0;
       
       if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
-      verificationTimerRef.current = setInterval(() => {
+        verificationTimerRef.current = setInterval(() => {
         stopwatchRef.current += 1;
         setVerificationStopwatch(stopwatchRef.current);
       }, 1000);
@@ -425,19 +427,68 @@ function App() {
         </div>
         <h1 className="theme-title">Elegí tu Temática</h1>
         <div className="theme-cards">
-          <div className="theme-card fox-card" onClick={() => { setAppTheme('fox'); setThemeSelected(true); }}>
-            <h2>EL DEL FOX</h2>
-            <div className="theme-preview">
-              <div className="vw-circle">
-                <svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-                  <g transform="translate(75, 75)">
-                    <g transform="scale(1.4) translate(-75, -75)">
-                      <path fill="#fff" d="M75,120.4c-24.9,0-45.3-20.5-45.3-45.4c0-5.6,1-10.9,2.9-15.9l26.5,53.3c0.3,0.7,0.8,1.3,1.6,1.3c0.8,0,1.3-0.6,1.6-1.3l12.2-27.3c0.1-0.3,0.3-0.6,0.6-0.6s0.4,0.3,0.6,0.6l12.2,27.3c0.3,0.7,0.8,1.3,1.6,1.3c0.8,0,1.3-0.6,1.6-1.3l26.5-53.3c1.9,5,2.9,10.3,2.9,15.9C120.3,99.9,99.9,120.4,75,120.4z M75,64.7c-0.3,0-0.4-0.3-0.6-0.6l-14.2-32c4.6-1.7,9.6-2.6,14.8-2.6c5.2,0,10.2,0.9,14.8,2.6l-14.2,32C75.4,64.5,75.3,64.7,75,64.7z M60.5,97.6c-0.3,0-0.4-0.3-0.6-0.6l-23-46.4c4.1-6.3,9.6-11.6,16.3-15.3l16.6,36.9C70,72.8,70.5,73,71,73h8c0.6,0,1-0.1,1.3-0.8l16.6-36.9c6.6,3.7,12.2,9,16.3,15.3L90,97c-0.1,0.3-0.3,0.6-0.6,0.6c-0.3,0-0.4-0.3-0.6-0.6l-8.7-19.8c-0.3-0.7-0.7-0.8-1.3-0.8h-8c-0.6,0-1,0.1-1.3,0.8L61.1,97C61,97.3,60.8,97.6,60.5,97.6z M75,125c27.7,0,50-22.3,50-50c0-27.7-22.3-50-50-50c-27.7,0-50,22.3-50,50C25,102.7,47.3,125,75,125z" />
-                    </g>
-                  </g>
-                </svg>
+          <div 
+            className="theme-card fox-card" 
+            onClick={() => { if (!showFoxPasswordModal) setShowFoxPasswordModal(true); }}
+            style={{ cursor: showFoxPasswordModal ? 'default' : 'pointer', padding: showFoxPasswordModal ? '15px' : '' }}
+          >
+            {!showFoxPasswordModal ? (
+              <>
+                <h2>EL DEL FOX</h2>
+                <div className="theme-preview">
+                  <div className="vw-circle">
+                    <svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+                      <g transform="translate(75, 75)">
+                        <g transform="scale(1.4) translate(-75, -75)">
+                          <path fill="#fff" d="M75,120.4c-24.9,0-45.3-20.5-45.3-45.4c0-5.6,1-10.9,2.9-15.9l26.5,53.3c0.3,0.7,0.8,1.3,1.6,1.3c0.8,0,1.3-0.6,1.6-1.3l12.2-27.3c0.1-0.3,0.3-0.6,0.6-0.6s0.4,0.3,0.6,0.6l12.2,27.3c0.3,0.7,0.8,1.3,1.6,1.3c0.8,0,1.3-0.6,1.6-1.3l26.5-53.3c1.9,5,2.9,10.3,2.9,15.9C120.3,99.9,99.9,120.4,75,120.4z M75,64.7c-0.3,0-0.4-0.3-0.6-0.6l-14.2-32c4.6-1.7,9.6-2.6,14.8-2.6c5.2,0,10.2,0.9,14.8,2.6l-14.2,32C75.4,64.5,75.3,64.7,75,64.7z M60.5,97.6c-0.3,0-0.4-0.3-0.6-0.6l-23-46.4c4.1-6.3,9.6-11.6,16.3-15.3l16.6,36.9C70,72.8,70.5,73,71,73h8c0.6,0,1-0.1,1.3-0.8l16.6-36.9c6.6,3.7,12.2,9,16.3,15.3L90,97c-0.1,0.3-0.3,0.6-0.6,0.6c-0.3,0-0.4-0.3-0.6-0.6l-8.7-19.8c-0.3-0.7-0.7-0.8-1.3-0.8h-8c-0.6,0-1,0.1-1.3,0.8L61.1,97C61,97.3,60.8,97.6,60.5,97.6z M75,125c27.7,0,50-22.3,50-50c0-27.7-22.3-50-50-50c-27.7,0-50,22.3-50,50C25,102.7,47.3,125,75,125z" />
+                        </g>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="inline-password-form" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', width: '100%' }}>
+                <h3 style={{ margin: 0, color: '#fff', fontSize: '18px' }}>🦊 Perfil Privado</h3>
+                <input 
+                  type="password"
+                  placeholder="Contraseña..."
+                  value={foxPasswordInput}
+                  onChange={(e) => setFoxPasswordInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (foxPasswordInput === "eldelfox1122") {
+                        setAppTheme('fox');
+                        setThemeSelected(true);
+                        setShowFoxPasswordModal(false);
+                        setFoxPasswordInput('');
+                      } else {
+                        alert("Contraseña incorrecta. Acceso denegado.");
+                        setFoxPasswordInput('');
+                      }
+                    }
+                  }}
+                  autoFocus
+                  style={{
+                    width: '80%', padding: '8px', borderRadius: '5px', border: '1px solid #555',
+                  }}
+                />
+                <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
+                  <button onClick={() => { setShowFoxPasswordModal(false); setFoxPasswordInput(''); }} style={{ padding: '5px 10px', border: 'none', background: 'transparent', color: '#aaa', cursor: 'pointer' }}>Cancelar</button>
+                  <button onClick={() => {
+                    if (foxPasswordInput === "eldelfox1122") {
+                      setAppTheme('fox');
+                      setThemeSelected(true);
+                      setShowFoxPasswordModal(false);
+                      setFoxPasswordInput('');
+                    } else {
+                      alert("Contraseña incorrecta. Acceso denegado.");
+                      setFoxPasswordInput('');
+                    }
+                  }} style={{ padding: '5px 15px', border: 'none', background: '#fff', color: '#000', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>Entrar</button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
           
           <div className="theme-card chona-card" onClick={() => { setAppTheme('chona'); setThemeSelected(true); }}>
@@ -624,7 +675,7 @@ function App() {
               </details>
             </div>
             
-            {appTheme === 'joquer' && (
+            {(appTheme === 'joquer' || appTheme === 'fox') && (
               <div className="input-group">
                 <label>Tiempo Límite de Respuesta (segundos)</label>
                 <input 
@@ -817,8 +868,8 @@ function App() {
             </div>
           )}
 
-          {/* Winner Verification Panel (Joquer Theme Only) */}
-          {appTheme === 'joquer' && (
+          {/* Winner Verification Panel (Joquer & Fox Theme) */}
+          {(appTheme === 'joquer' || appTheme === 'fox') && (
             <div 
               className="glass-panel" 
               onMouseDown={(e) => {
