@@ -119,6 +119,13 @@ function App() {
   }, [appTheme]);
 
   useEffect(() => {
+    if (isWinnerPresent === 'waiting' && verificationStopwatch >= verificationTimeLimit) {
+      if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
+      setIsWinnerPresent('failed');
+    }
+  }, [verificationStopwatch, verificationTimeLimit, isWinnerPresent]);
+
+  useEffect(() => {
     // Initialize socket connection
     socketRef.current = io(SOCKET_URL);
 
@@ -140,11 +147,7 @@ function App() {
         setIsWinnerPresent(prevStatus => {
           if (prevStatus === 'waiting') {
             if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
-            if (stopwatchRef.current <= verificationTimeLimit) {
-              return 'success';
-            } else {
-              return 'failed';
-            }
+            return 'success';
           }
           return prevStatus;
         });
