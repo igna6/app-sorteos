@@ -978,7 +978,11 @@ function App() {
               userSelect: 'none'
             }}>
                 <button 
-                  onClick={() => setShowWinnerVerification(false)}
+                  onClick={() => {
+                    setShowWinnerVerification(false);
+                    setActiveWinner(null);
+                    activeWinnerRef.current = null;
+                  }}
                   style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', zIndex: 10 }}
                   title="Cerrar"
                 >
