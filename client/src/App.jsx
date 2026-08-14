@@ -139,7 +139,8 @@ function App() {
   }, [appTheme]);
 
   useEffect(() => {
-    if (isWinnerPresent === 'waiting' && verificationStopwatch >= verificationTimeLimit) {
+    const limit = verificationTimeLimit === '' ? 30 : verificationTimeLimit;
+    if (isWinnerPresent === 'waiting' && verificationStopwatch >= limit) {
       if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
       setIsWinnerPresent('failed');
     }
@@ -701,13 +702,21 @@ function App() {
             {(appTheme === 'joquer' || appTheme === 'fox') && (
               <div className="input-group">
                 <label>Tiempo Límite de Respuesta (segundos)</label>
-                <input 
-                  type="number" 
-                  min="5" 
-                  value={verificationTimeLimit} 
-                  onChange={(e) => setVerificationTimeLimit(parseInt(e.target.value) || 30)}
-                  disabled={isListening}
-                />
+                  <input 
+                    type="number" 
+                    min="5" 
+                    value={verificationTimeLimit} 
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setVerificationTimeLimit(val === '' ? '' : parseInt(val));
+                    }}
+                    onBlur={() => {
+                      if (verificationTimeLimit === '' || verificationTimeLimit < 5) {
+                        setVerificationTimeLimit(30);
+                      }
+                    }}
+                    disabled={isListening}
+                  />
               </div>
             )}
 
