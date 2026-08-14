@@ -158,6 +158,7 @@ function App() {
     
     if (appTheme === 'chona') {
       html.classList.add('chona-active');
+      setChannel('31269701');
     } else if (appTheme === 'jack') {
       html.classList.add('jack-active');
     } else if (appTheme === 'joquer') {
@@ -587,7 +588,7 @@ function App() {
               <>
                 <h2 className="joquer-text">JOQUER</h2>
                 <div className="theme-preview" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                  <img src="/joquer_icon.png" alt="Joquer" className="joquer-preview-icon" style={{ width: '110px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.5))' }} />
+                  <img src="/joquer_avatar.png" alt="Joquer" className="joquer-preview-icon" style={{ width: '130px', height: '130px', borderRadius: '50%', objectFit: 'cover', filter: 'drop-shadow(0 0 15px rgba(255,255,255,0.3))' }} />
                 </div>
               </>
             ) : (
