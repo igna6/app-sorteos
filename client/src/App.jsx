@@ -904,6 +904,7 @@ function App() {
               style={{
               border: `2px solid ${!activeWinner ? '#333' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
               boxShadow: `0 0 30px ${!activeWinner ? 'rgba(0,0,0,0.5)' : isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+              background: appTheme === 'joquer' ? '#111111' : undefined,
               position: 'fixed',
               left: `${panelPos.x}px`,
               top: `${panelPos.y}px`,
