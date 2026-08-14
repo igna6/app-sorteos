@@ -113,6 +113,8 @@ function App() {
   const [passwordInput, setPasswordInput] = useState('');
   const [showFoxPasswordModal, setShowFoxPasswordModal] = useState(false);
   const [foxPasswordInput, setFoxPasswordInput] = useState('');
+  const [showChonaPasswordModal, setShowChonaPasswordModal] = useState(false);
+  const [chonaPasswordInput, setChonaPasswordInput] = useState('');
   
   const socketRef = useRef(null);
 
@@ -251,7 +253,7 @@ function App() {
     setParticipants((prev) => prev.filter((_, i) => i !== randomIndex));
     setWinners((prev) => [...prev, winner]);
   
-      if (appTheme === 'joquer' || appTheme === 'fox') {
+      if (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') {
         setShowWinnerVerification(true);
         setWinnerMessages([]);
       setIsWinnerPresent('waiting');
@@ -515,11 +517,59 @@ function App() {
             )}
           </div>
           
-          <div className="theme-card chona-card" onClick={() => { setAppTheme('chona'); setThemeSelected(true); }}>
-            <h2 className="chona-text">CHHONAA</h2>
-            <div className="theme-preview">
-              <img src="/boca.png" alt="Boca" className="boca-preview" />
-            </div>
+          <div 
+            className="theme-card chona-card" 
+            onClick={() => { if (!showChonaPasswordModal) setShowChonaPasswordModal(true); }}
+            style={{ cursor: showChonaPasswordModal ? 'default' : 'pointer', padding: showChonaPasswordModal ? '15px' : '' }}
+          >
+            {!showChonaPasswordModal ? (
+              <>
+                <h2 className="chona-text">CHHONAA</h2>
+                <div className="theme-preview">
+                  <img src="/boca.png" alt="Boca" className="boca-preview" />
+                </div>
+              </>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#ccc' }}>Ingrese la contraseña</p>
+                <input 
+                  type="password" 
+                  value={chonaPasswordInput}
+                  onChange={(e) => setChonaPasswordInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (chonaPasswordInput === "chona1122") {
+                        setAppTheme('chona');
+                        setThemeSelected(true);
+                        setShowChonaPasswordModal(false);
+                        setChonaPasswordInput('');
+                      } else {
+                        alert("Contraseña incorrecta. Acceso denegado.");
+                        setChonaPasswordInput('');
+                      }
+                    }
+                  }}
+                  autoFocus
+                  style={{
+                    width: '80%', padding: '8px', borderRadius: '5px', border: '1px solid #555',
+                  }}
+                />
+                <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
+                  <button onClick={() => { setShowChonaPasswordModal(false); setChonaPasswordInput(''); }} style={{ padding: '5px 10px', border: 'none', background: 'transparent', color: '#aaa', cursor: 'pointer' }}>Cancelar</button>
+                  <button onClick={() => {
+                    if (chonaPasswordInput === "chona1122") {
+                      setAppTheme('chona');
+                      setThemeSelected(true);
+                      setShowChonaPasswordModal(false);
+                      setChonaPasswordInput('');
+                    } else {
+                      alert("Contraseña incorrecta. Acceso denegado.");
+                      setChonaPasswordInput('');
+                    }
+                  }} style={{ padding: '5px 15px', border: 'none', background: '#0a358c', color: '#fff', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>Entrar</button>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="theme-card pato-card" onClick={() => { setAppTheme('pato'); setThemeSelected(true); }}>
@@ -699,7 +749,7 @@ function App() {
               </details>
             </div>
             
-            {(appTheme === 'joquer' || appTheme === 'fox') && (
+            {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') && (
               <div className="input-group">
                 <label>Tiempo Límite de Respuesta (segundos)</label>
                   <input 
@@ -903,7 +953,7 @@ function App() {
           )}
 
           {/* Winner Verification Panel (Joquer & Fox Theme) */}
-          {(appTheme === 'joquer' || appTheme === 'fox') && (
+          {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') && (
             <div 
               className="glass-panel" 
               onMouseDown={(e) => {
