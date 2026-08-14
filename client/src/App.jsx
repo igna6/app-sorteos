@@ -24,6 +24,39 @@ const DonationSection = () => (
   </div>
 );
 
+const PasswordForm = ({ expectedPassword, themeName, onCancel, onSuccess }) => {
+  const [input, setInput] = useState('');
+  const handleSubmit = () => {
+    if (input === expectedPassword) {
+      onSuccess(themeName);
+    } else {
+      alert("Contraseña incorrecta. Acceso denegado.");
+      setInput('');
+    }
+  };
+  return (
+    <div className="inline-password-form" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', width: '100%', height: '100%', padding: '15px', boxSizing: 'border-box' }}>
+      <h3 style={{ margin: 0, color: '#fff', fontSize: '16px', textAlign: 'center' }}>Perfil Privado</h3>
+      <input 
+        type="password"
+        placeholder="Contraseña..."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); }}
+        autoFocus
+        style={{
+          width: '90%', padding: '8px', borderRadius: '5px', border: '1px solid #555',
+          background: 'rgba(0,0,0,0.5)', color: '#fff', textAlign: 'center'
+        }}
+      />
+      <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
+        <button onClick={onCancel} style={{ padding: '5px 10px', border: 'none', background: 'transparent', color: '#aaa', cursor: 'pointer' }}>Cancelar</button>
+        <button onClick={handleSubmit} style={{ padding: '5px 15px', border: 'none', background: '#fff', color: '#000', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>Entrar</button>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const [channel, setChannel] = useState('');
   const [keyword, setKeyword] = useState('');
@@ -109,12 +142,7 @@ function App() {
   const [isRouletteFixedMode, setIsRouletteFixedMode] = useState(false);
   
   // Custom Password Modal state
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordInput, setPasswordInput] = useState('');
-  const [showFoxPasswordModal, setShowFoxPasswordModal] = useState(false);
-  const [foxPasswordInput, setFoxPasswordInput] = useState('');
-  const [showChonaPasswordModal, setShowChonaPasswordModal] = useState(false);
-  const [chonaPasswordInput, setChonaPasswordInput] = useState('');
+  const [activePasswordTheme, setActivePasswordTheme] = useState(null);
   
   const socketRef = useRef(null);
 
@@ -447,6 +475,12 @@ function App() {
     setTournamentBracket(newBracket);
   };
 
+  const handleThemeLoginSuccess = (theme) => {
+    setAppTheme(theme);
+    setThemeSelected(true);
+    setActivePasswordTheme(null);
+  };
+
   if (!themeSelected) {
     return (
       <div className="theme-selector-container" style={{ position: 'relative' }}>
@@ -457,10 +491,10 @@ function App() {
         <div className="theme-cards">
           <div 
             className="theme-card fox-card" 
-            onClick={() => { if (!showFoxPasswordModal) setShowFoxPasswordModal(true); }}
-            style={{ cursor: showFoxPasswordModal ? 'default' : 'pointer', padding: showFoxPasswordModal ? '15px' : '' }}
+            onClick={() => { if (activePasswordTheme !== 'fox') setActivePasswordTheme('fox'); }}
+            style={{ cursor: activePasswordTheme === 'fox' ? 'default' : 'pointer', padding: activePasswordTheme === 'fox' ? '0' : '' }}
           >
-            {!showFoxPasswordModal ? (
+            {activePasswordTheme !== 'fox' ? (
               <>
                 <h2>EL DEL FOX</h2>
                 <div className="theme-preview">
@@ -476,55 +510,21 @@ function App() {
                 </div>
               </>
             ) : (
-              <div className="inline-password-form" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', width: '100%' }}>
-                <h3 style={{ margin: 0, color: '#fff', fontSize: '18px' }}>🦊 Perfil Privado</h3>
-                <input 
-                  type="password"
-                  placeholder="Contraseña..."
-                  value={foxPasswordInput}
-                  onChange={(e) => setFoxPasswordInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      if (foxPasswordInput === "eldelfox1122") {
-                        setAppTheme('fox');
-                        setThemeSelected(true);
-                        setShowFoxPasswordModal(false);
-                        setFoxPasswordInput('');
-                      } else {
-                        alert("Contraseña incorrecta. Acceso denegado.");
-                        setFoxPasswordInput('');
-                      }
-                    }
-                  }}
-                  autoFocus
-                  style={{
-                    width: '80%', padding: '8px', borderRadius: '5px', border: '1px solid #555',
-                  }}
-                />
-                <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
-                  <button onClick={() => { setShowFoxPasswordModal(false); setFoxPasswordInput(''); }} style={{ padding: '5px 10px', border: 'none', background: 'transparent', color: '#aaa', cursor: 'pointer' }}>Cancelar</button>
-                  <button onClick={() => {
-                    if (foxPasswordInput === "eldelfox1122") {
-                      setAppTheme('fox');
-                      setThemeSelected(true);
-                      setShowFoxPasswordModal(false);
-                      setFoxPasswordInput('');
-                    } else {
-                      alert("Contraseña incorrecta. Acceso denegado.");
-                      setFoxPasswordInput('');
-                    }
-                  }} style={{ padding: '5px 15px', border: 'none', background: '#fff', color: '#000', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>Entrar</button>
-                </div>
-              </div>
+              <PasswordForm 
+                expectedPassword="eldelfox1122" 
+                themeName="fox" 
+                onCancel={() => setActivePasswordTheme(null)} 
+                onSuccess={handleThemeLoginSuccess} 
+              />
             )}
           </div>
           
           <div 
             className="theme-card chona-card" 
-            onClick={() => { if (!showChonaPasswordModal) setShowChonaPasswordModal(true); }}
-            style={{ cursor: showChonaPasswordModal ? 'default' : 'pointer', padding: showChonaPasswordModal ? '15px' : '' }}
+            onClick={() => { if (activePasswordTheme !== 'chona') setActivePasswordTheme('chona'); }}
+            style={{ cursor: activePasswordTheme === 'chona' ? 'default' : 'pointer', padding: activePasswordTheme === 'chona' ? '0' : '' }}
           >
-            {!showChonaPasswordModal ? (
+            {activePasswordTheme !== 'chona' ? (
               <>
                 <h2 className="chona-text">CHHONAA</h2>
                 <div className="theme-preview">
@@ -532,53 +532,35 @@ function App() {
                 </div>
               </>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#ccc' }}>Ingrese la contraseña</p>
-                <input 
-                  type="password" 
-                  value={chonaPasswordInput}
-                  onChange={(e) => setChonaPasswordInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      if (chonaPasswordInput === "chona1122") {
-                        setAppTheme('chona');
-                        setThemeSelected(true);
-                        setShowChonaPasswordModal(false);
-                        setChonaPasswordInput('');
-                      } else {
-                        alert("Contraseña incorrecta. Acceso denegado.");
-                        setChonaPasswordInput('');
-                      }
-                    }
-                  }}
-                  autoFocus
-                  style={{
-                    width: '80%', padding: '8px', borderRadius: '5px', border: '1px solid #555',
-                  }}
-                />
-                <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
-                  <button onClick={() => { setShowChonaPasswordModal(false); setChonaPasswordInput(''); }} style={{ padding: '5px 10px', border: 'none', background: 'transparent', color: '#aaa', cursor: 'pointer' }}>Cancelar</button>
-                  <button onClick={() => {
-                    if (chonaPasswordInput === "chona1122") {
-                      setAppTheme('chona');
-                      setThemeSelected(true);
-                      setShowChonaPasswordModal(false);
-                      setChonaPasswordInput('');
-                    } else {
-                      alert("Contraseña incorrecta. Acceso denegado.");
-                      setChonaPasswordInput('');
-                    }
-                  }} style={{ padding: '5px 15px', border: 'none', background: '#0a358c', color: '#fff', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>Entrar</button>
-                </div>
-              </div>
+              <PasswordForm 
+                expectedPassword="chona1122" 
+                themeName="chona" 
+                onCancel={() => setActivePasswordTheme(null)} 
+                onSuccess={handleThemeLoginSuccess} 
+              />
             )}
           </div>
 
-          <div className="theme-card pato-card" onClick={() => { setAppTheme('pato'); setThemeSelected(true); }}>
-            <h2 className="pato-text" style={{ color: '#FFD700', textShadow: '0 0 10px rgba(255, 153, 0, 0.8)' }}>PATO</h2>
-            <div className="theme-preview">
-              <div style={{ fontSize: '80px', filter: 'drop-shadow(0 0 15px rgba(255,153,0,0.6))' }}>🦆</div>
-            </div>
+          <div 
+            className="theme-card pato-card" 
+            onClick={() => { if (activePasswordTheme !== 'pato') setActivePasswordTheme('pato'); }}
+            style={{ cursor: activePasswordTheme === 'pato' ? 'default' : 'pointer', padding: activePasswordTheme === 'pato' ? '0' : '' }}
+          >
+            {activePasswordTheme !== 'pato' ? (
+              <>
+                <h2 className="pato-text" style={{ color: '#FFD700', textShadow: '0 0 10px rgba(255, 153, 0, 0.8)' }}>PATO</h2>
+                <div className="theme-preview">
+                  <div style={{ fontSize: '80px', filter: 'drop-shadow(0 0 15px rgba(255,153,0,0.6))' }}>🦆</div>
+                </div>
+              </>
+            ) : (
+              <PasswordForm 
+                expectedPassword="pato1212" 
+                themeName="pato" 
+                onCancel={() => setActivePasswordTheme(null)} 
+                onSuccess={handleThemeLoginSuccess} 
+              />
+            )}
           </div>
 
           <div className="theme-card jack-card" onClick={() => { setAppTheme('jack'); setThemeSelected(true); }}>
@@ -598,10 +580,10 @@ function App() {
           </div>
           <div 
             className="theme-card joquer-card" 
-            onClick={() => { if (!showPasswordModal) setShowPasswordModal(true); }}
-            style={{ cursor: showPasswordModal ? 'default' : 'pointer', padding: showPasswordModal ? '15px' : '' }}
+            onClick={() => { if (activePasswordTheme !== 'joquer') setActivePasswordTheme('joquer'); }}
+            style={{ cursor: activePasswordTheme === 'joquer' ? 'default' : 'pointer', padding: activePasswordTheme === 'joquer' ? '0' : '' }}
           >
-            {!showPasswordModal ? (
+            {activePasswordTheme !== 'joquer' ? (
               <>
                 <h2 className="joquer-text">JOQUER</h2>
                 <div className="theme-preview" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -609,47 +591,12 @@ function App() {
                 </div>
               </>
             ) : (
-              <div className="inline-password-form" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', width: '100%' }}>
-                <h3 style={{ margin: 0, color: '#fff', fontSize: '18px' }}>🔒 Perfil Privado</h3>
-                <input 
-                  type="password" 
-                  placeholder="Contraseña"
-                  value={passwordInput} 
-                  onChange={(e) => setPasswordInput(e.target.value)} 
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      if (passwordInput === "joquertincho1122") {
-                        setAppTheme('joquer');
-                        setThemeSelected(true);
-                        setShowPasswordModal(false);
-                        setPasswordInput('');
-                      } else {
-                        alert("Contraseña incorrecta. Acceso denegado.");
-                        setPasswordInput('');
-                      }
-                    }
-                  }}
-                  autoFocus
-                  style={{
-                    width: '80%', padding: '8px', borderRadius: '5px', border: '1px solid #555',
-                    background: '#222', color: '#fff', textAlign: 'center', marginTop: '10px'
-                  }}
-                />
-                <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
-                  <button onClick={() => { setShowPasswordModal(false); setPasswordInput(''); }} style={{ padding: '5px 10px', border: 'none', background: 'transparent', color: '#aaa', cursor: 'pointer' }}>Cancelar</button>
-                  <button onClick={() => {
-                    if (passwordInput === "joquertincho1122") {
-                      setAppTheme('joquer');
-                      setThemeSelected(true);
-                      setShowPasswordModal(false);
-                      setPasswordInput('');
-                    } else {
-                      alert("Contraseña incorrecta. Acceso denegado.");
-                      setPasswordInput('');
-                    }
-                  }} style={{ padding: '5px 15px', border: 'none', background: '#fff', color: '#000', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>Entrar</button>
-                </div>
-              </div>
+              <PasswordForm 
+                expectedPassword="joquertincho1122" 
+                themeName="joquer" 
+                onCancel={() => setActivePasswordTheme(null)} 
+                onSuccess={handleThemeLoginSuccess} 
+              />
             )}
           </div>
         </div>
