@@ -805,15 +805,17 @@ function App() {
                   ))
                 )}
               </div>
-
-              <button 
-                className="btn" 
-                style={{ width: '100%', marginTop: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                onClick={drawWinner}
-                disabled={participants.length === 0}
-              >
-                Sortear Ganador <Gift size={20} style={{ marginLeft: '8px' }} />
-              </button>
+              
+              {appTheme !== 'joquer' && (
+                <button 
+                  className="btn" 
+                  style={{ width: '100%', marginTop: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  onClick={drawWinner}
+                  disabled={participants.length === 0}
+                >
+                  Sortear Ganador <Gift size={20} style={{ marginLeft: '8px' }} />
+                </button>
+              )}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -897,7 +899,7 @@ function App() {
               className="glass-panel" 
               onMouseDown={(e) => {
                 // Si hacemos clic en el contenedor de mensajes, no arrastramos (para poder scrollear)
-                if (e.target.closest('.chat-messages-container')) return;
+                if (e.target.closest('.chat-messages-container') || e.target.closest('button')) return;
                 setIsDraggingPanel(true);
                 setPanelDragStart({ x: e.clientX - panelPos.x, y: e.clientY - panelPos.y });
               }}
@@ -947,6 +949,16 @@ function App() {
                   ))
                 )}
               </div>
+              {appTheme === 'joquer' && (
+                <button 
+                  className="btn" 
+                  style={{ width: '100%', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                  onClick={drawWinner}
+                  disabled={participants.length === 0}
+                >
+                  Sortear Ganador <Gift size={20} style={{ marginLeft: '8px' }} />
+                </button>
+              )}
             </div>
           )}
         </>
