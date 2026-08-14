@@ -62,8 +62,8 @@ function App() {
       };
 
       setPanelPos({ 
-        x: Math.max(0, window.innerWidth - 450), 
-        y: 150 
+        x: Math.max(0, (window.innerWidth - 380) / 2), 
+        y: Math.max(0, (window.innerHeight - 450) / 2) 
       });
 
       window.addEventListener('resize', handleResize);
