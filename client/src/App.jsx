@@ -865,7 +865,7 @@ function App() {
                 )}
               </div>
               
-              {appTheme !== 'joquer' && (
+              {!(appTheme === 'joquer' && showWinnerVerification) && (
                 <button 
                   className="btn" 
                   style={{ width: '100%', marginTop: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -953,7 +953,7 @@ function App() {
           )}
 
           {/* Winner Verification Panel (Joquer & Fox Theme) */}
-          {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') && (
+          {showWinnerVerification && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') && (
             <div 
               className="glass-panel" 
               onMouseDown={(e) => {
@@ -977,6 +977,13 @@ function App() {
               cursor: isDraggingPanel ? 'grabbing' : 'grab',
               userSelect: 'none'
             }}>
+                <button 
+                  onClick={() => setShowWinnerVerification(false)}
+                  style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', zIndex: 10 }}
+                  title="Cerrar"
+                >
+                  <XCircle size={24} />
+                </button>
               <h2 style={{ textAlign: 'center', color: activeWinner ? '#fff' : '#666', fontSize: '1.8rem', margin: '0 0 0.5rem 0', textShadow: activeWinner ? '0 0 10px rgba(255,255,255,0.3)' : 'none' }}>
                 {activeWinner ? activeWinner.username : 'Esperando ganador...'}
               </h2>
