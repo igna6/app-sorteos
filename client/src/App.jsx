@@ -698,7 +698,7 @@ function App() {
               </details>
             </div>
             
-            {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') && (
+            {appTheme === 'joquer' && (
               <div className="input-group">
                 <label>Tiempo Límite de Respuesta (segundos)</label>
                   <input 
@@ -901,8 +901,8 @@ function App() {
             </div>
           )}
 
-          {/* Winner Verification Panel (Joquer & Fox Theme) */}
-          {showWinnerVerification && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') && (
+          {/* Winner Verification Panel (Joquer Theme) */}
+          {showWinnerVerification && appTheme === 'joquer' && (
             <div 
               className="glass-panel" 
               onMouseDown={(e) => {
