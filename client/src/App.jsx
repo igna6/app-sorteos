@@ -153,6 +153,11 @@ function App() {
   }, [winners]);
 
   useEffect(() => {
+    if (socketRef.current) {
+      socketRef.current.emit('stop_listening');
+      setIsListening(false);
+    }
+    
     const html = document.documentElement;
     html.classList.remove('chona-active', 'jack-active', 'joquer-active', 'pato-active');
     
