@@ -173,6 +173,7 @@ function App() {
       setChannel('17912002');
     } else if (appTheme === 'pato') {
       html.classList.add('pato-active');
+      setChannel('28198977');
     }
   }, [appTheme]);
 
