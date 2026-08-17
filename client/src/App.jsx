@@ -859,7 +859,7 @@ function App() {
                           <h2>Ganadores</h2>
                           <span className="badge">{winners.length}</span>
                         </div>
-                        {winners.length > 0 && (
+                        {winners.length > 0 && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') && (
                           <button 
                             className="action-btn" 
                             onClick={downloadWinnersText}
