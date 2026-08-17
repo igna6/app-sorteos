@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import confetti from 'canvas-confetti';
-import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle, Palette, Gamepad2, XCircle } from 'lucide-react';
+import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle, Palette, Gamepad2, XCircle, Download } from 'lucide-react';
 import './winner-animations.css';
 import Logo from './Logo';
 import TournamentBracket from './TournamentBracket';
@@ -325,6 +325,25 @@ function App() {
       setParticipants([]);
       setWinners([]);
     }
+  };
+
+  const downloadWinnersText = () => {
+    if (winners.length === 0) return;
+    
+    let textContent = "LISTADO DE GANADORES - " + new Date().toLocaleString() + "\n";
+    textContent += "========================================\n\n";
+    
+    winners.forEach((w, i) => {
+      textContent += `${i + 1}. ${w.username}${w.isSubscriber ? ' (Suscriptor)' : ''}\n`;
+    });
+    
+    const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `ganadores_sorteo_${new Date().getTime()}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const generateEmptyBracket = (size) => {
@@ -829,11 +848,23 @@ function App() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 {!isTournamentMode ? (
-                  <div className="glass-panel">
-                    <div className="list-header">
-                      <h2>Ganadores</h2>
-                      <span className="badge">{winners.length}</span>
-                    </div>
+                    <div className="glass-panel">
+                      <div className="list-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <h2>Ganadores</h2>
+                          <span className="badge">{winners.length}</span>
+                        </div>
+                        {winners.length > 0 && (
+                          <button 
+                            className="action-btn" 
+                            onClick={downloadWinnersText}
+                            title="Descargar listado en TXT"
+                            style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '5px 10px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem', color: '#fff' }}
+                          >
+                            <Download size={14} /> TXT
+                          </button>
+                        )}
+                      </div>
                     
                     <div className="participants-list">
                       {winners.length === 0 ? (
