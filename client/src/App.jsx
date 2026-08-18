@@ -853,7 +853,6 @@ function App() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                {!isTournamentMode ? (
                     <div className="glass-panel">
                       <div className="list-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -894,7 +893,8 @@ function App() {
                       )}
                     </div>
                   </div>
-                ) : (
+                  
+                {isTournamentMode && (
                   <div className="glass-panel tournament-panel">
                     <div className="list-header">
                       <h2>Torneo de {tournamentSize}</h2>
