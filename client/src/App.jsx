@@ -202,6 +202,17 @@ function App() {
     });
 
     socketRef.current.on('chat_message', (msg) => {
+      // Actualizar la hora de ultima actividad si participan
+      setParticipants(prev => {
+        const idx = prev.findIndex(p => p.username === msg.username);
+        if (idx !== -1) {
+          const updated = [...prev];
+          updated[idx] = { ...updated[idx], lastActiveAt: Date.now() };
+          return updated;
+        }
+        return prev;
+      });
+
       // Si el ganador esta activo y el mensaje es de el
       if (activeWinnerRef.current && activeWinnerRef.current.username === msg.username) {
         setWinnerMessages((prev) => [...prev, msg]);
@@ -218,15 +229,18 @@ function App() {
 
     socketRef.current.on('participant_joined', (user) => {
       setParticipants((prev) => {
-        // Solo agregar si no esta en la lista (participan solo 1 vez)
         const alreadyExists = prev.some((p) => p.username === user.username);
-        if (alreadyExists) return prev;
+        if (alreadyExists) {
+          const updated = [...prev];
+          const idx = updated.findIndex((p) => p.username === user.username);
+          updated[idx] = { ...updated[idx], lastActiveAt: Date.now() };
+          return updated;
+        }
         
-        // Tampoco agregarlo si ya es un ganador
         const isAlreadyWinner = winnersRef.current.some((w) => w.username === user.username);
         if (isAlreadyWinner) return prev;
 
-        return [...prev, user];
+        return [...prev, { ...user, lastActiveAt: Date.now() }];
       });
     });
 
@@ -758,6 +772,31 @@ function App() {
                 disabled={isListening}
               />
             </div>
+
+            {appTheme !== 'ninguno' && (
+            <div className="input-group">
+              <label>Limpieza Automática de Inactivos</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <input 
+                  type="checkbox" 
+                  checked={isActiveModeEnabled}
+                  onChange={(e) => setIsActiveModeEnabled(e.target.checked)}
+                  style={{ width: 'auto' }}
+                  disabled={isListening}
+                />
+                <span style={{ fontSize: '0.9rem', color: '#fff' }}>Eliminar si no escriben en</span>
+                <input 
+                  type="number" 
+                  value={activeTimeLimit}
+                  onChange={(e) => setActiveTimeLimit(Number(e.target.value))}
+                  min="1"
+                  style={{ width: '60px', padding: '5px', backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', borderRadius: '4px' }}
+                  disabled={!isActiveModeEnabled || isListening}
+                />
+                <span style={{ fontSize: '0.9rem', color: '#fff' }}>min</span>
+              </div>
+            </div>
+            )}
 
             <div className="input-group">
               <label>Ventaja para Suscriptores (Multiplicador)</label>
