@@ -180,6 +180,16 @@ function App() {
   }, [appTheme]);
 
   useEffect(() => {
+    if (!isActiveModeEnabled || isListening === false) return;
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const limitMs = Number(activeTimeLimit) * 60000;
+      setParticipants(prev => prev.filter(p => now - (p.lastActiveAt || now) <= limitMs));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isActiveModeEnabled, activeTimeLimit, isListening]);
+
+  useEffect(() => {
     const limit = verificationTimeLimit === '' ? 30 : verificationTimeLimit;
     if (isWinnerPresent === 'waiting' && verificationStopwatch >= limit) {
       if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
@@ -788,7 +798,7 @@ function App() {
                 <input 
                   type="number" 
                   value={activeTimeLimit}
-                  onChange={(e) => setActiveTimeLimit(Number(e.target.value))}
+                  onChange={(e) => setActiveTimeLimit(e.target.value)}
                   min="1"
                   style={{ width: '60px', padding: '5px', backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', borderRadius: '4px' }}
                   disabled={!isActiveModeEnabled || isListening}
