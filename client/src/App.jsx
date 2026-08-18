@@ -67,6 +67,8 @@ function App() {
   const [error, setError] = useState('');
   const [activeWinner, setActiveWinner] = useState(null); // Para el overlay
   const [subMultiplier, setSubMultiplier] = useState(1); // Multiplicador de subs
+  const [isActiveModeEnabled, setIsActiveModeEnabled] = useState(false);
+  const [activeTimeLimit, setActiveTimeLimit] = useState(5);
   const [appTheme, setAppTheme] = useState('fox');
   const [themeSelected, setThemeSelected] = useState(false);
   
