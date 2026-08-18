@@ -57,10 +57,9 @@ io.on('connection', (socket) => {
         timestamp: message.createdAt
       });
       
-      // Si el mensaje contiene la palabra clave (ignorando mayusculas/minusculas)
-      // Usamos el currentWord especifico de esta conexion
+      // Si el mensaje contiene la palabra clave (o si no hay palabra clave requerida)
       const connectionData = clientConnections.get(socket.id);
-      if (connectionData && lowerContent.includes(connectionData.currentWord)) {
+      if (connectionData && (connectionData.currentWord === '' || lowerContent.includes(connectionData.currentWord))) {
         
         // Detectar si el usuario es suscriptor o VIP/fundador
         let isSubscriber = false;
