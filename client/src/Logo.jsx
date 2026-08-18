@@ -66,9 +66,9 @@ export default function Logo({ appTheme }) {
         <h1 style={{
           fontFamily: "'Anton', sans-serif",
           fontSize: '7rem',
-          color: '#FFD700',
+          color: '#FFCC00',
           textTransform: 'uppercase',
-          textShadow: '0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 40px #FF9900, 0 0 80px #FF9900',
+          textShadow: '0 0 5px rgba(255, 204, 0, 0.6), 0 0 15px rgba(255, 153, 0, 0.4)',
           margin: 0,
           fontStyle: 'italic',
           letterSpacing: '5px'
