@@ -883,7 +883,6 @@ function App() {
                         <span style={{ display: 'flex', alignItems: 'center' }}>
                           {p.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}
                           {p.username} 
-                          {isActiveModeEnabled && <span style={{ marginLeft: '8px', fontSize: '0.8rem', opacity: 0.6 }}>({age}s)</span>}
                         </span>
                         <button 
                           className="action-btn" 
