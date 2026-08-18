@@ -919,8 +919,7 @@ html.jack-active body::after {
 
 /* Pato Theme Overrides */
 html.pato-active::before,
-html.pato-active::after,
-html.pato-active body::before {
+html.pato-active::after {
   display: none !important;
 }
 
@@ -929,11 +928,25 @@ html.pato-active {
   --bg-color: #0d131f;
 }
 
+@keyframes pato-neon-pulse {
+  0% { filter: brightness(1) contrast(1.1) saturate(1.2); }
+  50% { filter: brightness(1.25) contrast(1.3) saturate(1.5); }
+  100% { filter: brightness(1) contrast(1.1) saturate(1.2); }
+}
+
 html.pato-active body {
+  background: var(--bg-color);
+}
+
+html.pato-active body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-image: url('/casino_duck_bg.jpg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  z-index: -2;
+  animation: pato-neon-pulse 3s infinite alternate ease-in-out;
 }
 
 html.pato-active body::after {
