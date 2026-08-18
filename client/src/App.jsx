@@ -876,18 +876,24 @@ function App() {
                     Esperando a que los espectadores escriban la palabra clave...
                   </div>
                 ) : (
-                  participants.map((p, index) => (
-                    <div key={p.id || index} className={`participant-item ${p.isSubscriber ? 'is-sub' : ''}`}>
-                      <span style={{ display: 'flex', alignItems: 'center' }}>{p.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}{p.username}</span>
-                      <button 
-                        className="action-btn" 
-                        onClick={() => removeParticipant(index)}
-                        title="Eliminar de la lista"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  ))
+                  participants.map((p, index) => {
+                    const age = Math.round((Date.now() - (p.lastActiveAt || Date.now())) / 1000);
+                    return (
+                      <div key={p.id || index} className={`participant-item ${p.isSubscriber ? 'is-sub' : ''}`}>
+                        <span style={{ display: 'flex', alignItems: 'center' }}>
+                          {p.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}
+                          {p.username} 
+                          {isActiveModeEnabled && <span style={{ marginLeft: '8px', fontSize: '0.8rem', opacity: 0.6 }}>({age}s)</span>}
+                        </span>
+                        <button 
+                          className="action-btn" 
+                          onClick={() => removeParticipant(index)}
+                          title="Eliminar participante"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    )})
                 )}
               </div>
               
