@@ -65,8 +65,9 @@ io.on('connection', (socket) => {
         // Detectar si el usuario es suscriptor o VIP/fundador
         let isSubscriber = false;
         if (message.sender.identity && Array.isArray(message.sender.identity.badges)) {
+          console.log(`[DEBUG] Badges para ${message.sender.username}:`, JSON.stringify(message.sender.identity.badges));
           isSubscriber = message.sender.identity.badges.some(badge => 
-            badge.type === 'subscriber' || badge.type === 'founder'
+            (badge.type && badge.type.toLowerCase().includes('sub')) || badge.type === 'founder'
           );
         }
 
