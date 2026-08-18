@@ -290,7 +290,7 @@ function App() {
     setParticipants((prev) => prev.filter((_, i) => i !== randomIndex));
     setWinners((prev) => [...prev, winner]);
   
-      if (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') {
+      if (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') {
         setShowWinnerVerification(true);
         setWinnerMessages([]);
       setIsWinnerPresent('waiting');
@@ -724,7 +724,7 @@ function App() {
               </details>
             </div>
             
-            {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') && (
+            {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
               <div className="input-group">
                 <label>Tiempo Límite de Respuesta (segundos)</label>
                   <input 
@@ -859,7 +859,7 @@ function App() {
                           <h2>Ganadores</h2>
                           <span className="badge">{winners.length}</span>
                         </div>
-                        {winners.length > 0 && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') && (
+                        {winners.length > 0 && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
                           <button 
                             className="action-btn" 
                             onClick={downloadWinnersText}
@@ -940,7 +940,7 @@ function App() {
           )}
 
           {/* Winner Verification Panel (Joquer, Fox & Chona Theme) */}
-          {showWinnerVerification && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona') && (
+          {showWinnerVerification && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
             <div 
               className="glass-panel" 
               onMouseDown={(e) => {
