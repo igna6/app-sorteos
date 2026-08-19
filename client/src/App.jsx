@@ -260,12 +260,19 @@ function App() {
   }, []);
 
   const handleStart = () => {
-    if (!channel || !keyword) {
-      setError('Por favor, ingresa el ID del chatroom y la palabra clave');
+    if (!channel) {
+      setError('Por favor, ingresa el ID del chatroom');
+      return;
+    }
+    // Si la limpieza automatica esta activa, la palabra clave es opcional.
+    // Si no esta activa, exigimos palabra clave.
+    if (!isActiveModeEnabled && !keyword) {
+      setError('Por favor, ingresa la palabra clave');
       return;
     }
     setError('');
-    socketRef.current.emit('start_listening', { roomId: channel, keyword });
+    // Si esta activo isActiveModeEnabled y no hay keyword, mandamos string vacio para que agarre todo.
+    socketRef.current.emit('start_listening', { roomId: channel, keyword: (isActiveModeEnabled && !keyword) ? '' : keyword });
   };
 
   const handleStop = () => {
