@@ -311,6 +311,13 @@ function App() {
     setActiveWinner(winner);
     activeWinnerRef.current = winner;
 
+    // Reproducir sonido
+    try {
+      const audio = new Audio('./winner_sound.mp3');
+      audio.volume = 0.8;
+      audio.play().catch(e => console.log('Audio error:', e));
+    } catch (e) {}
+
     // Disparar confeti (estilo explosivo)
     confetti({
       particleCount: 150,
