@@ -729,7 +729,81 @@ function App() {
       </div>
       {appTheme === 'jack' && <ConstellationBackground />}
       {appTheme === 'joquer' && <JoquerBackground />}
-      <div className="top-bar">
+      <div className="top-bar" style={{ display: 'flex', gap: '10px' }}>
+        {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
+          <div className="settings-menu-container">
+            <button 
+              className="settings-btn" 
+              style={{ backgroundColor: isWidgetsOpen ? 'rgba(255,255,255,0.2)' : '' }}
+              onClick={() => setIsWidgetsOpen(!isWidgetsOpen)}
+              title="Widgets"
+            >
+              <LayoutDashboard size={24} />
+            </button>
+            
+            {isWidgetsOpen && (
+              <div className="settings-dropdown" style={{ width: '300px', right: '0', cursor: 'default' }}>
+                <div style={{ padding: '10px' }}>
+                  
+                  {/* Timer Widget */}
+                  <div style={{ marginBottom: '20px' }}>
+                    <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 10px 0', fontSize: '1rem', color: '#fff' }}>
+                      <Clock size={16} /> Temporizador
+                    </h3>
+                    {!isTimerActive ? (
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <input 
+                          type="number" 
+                          min="1"
+                          value={timerInput}
+                          onChange={(e) => setTimerInput(Number(e.target.value))}
+                          style={{ width: '60px', padding: '5px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: '#fff' }}
+                        />
+                        <span style={{ color: '#fff', fontSize: '0.9rem' }}>min</span>
+                        <button 
+                          className="action-btn"
+                          onClick={() => { setTimerSeconds(timerInput * 60); setIsTimerActive(true); }}
+                          style={{ background: '#28a745', padding: '5px 15px', color: '#fff', display: 'flex', alignItems: 'center', gap: '5px', flex: 1, justifyContent: 'center' }}
+                        >
+                          <Play size={14} /> Iniciar
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <div style={{ flex: 1, fontSize: '1.5rem', fontWeight: 'bold', color: '#fff', textAlign: 'center', background: 'rgba(0,0,0,0.3)', borderRadius: '4px', padding: '5px' }}>
+                          {formatTime(timerSeconds)}
+                        </div>
+                        <button 
+                          className="action-btn"
+                          onClick={() => setIsTimerActive(false)}
+                          style={{ background: '#dc3545', padding: '5px 15px', color: '#fff', display: 'flex', alignItems: 'center', gap: '5px' }}
+                        >
+                          <Square size={14} /> Detener
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="dropdown-divider"></div>
+                  
+                  {/* Notes Widget */}
+                  <div style={{ marginTop: '10px' }}>
+                    <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 10px 0', fontSize: '1rem', color: '#fff' }}>
+                      <FileText size={16} /> Notas
+                    </h3>
+                    <textarea 
+                      value={notesText}
+                      onChange={(e) => setNotesText(e.target.value)}
+                      placeholder="Escribe tus notas aquí..."
+                      style={{ width: '100%', height: '120px', padding: '10px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.3)', color: '#fff', resize: 'vertical', fontFamily: 'inherit' }}
+                    />
+                  </div>
+                  
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <div className="settings-menu-container">
           <button 
             className="settings-btn" 
