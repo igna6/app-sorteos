@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import confetti from 'canvas-confetti';
-import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle, Palette, Gamepad2, XCircle, Download } from 'lucide-react';
+import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle, Palette, Gamepad2, XCircle, Download, LayoutDashboard, Clock, Play, Square, FileText } from 'lucide-react';
 import './winner-animations.css';
 import Logo from './Logo';
 import TournamentBracket from './TournamentBracket';
@@ -138,6 +138,12 @@ function App() {
   const [tournamentSize, setTournamentSize] = useState(0);
   const [tournamentBracket, setTournamentBracket] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isWidgetsOpen, setIsWidgetsOpen] = useState(false);
+  const [timerInput, setTimerInput] = useState(5);
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [notesText, setNotesText] = useState('');
+  const widgetsTimerRef = useRef(null);
   
   // Roulette state
   const [isRouletteMode, setIsRouletteMode] = useState(false);
