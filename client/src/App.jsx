@@ -160,6 +160,51 @@ function App() {
     winnersRef.current = winners;
   }, [winners]);
 
+  const playAlarmBeep = () => {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const playBeep = (startTime) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(800, startTime);
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(0.5, startTime + 0.05);
+      gain.gain.setValueAtTime(0.5, startTime + 0.15);
+      gain.gain.linearRampToValueAtTime(0, startTime + 0.2);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + 0.2);
+    };
+    const now = ctx.currentTime;
+    playBeep(now); playBeep(now + 0.4); playBeep(now + 0.8); playBeep(now + 1.2);
+  };
+
+  useEffect(() => {
+    if (isTimerActive) {
+      widgetsTimerRef.current = setInterval(() => {
+        setTimerSeconds(prev => {
+          if (prev <= 1) {
+            clearInterval(widgetsTimerRef.current);
+            setIsTimerActive(false);
+            playAlarmBeep();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(widgetsTimerRef.current);
+    }
+  }, [isTimerActive]);
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = (secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
   useEffect(() => {
     if (socketRef.current) {
       socketRef.current.emit('stop_listening');
