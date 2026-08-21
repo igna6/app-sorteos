@@ -370,11 +370,26 @@ function App() {
     } catch (e) {}
 
     // Disparar confeti (estilo explosivo)
+    let themeColors = ['#ff2a2a', '#ffffff', '#000000'];
+    if (appTheme === 'joquer') {
+      themeColors = ['#ffcc00', '#111111', '#555555'];
+    } else if (appTheme === 'fox') {
+      themeColors = ['#00f3ff', '#9d00ff', '#ffffff'];
+    } else if (appTheme === 'chona') {
+      themeColors = ['#00447c', '#e3a900', '#ffffff'];
+    } else if (appTheme === 'pato') {
+      themeColors = ['#ffff00', '#ff8800', '#ffffff'];
+    } else if (appTheme === 'jack') {
+      themeColors = ['#00f3ff', '#000000', '#ffffff'];
+    } else {
+      themeColors = ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff'];
+    }
+
     confetti({
       particleCount: 150,
       spread: 100,
       origin: { y: 0.6 },
-      colors: ['#ff2a2a', '#ffffff', '#000000']
+      colors: themeColors
     });
 
     // Mover de lista de participantes a ganadores inmediatamente por detrás
