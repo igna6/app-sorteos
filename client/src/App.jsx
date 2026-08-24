@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import confetti from 'canvas-confetti';
-import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle, Palette, Gamepad2, XCircle, Download, LayoutDashboard, Clock, Play, Square, FileText } from 'lucide-react';
+import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle, Palette, Gamepad2, XCircle, Download, LayoutDashboard, Clock, Play, Square, FileText, Volume2 } from 'lucide-react';
 import './winner-animations.css';
 import Logo from './Logo';
 import TournamentBracket from './TournamentBracket';
@@ -71,6 +71,7 @@ function App() {
   const [activeTimeLimit, setActiveTimeLimit] = useState(5);
   const [appTheme, setAppTheme] = useState('fox');
   const [themeSelected, setThemeSelected] = useState(false);
+  const [globalVolume, setGlobalVolume] = useState(0.8);
   
   // Winner Verification States (Joquer Only)
   const [showWinnerVerification, setShowWinnerVerification] = useState(false);
@@ -163,7 +164,7 @@ function App() {
   const playAlarmBeep = () => {
     try {
       const audio = new Audio('./alarm_sound.mp3');
-      audio.volume = 1.0;
+      audio.volume = globalVolume;
       audio.play().catch(e => console.log('Audio error:', e));
     } catch (e) {}
   };
@@ -351,7 +352,7 @@ function App() {
     // Reproducir sonido
     try {
       const audio = new Audio('./winner_sound.mp3');
-      audio.volume = 0.8;
+      audio.volume = globalVolume;
       audio.play().catch(e => console.log('Audio error:', e));
     } catch (e) {}
 
