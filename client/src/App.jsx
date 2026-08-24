@@ -161,25 +161,11 @@ function App() {
   }, [winners]);
 
   const playAlarmBeep = () => {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    const ctx = new AudioContext();
-    const playBeep = (startTime) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(800, startTime);
-      gain.gain.setValueAtTime(0, startTime);
-      gain.gain.linearRampToValueAtTime(0.5, startTime + 0.05);
-      gain.gain.setValueAtTime(0.5, startTime + 0.15);
-      gain.gain.linearRampToValueAtTime(0, startTime + 0.2);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(startTime);
-      osc.stop(startTime + 0.2);
-    };
-    const now = ctx.currentTime;
-    playBeep(now); playBeep(now + 0.4); playBeep(now + 0.8); playBeep(now + 1.2);
+    try {
+      const audio = new Audio('./alarm_sound.mp3');
+      audio.volume = 1.0;
+      audio.play().catch(e => console.log('Audio error:', e));
+    } catch (e) {}
   };
 
   useEffect(() => {
