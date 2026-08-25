@@ -731,7 +731,23 @@ function App() {
       </div>
       {appTheme === 'jack' && <ConstellationBackground />}
       {appTheme === 'joquer' && <JoquerBackground />}
-      <div className="top-bar" style={{ display: 'flex', gap: '10px' }}>
+      <div className="top-bar" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        
+        {/* Control de Volumen Global */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.4)', padding: '5px 15px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <Volume2 size={18} color="#fff" />
+          <input 
+            type="range" 
+            min="0" 
+            max="1" 
+            step="0.05" 
+            value={globalVolume}
+            onChange={(e) => setGlobalVolume(parseFloat(e.target.value))}
+            style={{ width: '80px', cursor: 'pointer' }}
+            title={`Volumen: ${Math.round(globalVolume * 100)}%`}
+          />
+        </div>
+
         {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
           <div className="settings-menu-container">
             <button 
