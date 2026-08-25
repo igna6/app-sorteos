@@ -72,6 +72,8 @@ function App() {
   const [appTheme, setAppTheme] = useState('fox');
   const [themeSelected, setThemeSelected] = useState(false);
   const [globalVolume, setGlobalVolume] = useState(0.8);
+  const volumeRef = useRef(0.8);
+  useEffect(() => { volumeRef.current = globalVolume; }, [globalVolume]);
   
   // Winner Verification States (Joquer Only)
   const [showWinnerVerification, setShowWinnerVerification] = useState(false);
@@ -164,7 +166,7 @@ function App() {
   const playAlarmBeep = () => {
     try {
       const audio = new Audio('./alarm_sound.mp3');
-      audio.volume = globalVolume;
+      audio.volume = Math.pow(volumeRef.current, 2);
       audio.play().catch(e => console.log('Audio error:', e));
     } catch (e) {}
   };
@@ -352,7 +354,7 @@ function App() {
     // Reproducir sonido
     try {
       const audio = new Audio('./winner_sound.mp3');
-      audio.volume = globalVolume;
+      audio.volume = Math.pow(volumeRef.current, 2);
       audio.play().catch(e => console.log('Audio error:', e));
     } catch (e) {}
 
