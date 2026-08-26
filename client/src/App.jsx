@@ -1129,22 +1129,21 @@ function App() {
                 Reiniciar Sorteo (Borrar Todo)
               </button>
             )}
-          
-            {isSplitMode && (
+          </div>
+
+                    {isSplitMode && (
+            <div className="split-middle-column" style={{ flexDirection: 'column', gap: '20px' }}>
+              <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                {renderWinnerVerificationPanel()}
+              </div>
               <button 
                 className="btn" 
-                style={{ width: '100%', marginTop: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ff4757', color: 'white', fontWeight: 'bold', border: 'none', padding: '1rem', borderRadius: '8px', fontSize: '1.2rem', cursor: 'pointer', boxShadow: '0 0 15px rgba(255, 71, 87, 0.4)' }}
+                style={{ width: '100%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ff4757', color: 'white', fontWeight: 'bold', border: 'none', padding: '1rem', borderRadius: '8px', fontSize: '1.2rem', cursor: 'pointer', boxShadow: '0 0 15px rgba(255, 71, 87, 0.4)' }}
                 onClick={drawWinner}
                 disabled={participants.length === 0}
               >
                 DRAW WINNER / SORTEAR <Gift size={24} style={{ marginLeft: '12px' }} />
               </button>
-            )}
-          </div>
-
-                    {isSplitMode && (
-            <div className="split-middle-column">
-              {renderWinnerVerificationPanel()}
             </div>
           )}
           <div className="content-grid">
