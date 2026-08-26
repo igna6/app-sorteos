@@ -686,7 +686,8 @@ function App() {
                   ))
                 )}
               </div>
-              <button 
+              {!isSplitMode && (
+<button 
                 className="btn" 
                 style={{ width: '100%', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                 onClick={drawWinner}
@@ -694,6 +695,7 @@ function App() {
               >
                 Sortear Ganador <Gift size={20} style={{ marginLeft: '8px' }} />
               </button>
+)}
             </div>
           )}
       </>
