@@ -993,7 +993,8 @@ function App() {
         <RouletteMode appTheme={appTheme} isFixedMode={isRouletteFixedMode} />
       ) : (
         <>
-          <div className="glass-panel setup-panel">
+          <div className={`main-layout ${isSplitMode ? 'split-mode' : ''}`}>
+            <div className="glass-panel setup-panel">
             <div className="input-group">
               <label>ID de Chatroom de Kick</label>
               <input 
@@ -1278,6 +1279,7 @@ function App() {
             </div>
           )}
 
+          </div>
           {!isSplitMode && renderWinnerVerificationPanel()}
         </>
       )}
