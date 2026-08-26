@@ -1128,6 +1128,17 @@ function App() {
                 Reiniciar Sorteo (Borrar Todo)
               </button>
             )}
+          
+            {isSplitMode && (
+              <button 
+                className="btn" 
+                style={{ width: '100%', marginTop: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ff4757', color: 'white', fontWeight: 'bold', border: 'none', padding: '1rem', borderRadius: '8px', fontSize: '1.2rem', cursor: 'pointer', boxShadow: '0 0 15px rgba(255, 71, 87, 0.4)' }}
+                onClick={drawWinner}
+                disabled={participants.length === 0}
+              >
+                DRAW WINNER / SORTEAR <Gift size={24} style={{ marginLeft: '12px' }} />
+              </button>
+            )}
           </div>
 
                     {isSplitMode && (
