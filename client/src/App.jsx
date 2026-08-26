@@ -851,6 +851,14 @@ function App() {
         {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
           <div className="settings-menu-container">
             <button 
+                className="settings-btn" 
+                style={{ backgroundColor: isSplitMode ? 'rgba(255,255,255,0.2)' : '' }}
+                onClick={() => setIsSplitMode(!isSplitMode)}
+                title="Separar Pantalla"
+              >
+                <Columns size={24} />
+              </button>
+              <button 
               className="settings-btn" 
               style={{ backgroundColor: isWidgetsOpen ? 'rgba(255,255,255,0.2)' : '' }}
               onClick={() => setIsWidgetsOpen(!isWidgetsOpen)}
