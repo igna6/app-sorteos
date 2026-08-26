@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import confetti from 'canvas-confetti';
-import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle, Palette, Gamepad2, XCircle, Download, LayoutDashboard, Clock, Play, Square, FileText, Volume2 } from 'lucide-react';
+import { Settings, CheckCircle2, Star, Trash2, Gift, RotateCcw, Dices, Shuffle, Palette, Gamepad2, XCircle, Download, LayoutDashboard, Clock, Play, Square, FileText, Volume2, Columns } from 'lucide-react';
 import './winner-animations.css';
 import Logo from './Logo';
 import TournamentBracket from './TournamentBracket';
@@ -142,6 +142,7 @@ function App() {
   const [tournamentBracket, setTournamentBracket] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isWidgetsOpen, setIsWidgetsOpen] = useState(false);
+  const [isSplitMode, setIsSplitMode] = useState(false);
   const [timerInput, setTimerInput] = useState(5);
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [isTimerActive, setIsTimerActive] = useState(false);
@@ -602,6 +603,103 @@ function App() {
     setActivePasswordTheme(null);
   };
 
+
+  const renderWinnerVerificationPanel = () => {
+    return (
+      <>
+          {/* Winner Verification Panel (Joquer, Fox & Chona Theme) */}
+          {(isSplitMode || showWinnerVerification) && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
+            <div 
+              className="glass-panel" 
+              onMouseDown={(e) => {
+                // Si hacemos clic en el contenedor de mensajes, un boton o el nombre, no arrastramos (para poder scrollear/seleccionar)
+                if (isSplitMode) return;
+                  if (e.target.closest('.chat-messages-container') || e.target.closest('button') || e.target.closest('h2')) return;
+                setIsDraggingPanel(true);
+                setPanelDragStart({ x: e.clientX - panelPos.x, y: e.clientY - panelPos.y });
+              }}
+              style={isSplitMode ? {
+                border: `2px solid ${!activeWinner ? '#333' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
+                boxShadow: `0 0 30px ${!activeWinner ? 'rgba(0,0,0,0.5)' : isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+                background: '#0B0E14',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                zIndex: 10
+              } : {
+                border: `2px solid ${!activeWinner ? '#333' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
+                boxShadow: `0 0 30px ${!activeWinner ? 'rgba(0,0,0,0.5)' : isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+                background: '#0B0E14',
+                position: 'fixed',
+                left: `${panelPos.x}px`,
+                top: `${panelPos.y}px`,
+                width: '380px',
+                height: '450px',
+                display: 'flex',
+                flexDirection: 'column',
+                zIndex: 9999,
+                cursor: isDraggingPanel ? 'grabbing' : 'grab',
+                userSelect: isDraggingPanel ? 'none' : 'auto'
+              }}>
+                {(!isSplitMode || activeWinner) && (
+                  <button 
+                    onClick={() => {
+                      setShowWinnerVerification(false);
+                    setActiveWinner(null);
+                    activeWinnerRef.current = null;
+                  }}
+                  style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', zIndex: 10 }}
+                  title="Cerrar"
+                >
+                  <XCircle size={24} />
+                </button>
+                  )}
+                <h2 style={{ textAlign: 'center', color: activeWinner ? '#fff' : '#666', fontSize: '1.8rem', margin: '0 0 0.5rem 0', textShadow: activeWinner ? '0 0 10px rgba(255,255,255,0.3)' : 'none' }}>
+                {activeWinner ? activeWinner.username : 'Esperando ganador...'}
+              </h2>
+              
+              <div style={{ textAlign: 'center', fontSize: '0.95rem', whiteSpace: 'nowrap', minHeight: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', color: !activeWinner ? '#555' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
+                {!activeWinner ? 'Inicia un sorteo para el chat de validación' : isWinnerPresent === 'success' ? '✔️ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
+              </div>
+              
+              <div className="chat-messages-container" style={{
+                background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '1rem',
+                flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
+                border: '1px solid rgba(255,255,255,0.1)',
+                cursor: 'auto'
+              }}>
+                {!activeWinner ? (
+                  <div style={{ color: '#444', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
+                    Esperando el sorteo...
+                  </div>
+                ) : winnerMessages.length === 0 ? (
+                  <div style={{ color: '#888', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
+                    Todavía no escribió nada desde que ganó...
+                  </div>
+                ) : (
+                  winnerMessages.map((msg, idx) => (
+                    <div key={idx} style={{ background: 'rgba(255,255,255,0.1)', padding: '0.8rem', borderRadius: '8px', color: '#fff' }}>
+                      <span style={{ fontWeight: 'bold', color: '#a855f7' }}>{msg.username}: </span>
+                      <span>{msg.content}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+              <button 
+                className="btn" 
+                style={{ width: '100%', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                onClick={drawWinner}
+                disabled={participants.length === 0}
+              >
+                Sortear Ganador <Gift size={20} style={{ marginLeft: '8px' }} />
+              </button>
+            </div>
+          )}
+      </>
+    );
+  };
+
   if (!themeSelected) {
     return (
       <div className="theme-selector-container" style={{ position: 'relative' }}>
@@ -1022,6 +1120,11 @@ function App() {
             )}
           </div>
 
+                    {isSplitMode && (
+            <div className="split-middle-column">
+              {renderWinnerVerificationPanel()}
+            </div>
+          )}
           <div className="content-grid">
             <div className="glass-panel">
               <div className="list-header">
@@ -1154,83 +1257,7 @@ function App() {
             </div>
           )}
 
-          {/* Winner Verification Panel (Joquer, Fox & Chona Theme) */}
-          {showWinnerVerification && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
-            <div 
-              className="glass-panel" 
-              onMouseDown={(e) => {
-                // Si hacemos clic en el contenedor de mensajes, un boton o el nombre, no arrastramos (para poder scrollear/seleccionar)
-                if (e.target.closest('.chat-messages-container') || e.target.closest('button') || e.target.closest('h2')) return;
-                setIsDraggingPanel(true);
-                setPanelDragStart({ x: e.clientX - panelPos.x, y: e.clientY - panelPos.y });
-              }}
-              style={{
-              border: `2px solid ${!activeWinner ? '#333' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
-              boxShadow: `0 0 30px ${!activeWinner ? 'rgba(0,0,0,0.5)' : isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
-              background: '#0B0E14',
-              position: 'fixed',
-              left: `${panelPos.x}px`,
-              top: `${panelPos.y}px`,
-              width: '380px',
-              height: '450px',
-              display: 'flex',
-              flexDirection: 'column',
-              zIndex: 9999,
-              cursor: isDraggingPanel ? 'grabbing' : 'grab',
-              userSelect: isDraggingPanel ? 'none' : 'auto'
-            }}>
-                <button 
-                  onClick={() => {
-                    setShowWinnerVerification(false);
-                    setActiveWinner(null);
-                    activeWinnerRef.current = null;
-                  }}
-                  style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', zIndex: 10 }}
-                  title="Cerrar"
-                >
-                  <XCircle size={24} />
-                </button>
-              <h2 style={{ textAlign: 'center', color: activeWinner ? '#fff' : '#666', fontSize: '1.8rem', margin: '0 0 0.5rem 0', textShadow: activeWinner ? '0 0 10px rgba(255,255,255,0.3)' : 'none' }}>
-                {activeWinner ? activeWinner.username : 'Esperando ganador...'}
-              </h2>
-              
-              <div style={{ textAlign: 'center', fontSize: '0.95rem', whiteSpace: 'nowrap', minHeight: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', color: !activeWinner ? '#555' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
-                {!activeWinner ? 'Inicia un sorteo para el chat de validación' : isWinnerPresent === 'success' ? '✔️ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
-              </div>
-              
-              <div className="chat-messages-container" style={{
-                background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '1rem',
-                flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
-                border: '1px solid rgba(255,255,255,0.1)',
-                cursor: 'auto'
-              }}>
-                {!activeWinner ? (
-                  <div style={{ color: '#444', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
-                    Esperando el sorteo...
-                  </div>
-                ) : winnerMessages.length === 0 ? (
-                  <div style={{ color: '#888', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
-                    Todavía no escribió nada desde que ganó...
-                  </div>
-                ) : (
-                  winnerMessages.map((msg, idx) => (
-                    <div key={idx} style={{ background: 'rgba(255,255,255,0.1)', padding: '0.8rem', borderRadius: '8px', color: '#fff' }}>
-                      <span style={{ fontWeight: 'bold', color: '#a855f7' }}>{msg.username}: </span>
-                      <span>{msg.content}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-              <button 
-                className="btn" 
-                style={{ width: '100%', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-                onClick={drawWinner}
-                disabled={participants.length === 0}
-              >
-                Sortear Ganador <Gift size={20} style={{ marginLeft: '8px' }} />
-              </button>
-            </div>
-          )}
+          {!isSplitMode && renderWinnerVerificationPanel()}
         </>
       )}
 

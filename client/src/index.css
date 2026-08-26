@@ -971,3 +971,48 @@ html.pato-active body::after {
   transform: translateY(-5px);
 }
 
+
+/* =========================================
+   SPLIT MODE LAYOUT
+   ========================================= */
+.main-layout.split-mode {
+  display: grid;
+  grid-template-columns: 350px 1fr 350px;
+  gap: 20px;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.main-layout.split-mode > .setup-panel {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+.split-middle-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 120px);
+}
+
+.split-middle-column .glass-panel {
+  width: 100%;
+  height: 100%;
+  max-height: 800px;
+  max-width: none;
+}
+
+.main-layout.split-mode .content-grid {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+}
+
+.main-layout.split-mode .content-grid > .glass-panel {
+  flex: 1;
+  min-height: 0;
+}
+
