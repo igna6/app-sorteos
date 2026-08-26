@@ -10,7 +10,7 @@ import ConstellationBackground from './ConstellationBackground';
 import JoquerBackground from './JoquerBackground';
 import './App.css';
 
-const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+console.log("CACHE CLEARED"); const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
 
 const DonationSection = () => (
   <div className="donation-container">
@@ -1240,3 +1240,4 @@ function App() {
 }
 
 export default App;
+
