@@ -307,8 +307,8 @@ body::before {
 }
 
 .winner-item {
-  background: linear-gradient(135deg, rgba(255, 42, 42, 0.1), rgba(255, 42, 42, 0.05));
-  border: 1px solid var(--primary-color);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   padding: 1rem;
   display: flex;
@@ -316,6 +316,16 @@ body::before {
   gap: 1rem;
   margin-bottom: 0.5rem;
   animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.winner-item.winner-success {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(76, 175, 80, 0.05)) !important;
+  border-color: #4CAF50 !important;
+}
+
+.winner-item.winner-failed {
+  background: linear-gradient(135deg, rgba(255, 42, 42, 0.15), rgba(255, 42, 42, 0.05)) !important;
+  border-color: var(--primary-color) !important;
 }
 
 .winner-number {

@@ -235,6 +235,10 @@ function App() {
     if (isWinnerPresent === 'waiting' && verificationStopwatch >= limit) {
       if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
       setIsWinnerPresent('failed');
+        setWinners(prev => {
+          if (!activeWinnerRef.current) return prev;
+          return prev.map(w => w.username === activeWinnerRef.current.username ? { ...w, verificationStatus: 'failed' } : w);
+        });
     }
   }, [verificationStopwatch, verificationTimeLimit, isWinnerPresent]);
 
@@ -271,7 +275,8 @@ function App() {
         setIsWinnerPresent(prevStatus => {
           if (prevStatus === 'waiting') {
             if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
-            return 'success';
+              setWinners(prev => prev.map(w => w.username === activeWinnerRef.current.username ? { ...w, verificationStatus: 'success' } : w));
+              return 'success';
           }
           return prevStatus;
         });
@@ -346,7 +351,8 @@ function App() {
     // Pick a random winner from the tickets array
     const winningTicket = Math.floor(Math.random() * tickets.length);
     const randomIndex = tickets[winningTicket];
-    const winner = participants[randomIndex];
+      const isVerificationTheme = (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato');
+      const winner = { ...participants[randomIndex], verificationStatus: isVerificationTheme ? 'waiting' : 'success' };
 
     // Mostrar overlay
     setActiveWinner(winner);
@@ -1217,7 +1223,7 @@ function App() {
                         </div>
                       ) : (
                         winners.map((w, index) => (
-                          <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''}`}>
+                          <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''} ${w.verificationStatus ? 'winner-' + w.verificationStatus : ''}`}>
                             <div className="winner-number">{index + 1}</div>
                             <span style={{ display: 'flex', alignItems: 'center' }}>{w.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}{w.username}</span>
                             <button 
