@@ -436,12 +436,16 @@ function App() {
   };
 
   const downloadWinnersText = () => {
-    if (winners.length === 0) return;
+    const validWinners = winners.filter(w => w.verificationStatus === 'success');
+    if (validWinners.length === 0) {
+      alert("No hay ganadores válidos para descargar.");
+      return;
+    }
     
     let textContent = "LISTADO DE GANADORES - " + new Date().toLocaleString() + "\n";
     textContent += "========================================\n\n";
     
-    winners.forEach((w, i) => {
+    validWinners.forEach((w, i) => {
       textContent += `${i + 1}. ${w.username}${w.isSubscriber ? ' (Suscriptor)' : ''}\n`;
     });
     
@@ -1202,7 +1206,7 @@ function App() {
                       <div className="list-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <h2>Ganadores</h2>
-                          <span className="badge">{winners.length}</span>
+                          <span className="badge">{winners.filter(w => w.verificationStatus === 'success').length}</span>
                         </div>
                         {winners.length > 0 && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
                           <button 
