@@ -89,8 +89,17 @@ class KickConnection extends events.EventEmitter {
   handleMessage(msg) {
     try {
       const { data, event } = msg;
+      
+      if (event === "pusher:ping") {
+        if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
+          this.websocket.send(JSON.stringify({ event: "pusher:pong" }));
+        }
+        return;
+      }
+
       const parsedData = typeof data === "string" ? JSON.parse(data) : data;
       
+      if (!event) return;
       const eventName = event.split("\\")[2];
       if (!eventName) return;
 
