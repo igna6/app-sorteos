@@ -237,7 +237,7 @@ function App() {
       setIsWinnerPresent('failed');
         setWinners(prev => {
           if (!activeWinnerRef.current) return prev;
-          return prev.map(w => w.username === activeWinnerRef.current.username ? { ...w, verificationStatus: 'failed' } : w);
+          return prev.map(w => w.username.toLowerCase() === activeWinnerRef.current.username.toLowerCase() ? { ...w, verificationStatus: 'failed' } : w);
         });
     }
   }, [verificationStopwatch, verificationTimeLimit, isWinnerPresent]);
@@ -259,7 +259,7 @@ function App() {
     socketRef.current.on('chat_message', (msg) => {
       // Actualizar la hora de ultima actividad si participan
       setParticipants(prev => {
-        const idx = prev.findIndex(p => p.username === msg.username);
+        const idx = prev.findIndex(p => p.username.toLowerCase() === msg.username.toLowerCase());
         if (idx !== -1) {
           const updated = [...prev];
           updated[idx] = { ...updated[idx], lastActiveAt: Date.now() };
@@ -269,13 +269,13 @@ function App() {
       });
 
       // Si el ganador esta activo y el mensaje es de el
-      if (activeWinnerRef.current && activeWinnerRef.current.username === msg.username) {
+      if (activeWinnerRef.current && activeWinnerRef.current.username.toLowerCase() === msg.username.toLowerCase()) {
         setWinnerMessages((prev) => [...prev, msg]);
         
         setIsWinnerPresent(prevStatus => {
           if (prevStatus === 'waiting') {
             if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
-              setWinners(prev => prev.map(w => w.username === activeWinnerRef.current.username ? { ...w, verificationStatus: 'success' } : w));
+              setWinners(prev => prev.map(w => w.username.toLowerCase() === activeWinnerRef.current.username.toLowerCase() ? { ...w, verificationStatus: 'success' } : w));
               return 'success';
           }
           return prevStatus;
@@ -285,15 +285,15 @@ function App() {
 
     socketRef.current.on('participant_joined', (user) => {
       setParticipants((prev) => {
-        const alreadyExists = prev.some((p) => p.username === user.username);
+        const alreadyExists = prev.some((p) => p.username.toLowerCase() === user.username.toLowerCase());
         if (alreadyExists) {
           const updated = [...prev];
-          const idx = updated.findIndex((p) => p.username === user.username);
+          const idx = updated.findIndex((p) => p.username.toLowerCase() === user.username.toLowerCase());
           updated[idx] = { ...updated[idx], lastActiveAt: Date.now() };
           return updated;
         }
         
-        const isAlreadyWinner = winnersRef.current.some((w) => w.username === user.username);
+        const isAlreadyWinner = winnersRef.current.some((w) => w.username.toLowerCase() === user.username.toLowerCase());
         if (isAlreadyWinner) return prev;
 
         return [...prev, { ...user, lastActiveAt: Date.now() }];
@@ -423,7 +423,7 @@ function App() {
     setWinners((prev) => prev.filter((_, i) => i !== index));
     // Agregar a participantes si no existe (por seguridad)
     setParticipants((prev) => {
-      if (prev.some((p) => p.username === winnerToMove.username)) return prev;
+      if (prev.some((p) => p.username.toLowerCase() === winnerToMove.username.toLowerCase())) return prev;
       return [...prev, winnerToMove];
     });
   };
