@@ -351,7 +351,7 @@ function App() {
     // Pick a random winner from the tickets array
     const winningTicket = Math.floor(Math.random() * tickets.length);
     const randomIndex = tickets[winningTicket];
-      const isVerificationTheme = (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato');
+      const isVerificationTheme = (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack');
       const winner = { ...participants[randomIndex], verificationStatus: isVerificationTheme ? 'waiting' : 'success' };
 
     // Mostrar overlay
@@ -392,7 +392,7 @@ function App() {
     setParticipants((prev) => prev.filter((_, i) => i !== randomIndex));
     setWinners((prev) => [...prev, winner]);
   
-      if (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') {
+      if (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack') {
         setShowWinnerVerification(true);
         setWinnerMessages([]);
       setIsWinnerPresent('waiting');
@@ -618,7 +618,7 @@ function App() {
     return (
       <>
           {/* Winner Verification Panel (Joquer, Fox & Chona Theme) */}
-          {(isSplitMode || showWinnerVerification) && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
+          {(isSplitMode || showWinnerVerification) && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack') && (
             <div 
               className="glass-panel" 
               onMouseDown={(e) => {
@@ -875,7 +875,7 @@ function App() {
           />
         </div>
 
-        {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
+        {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack') && (
           <div className="settings-menu-container">
             <button 
                 className="settings-btn" 
@@ -1043,7 +1043,7 @@ function App() {
               </details>
             </div>
             
-            {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
+            {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack') && (
               <div className="input-group">
                 <label>Tiempo Límite de Respuesta (segundos)</label>
                   <input 
@@ -1223,7 +1223,7 @@ function App() {
                           <h2>Ganadores</h2>
                           <span className="badge">{winners.filter(w => w.verificationStatus === 'success').length}</span>
                         </div>
-                        {winners.length > 0 && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato') && (
+                        {winners.length > 0 && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack') && (
                           <button 
                             className="action-btn" 
                             onClick={downloadWinnersText}
