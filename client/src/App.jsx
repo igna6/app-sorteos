@@ -192,6 +192,19 @@ function App() {
       setIsListening(false);
     }
 
+    // Limpieza total del estado del sorteo para aislar perfiles
+    setParticipants([]);
+    setWinners([]);
+    winnersRef.current = [];
+    setActiveWinner(null);
+    activeWinnerRef.current = null;
+    setShowWinnerVerification(false);
+    setWinnerMessages([]);
+    setIsWinnerPresent('waiting');
+    setVerificationStopwatch(0);
+    setKeyword('');
+    setError('');
+
     const html = document.documentElement;
     html.classList.remove('chona-active', 'jack-active', 'joquer-active', 'pato-active');
 
@@ -850,7 +863,22 @@ function App() {
 
           {isMenuOpen && (
             <div className="settings-dropdown">
-              <button className="dropdown-action-btn" onClick={() => { setThemeSelected(false); setIsMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center' }}>
+              <button className="dropdown-action-btn" onClick={() => {
+                if (socketRef.current) {
+                  socketRef.current.emit('stop_listening');
+                  setIsListening(false);
+                }
+                setParticipants([]);
+                setWinners([]);
+                winnersRef.current = [];
+                setActiveWinner(null);
+                activeWinnerRef.current = null;
+                setShowWinnerVerification(false);
+                setWinnerMessages([]);
+                setKeyword('');
+                setThemeSelected(false);
+                setIsMenuOpen(false);
+              }} style={{ display: 'flex', alignItems: 'center' }}>
                 <Palette size={16} style={{ marginRight: '8px' }} /> Cambiar Tema
               </button>
 
