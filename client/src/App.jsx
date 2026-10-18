@@ -10,7 +10,8 @@ import ConstellationBackground from './ConstellationBackground';
 import JoquerBackground from './JoquerBackground';
 import './App.css';
 
-console.log("CACHE CLEARED"); const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+console.log("CACHE CLEARED");
+const SOCKET_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
 
 const DonationSection = () => (
   <div className="donation-container">
@@ -37,7 +38,7 @@ const PasswordForm = ({ expectedPassword, themeName, onCancel, onSuccess }) => {
   return (
     <div className="inline-password-form" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', width: '100%', height: '100%', padding: '15px', boxSizing: 'border-box' }}>
       <h3 style={{ margin: 0, color: '#fff', fontSize: '16px', textAlign: 'center' }}>Perfil Privado</h3>
-      <input 
+      <input
         type="password"
         placeholder="Contraseña..."
         value={input}
@@ -65,8 +66,8 @@ function App() {
   const [winners, setWinners] = useState([]);
   const winnersRef = useRef([]);
   const [error, setError] = useState('');
-  const [activeWinner, setActiveWinner] = useState(null); // Para el overlay
-  const [subMultiplier, setSubMultiplier] = useState(1); // Multiplicador de subs
+  const [activeWinner, setActiveWinner] = useState(null);
+  const [subMultiplier, setSubMultiplier] = useState(1);
   const [isActiveModeEnabled, setIsActiveModeEnabled] = useState(false);
   const [activeTimeLimit, setActiveTimeLimit] = useState(5);
   const [appTheme, setAppTheme] = useState('fox');
@@ -74,7 +75,7 @@ function App() {
   const [globalVolume, setGlobalVolume] = useState(0.8);
   const volumeRef = useRef(0.8);
   useEffect(() => { volumeRef.current = globalVolume; }, [globalVolume]);
-  
+
   // Winner Verification States (Joquer Only)
   const [showWinnerVerification, setShowWinnerVerification] = useState(false);
   const [winnerMessages, setWinnerMessages] = useState([]);
@@ -85,7 +86,7 @@ function App() {
   const [panelPos, setPanelPos] = useState({ x: 100, y: 100 });
   const [isDraggingPanel, setIsDraggingPanel] = useState(false);
   const [panelDragStart, setPanelDragStart] = useState({ x: 0, y: 0 });
-  
+
   const activeWinnerRef = useRef(null);
   const verificationTimerRef = useRef(null);
   const stopwatchRef = useRef(0);
@@ -99,9 +100,9 @@ function App() {
         }));
       };
 
-      setPanelPos({ 
-        x: Math.max(0, (window.innerWidth - 380) / 2), 
-        y: Math.max(0, (window.innerHeight - 450) / 2) 
+      setPanelPos({
+        x: Math.max(0, (window.innerWidth - 380) / 2),
+        y: Math.max(0, (window.innerHeight - 450) / 2)
       });
 
       window.addEventListener('resize', handleResize);
@@ -112,24 +113,19 @@ function App() {
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isDraggingPanel) return;
-      
       const newX = e.clientX - panelDragStart.x;
       const newY = e.clientY - panelDragStart.y;
-      
-      setPanelPos({ 
-        x: Math.max(0, Math.min(newX, window.innerWidth - 380)), 
-        y: Math.max(0, Math.min(newY, window.innerHeight - 450)) 
+      setPanelPos({
+        x: Math.max(0, Math.min(newX, window.innerWidth - 380)),
+        y: Math.max(0, Math.min(newY, window.innerHeight - 450))
       });
     };
-    const handleMouseUp = () => {
-      setIsDraggingPanel(false);
-    };
+    const handleMouseUp = () => { setIsDraggingPanel(false); };
 
     if (isDraggingPanel) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
     }
-    
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
@@ -148,28 +144,23 @@ function App() {
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [notesText, setNotesText] = useState('');
   const widgetsTimerRef = useRef(null);
-  
+
   // Roulette state
   const [isRouletteMode, setIsRouletteMode] = useState(false);
   const [isRouletteFixedMode, setIsRouletteFixedMode] = useState(false);
-  
+
   // Custom Password Modal state
   const [activePasswordTheme, setActivePasswordTheme] = useState(null);
-  
   const socketRef = useRef(null);
 
-
-
-  useEffect(() => {
-    winnersRef.current = winners;
-  }, [winners]);
+  useEffect(() => { winnersRef.current = winners; }, [winners]);
 
   const playAlarmBeep = () => {
     try {
       const audio = new Audio('./alarm_sound.mp3');
       audio.volume = Math.pow(volumeRef.current, 2);
       audio.play().catch(e => console.log('Audio error:', e));
-    } catch (e) {}
+    } catch (e) { }
   };
 
   useEffect(() => {
@@ -200,23 +191,24 @@ function App() {
       socketRef.current.emit('stop_listening');
       setIsListening(false);
     }
-    
+
     const html = document.documentElement;
     html.classList.remove('chona-active', 'jack-active', 'joquer-active', 'pato-active');
-    
+
     if (appTheme === 'chona') {
       html.classList.add('chona-active');
-      setChannel('31269701');
+      setChannel('chhonaa'); // Reemplaza por el usuario exacto de kick si es distinto
     } else if (appTheme === 'jack') {
       html.classList.add('jack-active');
+      setChannel('jacktimba');
     } else if (appTheme === 'joquer') {
       html.classList.add('joquer-active');
-      setChannel('25583107');
+      setChannel('joquer');
     } else if (appTheme === 'fox') {
-      setChannel('17912002');
+      setChannel('eldelfox');
     } else if (appTheme === 'pato') {
       html.classList.add('pato-active');
-      setChannel('28198977');
+      setChannel('pato');
     }
   }, [appTheme]);
 
@@ -235,16 +227,17 @@ function App() {
     if (isWinnerPresent === 'waiting' && verificationStopwatch >= limit) {
       if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
       setIsWinnerPresent('failed');
-        setWinners(prev => {
-          if (!activeWinnerRef.current) return prev;
-          return prev.map(w => w.username.toLowerCase() === activeWinnerRef.current.username.toLowerCase() ? { ...w, verificationStatus: 'failed' } : w);
-        });
+      setWinners(prev => {
+        if (!activeWinnerRef.current) return prev;
+        return prev.map(w => w.username.toLowerCase() === activeWinnerRef.current.username.toLowerCase() ? { ...w, verificationStatus: 'failed' } : w);
+      });
     }
   }, [verificationStopwatch, verificationTimeLimit, isWinnerPresent]);
 
   useEffect(() => {
-    // Initialize socket connection
+    // Inicializar conexión Socket.io
     socketRef.current = io(SOCKET_URL);
+
 
     socketRef.current.on('listening_started', (data) => {
       if (data.success) {
@@ -257,7 +250,6 @@ function App() {
     });
 
     socketRef.current.on('chat_message', (msg) => {
-      // Actualizar la hora de ultima actividad si participan
       setParticipants(prev => {
         const idx = prev.findIndex(p => p.username.toLowerCase() === msg.username.toLowerCase());
         if (idx !== -1) {
@@ -268,15 +260,13 @@ function App() {
         return prev;
       });
 
-      // Si el ganador esta activo y el mensaje es de el
       if (activeWinnerRef.current && activeWinnerRef.current.username.toLowerCase() === msg.username.toLowerCase()) {
         setWinnerMessages((prev) => [...prev, msg]);
-        
         setIsWinnerPresent(prevStatus => {
           if (prevStatus === 'waiting') {
             if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
-              setWinners(prev => prev.map(w => w.username.toLowerCase() === activeWinnerRef.current.username.toLowerCase() ? { ...w, verificationStatus: 'success' } : w));
-              return 'success';
+            setWinners(prev => prev.map(w => w.username.toLowerCase() === activeWinnerRef.current.username.toLowerCase() ? { ...w, verificationStatus: 'success' } : w));
+            return 'success';
           }
           return prevStatus;
         });
@@ -292,10 +282,8 @@ function App() {
           updated[idx] = { ...updated[idx], lastActiveAt: Date.now() };
           return updated;
         }
-        
         const isAlreadyWinner = winnersRef.current.some((w) => w.username.toLowerCase() === user.username.toLowerCase());
         if (isAlreadyWinner) return prev;
-
         return [...prev, { ...user, lastActiveAt: Date.now() }];
       });
     });
@@ -310,15 +298,15 @@ function App() {
       setError('Por favor, ingresa el ID del chatroom');
       return;
     }
-    // Si la limpieza automatica esta activa, la palabra clave es opcional.
-    // Si no esta activa, exigimos palabra clave.
     if (!isActiveModeEnabled && !keyword) {
       setError('Por favor, ingresa la palabra clave');
       return;
     }
     setError('');
-    // Si esta activo isActiveModeEnabled y no hay keyword, mandamos string vacio para que agarre todo.
-    socketRef.current.emit('start_listening', { roomId: channel, keyword: (isActiveModeEnabled && !keyword) ? '' : keyword });
+    socketRef.current.emit('start_listening', {
+      roomId: channel,
+      keyword: (isActiveModeEnabled && !keyword) ? '' : keyword
+    });
   };
 
   const handleStop = () => {
@@ -329,83 +317,61 @@ function App() {
   const drawWinner = () => {
     if (participants.length === 0) return;
 
-    // Crear un arreglo de "boletos" (tickets)
     let tickets = [];
     participants.forEach((p, index) => {
-      let chances = 1; // Usuario normal tiene 1 chance
+      let chances = 1;
       if (p.isSubscriber) {
-        chances = subMultiplier; // Suscriptor tiene X chances (0, 1, 2, 3...)
+        chances = subMultiplier;
       }
-      
-      // Agregar el índice del participante tantas veces como chances tenga
       for (let i = 0; i < chances; i++) {
         tickets.push(index);
       }
     });
 
     if (tickets.length === 0) {
-      alert("No hay participantes válidos (por ejemplo, si excluiste a los subs y todos son subs).");
+      alert("No hay participantes válidos.");
       return;
     }
 
-    // Pick a random winner from the tickets array
     const winningTicket = Math.floor(Math.random() * tickets.length);
     const randomIndex = tickets[winningTicket];
-      const isVerificationTheme = (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack');
-      const winner = { ...participants[randomIndex], verificationStatus: isVerificationTheme ? 'waiting' : 'success' };
+    const isVerificationTheme = ['joquer', 'fox', 'chona', 'pato', 'jack'].includes(appTheme);
+    const winner = { ...participants[randomIndex], verificationStatus: isVerificationTheme ? 'waiting' : 'success' };
 
-    // Mostrar overlay
     setActiveWinner(winner);
     activeWinnerRef.current = winner;
 
-    // Reproducir sonido
     try {
       const audio = new Audio('./winner_sound.mp3');
       audio.volume = Math.pow(volumeRef.current, 2);
       audio.play().catch(e => console.log('Audio error:', e));
-    } catch (e) {}
+    } catch (e) { }
 
-    // Disparar confeti (estilo explosivo)
     let themeColors = ['#ff2a2a', '#ffffff', '#000000'];
-    if (appTheme === 'joquer') {
-      themeColors = ['#ffcc00', '#111111', '#555555'];
-    } else if (appTheme === 'fox') {
-      themeColors = ['#00f3ff', '#9d00ff', '#ffffff'];
-    } else if (appTheme === 'chona') {
-      themeColors = ['#00447c', '#e3a900', '#ffffff'];
-    } else if (appTheme === 'pato') {
-      themeColors = ['#ffff00', '#ff8800', '#ffffff'];
-    } else if (appTheme === 'jack') {
-      themeColors = ['#00f3ff', '#000000', '#ffffff'];
-    } else {
-      themeColors = ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff'];
-    }
+    if (appTheme === 'joquer') themeColors = ['#ffcc00', '#111111', '#555555'];
+    else if (appTheme === 'fox') themeColors = ['#00f3ff', '#9d00ff', '#ffffff'];
+    else if (appTheme === 'chona') themeColors = ['#00447c', '#e3a900', '#ffffff'];
+    else if (appTheme === 'pato') themeColors = ['#ffff00', '#ff8800', '#ffffff'];
+    else if (appTheme === 'jack') themeColors = ['#00f3ff', '#000000', '#ffffff'];
 
-    confetti({
-      particleCount: 150,
-      spread: 100,
-      origin: { y: 0.6 },
-      colors: themeColors
-    });
+    confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: themeColors });
 
-    // Mover de lista de participantes a ganadores inmediatamente por detrás
     setParticipants((prev) => prev.filter((_, i) => i !== randomIndex));
     setWinners((prev) => [...prev, winner]);
-  
-      if (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack') {
-        setShowWinnerVerification(true);
-        setWinnerMessages([]);
+
+    if (isVerificationTheme) {
+      setShowWinnerVerification(true);
+      setWinnerMessages([]);
       setIsWinnerPresent('waiting');
       setVerificationStopwatch(0);
       stopwatchRef.current = 0;
-      
+
       if (verificationTimerRef.current) clearInterval(verificationTimerRef.current);
-        verificationTimerRef.current = setInterval(() => {
+      verificationTimerRef.current = setInterval(() => {
         stopwatchRef.current += 1;
         setVerificationStopwatch(stopwatchRef.current);
       }, 1000);
     } else {
-      // Ocultar overlay después de 5 segundos para otros perfiles
       setTimeout(() => {
         setActiveWinner(null);
         activeWinnerRef.current = null;
@@ -419,9 +385,7 @@ function App() {
 
   const moveWinnerToParticipants = (index) => {
     const winnerToMove = winners[index];
-    // Eliminar de ganadores
     setWinners((prev) => prev.filter((_, i) => i !== index));
-    // Agregar a participantes si no existe (por seguridad)
     setParticipants((prev) => {
       if (prev.some((p) => p.username.toLowerCase() === winnerToMove.username.toLowerCase())) return prev;
       return [...prev, winnerToMove];
@@ -441,14 +405,13 @@ function App() {
       alert("No hay ganadores válidos para descargar.");
       return;
     }
-    
+
     let textContent = "LISTADO DE GANADORES - " + new Date().toLocaleString() + "\n";
     textContent += "========================================\n\n";
-    
     validWinners.forEach((w, i) => {
       textContent += `${i + 1}. ${w.username}${w.isSubscriber ? ' (Suscriptor)' : ''}\n`;
     });
-    
+
     const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -484,10 +447,8 @@ function App() {
       alert(`Necesitas al menos ${tournamentSize} participantes para iniciar este torneo. (Actuales: ${participants.length})`);
       return;
     }
-    
     const shuffled = [...participants].sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, tournamentSize);
-    
     const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
     const firstRound = newBracket[0];
     for (let i = 0; i < firstRound.length; i++) {
@@ -500,23 +461,16 @@ function App() {
   const shuffleBracket = () => {
     const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
     if (!newBracket[0]) return;
-    
-    // Extract all players from round 0
     let players = [];
     for (const match of newBracket[0]) {
       if (match.player1) players.push(match.player1);
       if (match.player2) players.push(match.player2);
     }
-    
-    // Shuffle
     players = players.sort(() => 0.5 - Math.random());
-    
-    // Put them back
     for (let i = 0; i < newBracket[0].length; i++) {
       newBracket[0][i].player1 = players[i * 2] || null;
       newBracket[0][i].player2 = players[i * 2 + 1] || null;
     }
-    
     setTournamentBracket(newBracket);
   };
 
@@ -524,31 +478,19 @@ function App() {
     const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
     const match = newBracket[roundIndex][matchIndex];
     const winner = match[playerKey];
-    
     if (!winner) return;
-    
     match.winner = winner;
-    
+
     if (roundIndex + 1 < newBracket.length) {
       const nextMatchIndex = Math.floor(matchIndex / 2);
       const isPlayer1 = matchIndex % 2 === 0;
-      
       const nextMatch = newBracket[roundIndex + 1][nextMatchIndex];
-      if (isPlayer1) {
-        nextMatch.player1 = winner;
-      } else {
-        nextMatch.player2 = winner;
-      }
+      if (isPlayer1) nextMatch.player1 = winner;
+      else nextMatch.player2 = winner;
       nextMatch.winner = null;
     } else {
-      // It's the final round, celebrate the tournament winner!
-      confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 }
-      });
+      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
     }
-    
     setTournamentBracket(newBracket);
   };
 
@@ -556,54 +498,39 @@ function App() {
     const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
     const match = newBracket[roundIndex][matchIndex];
     const playerToUndo = match.winner;
-    
     if (!playerToUndo) return;
-
     match.winner = null;
-    
+
     let currentRound = roundIndex;
     let currentMatch = matchIndex;
-    
-    // Propagate the removal to subsequent rounds
     while (currentRound + 1 < newBracket.length) {
       const nextMatchIndex = Math.floor(currentMatch / 2);
       const isPlayer1 = currentMatch % 2 === 0;
       const nextMatch = newBracket[currentRound + 1][nextMatchIndex];
-      
       const nextSlotPlayer = isPlayer1 ? nextMatch.player1 : nextMatch.player2;
-      
+
       if (nextSlotPlayer && nextSlotPlayer.id === playerToUndo.id) {
         if (isPlayer1) nextMatch.player1 = null;
         else nextMatch.player2 = null;
-        
-        if (nextMatch.winner && nextMatch.winner.id === playerToUndo.id) {
-           nextMatch.winner = null;
-        } else {
-           break;
-        }
+        if (nextMatch.winner && nextMatch.winner.id === playerToUndo.id) nextMatch.winner = null;
+        else break;
       } else {
         break;
       }
-      
       currentRound++;
       currentMatch = nextMatchIndex;
     }
-
     setTournamentBracket(newBracket);
   };
 
   const updateTournamentPlayer = (roundIndex, matchIndex, playerKey, updatedData) => {
     const newBracket = JSON.parse(JSON.stringify(tournamentBracket));
     const match = newBracket[roundIndex][matchIndex];
-    
     if (!match[playerKey]) {
-      // If it was empty, create a new participant object
       match[playerKey] = { id: Date.now(), ...updatedData };
     } else {
-      // If it exists, update it
       match[playerKey] = { ...match[playerKey], ...updatedData };
     }
-    
     setTournamentBracket(newBracket);
   };
 
@@ -613,101 +540,98 @@ function App() {
     setActivePasswordTheme(null);
   };
 
-
   const renderWinnerVerificationPanel = () => {
     return (
       <>
-          {/* Winner Verification Panel (Joquer, Fox & Chona Theme) */}
-          {(isSplitMode || showWinnerVerification) && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack') && (
-            <div 
-              className="glass-panel" 
-              onMouseDown={(e) => {
-                // Si hacemos clic en el contenedor de mensajes, un boton o el nombre, no arrastramos (para poder scrollear/seleccionar)
-                if (isSplitMode) return;
-                  if (e.target.closest('.chat-messages-container') || e.target.closest('button') || e.target.closest('h2')) return;
-                setIsDraggingPanel(true);
-                setPanelDragStart({ x: e.clientX - panelPos.x, y: e.clientY - panelPos.y });
-              }}
-              style={isSplitMode ? {
-                border: `2px solid ${!activeWinner ? '#333' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
-                boxShadow: `0 0 30px ${!activeWinner ? 'rgba(0,0,0,0.5)' : isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
-                background: '#0B0E14',
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                zIndex: 10
-              } : {
-                border: `2px solid ${!activeWinner ? '#333' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
-                boxShadow: `0 0 30px ${!activeWinner ? 'rgba(0,0,0,0.5)' : isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
-                background: '#0B0E14',
-                position: 'fixed',
-                left: `${panelPos.x}px`,
-                top: `${panelPos.y}px`,
-                width: '380px',
-                height: '450px',
-                display: 'flex',
-                flexDirection: 'column',
-                zIndex: 9999,
-                cursor: isDraggingPanel ? 'grabbing' : 'grab',
-                userSelect: isDraggingPanel ? 'none' : 'auto'
-              }}>
-                {(!isSplitMode || activeWinner) && (
-                  <button 
-                    onClick={() => {
-                      setShowWinnerVerification(false);
-                    setActiveWinner(null);
-                    activeWinnerRef.current = null;
-                  }}
-                  style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', zIndex: 10 }}
-                  title="Cerrar"
-                >
-                  <XCircle size={24} />
-                </button>
-                  )}
-                <h2 style={{ textAlign: 'center', color: activeWinner ? '#fff' : '#666', fontSize: '1.8rem', margin: '0 0 0.5rem 0', textShadow: activeWinner ? '0 0 10px rgba(255,255,255,0.3)' : 'none' }}>
-                {activeWinner ? activeWinner.username : 'Esperando ganador...'}
-              </h2>
-              
-              <div style={{ textAlign: 'center', fontSize: '0.95rem', whiteSpace: 'nowrap', minHeight: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', color: !activeWinner ? '#555' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
-                {!activeWinner ? 'Inicia un sorteo para el chat de validación' : isWinnerPresent === 'success' ? '✔️ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
-              </div>
-              
-              <div className="chat-messages-container" style={{
-                background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '1rem',
-                flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
-                border: '1px solid rgba(255,255,255,0.1)',
-                cursor: 'auto'
-              }}>
-                {!activeWinner ? (
-                  <div style={{ color: '#444', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
-                    Esperando el sorteo...
+        {(isSplitMode || showWinnerVerification) && ['joquer', 'fox', 'chona', 'pato', 'jack'].includes(appTheme) && (
+          <div
+            className="glass-panel"
+            onMouseDown={(e) => {
+              if (isSplitMode) return;
+              if (e.target.closest('.chat-messages-container') || e.target.closest('button') || e.target.closest('h2')) return;
+              setIsDraggingPanel(true);
+              setPanelDragStart({ x: e.clientX - panelPos.x, y: e.clientY - panelPos.y });
+            }}
+            style={isSplitMode ? {
+              border: `2px solid ${!activeWinner ? '#333' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
+              boxShadow: `0 0 30px ${!activeWinner ? 'rgba(0,0,0,0.5)' : isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+              background: '#0B0E14',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              zIndex: 10
+            } : {
+              border: `2px solid ${!activeWinner ? '#333' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#555'}`,
+              boxShadow: `0 0 30px ${!activeWinner ? 'rgba(0,0,0,0.5)' : isWinnerPresent === 'success' ? 'rgba(76, 175, 80, 0.4)' : isWinnerPresent === 'failed' ? 'rgba(255, 71, 87, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+              background: '#0B0E14',
+              position: 'fixed',
+              left: `${panelPos.x}px`,
+              top: `${panelPos.y}px`,
+              width: '380px',
+              height: '450px',
+              display: 'flex',
+              flexDirection: 'column',
+              zIndex: 9999,
+              cursor: isDraggingPanel ? 'grabbing' : 'grab',
+              userSelect: isDraggingPanel ? 'none' : 'auto'
+            }}>
+            {(!isSplitMode || activeWinner) && (
+              <button
+                onClick={() => {
+                  setShowWinnerVerification(false);
+                  setActiveWinner(null);
+                  activeWinnerRef.current = null;
+                }}
+                style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', zIndex: 10 }}
+                title="Cerrar"
+              >
+                <XCircle size={24} />
+              </button>
+            )}
+            <h2 style={{ textAlign: 'center', color: activeWinner ? '#fff' : '#666', fontSize: '1.8rem', margin: '0 0 0.5rem 0', textShadow: activeWinner ? '0 0 10px rgba(255,255,255,0.3)' : 'none' }}>
+              {activeWinner ? activeWinner.username : 'Esperando ganador...'}
+            </h2>
+
+            <div style={{ textAlign: 'center', fontSize: '0.95rem', whiteSpace: 'nowrap', minHeight: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', color: !activeWinner ? '#555' : isWinnerPresent === 'success' ? '#4CAF50' : isWinnerPresent === 'failed' ? '#ff4757' : '#ccc', fontWeight: 'bold' }}>
+              {!activeWinner ? 'Inicia un sorteo para el chat de validación' : isWinnerPresent === 'success' ? '✔️ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
+            </div>
+
+            <div className="chat-messages-container" style={{
+              background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '1rem',
+              flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
+              border: '1px solid rgba(255,255,255,0.1)',
+              cursor: 'auto'
+            }}>
+              {!activeWinner ? (
+                <div style={{ color: '#444', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
+                  Esperando el sorteo...
+                </div>
+              ) : winnerMessages.length === 0 ? (
+                <div style={{ color: '#888', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
+                  Todavía no escribió nada desde que ganó...
+                </div>
+              ) : (
+                winnerMessages.map((msg, idx) => (
+                  <div key={idx} style={{ background: 'rgba(255,255,255,0.1)', padding: '0.8rem', borderRadius: '8px', color: '#fff' }}>
+                    <span style={{ fontWeight: 'bold', color: '#a855f7' }}>{msg.username}: </span>
+                    <span>{msg.content}</span>
                   </div>
-                ) : winnerMessages.length === 0 ? (
-                  <div style={{ color: '#888', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
-                    Todavía no escribió nada desde que ganó...
-                  </div>
-                ) : (
-                  winnerMessages.map((msg, idx) => (
-                    <div key={idx} style={{ background: 'rgba(255,255,255,0.1)', padding: '0.8rem', borderRadius: '8px', color: '#fff' }}>
-                      <span style={{ fontWeight: 'bold', color: '#a855f7' }}>{msg.username}: </span>
-                      <span>{msg.content}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-              {!isSplitMode && (
-<button 
-                className="btn" 
+                ))
+              )}
+            </div>
+            {!isSplitMode && (
+              <button
+                className="btn"
                 style={{ width: '100%', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                 onClick={drawWinner}
                 disabled={participants.length === 0}
               >
                 Sortear Ganador <Gift size={20} style={{ marginLeft: '8px' }} />
               </button>
-)}
-            </div>
-          )}
+            )}
+          </div>
+        )}
       </>
     );
   };
@@ -720,8 +644,8 @@ function App() {
         </div>
         <h1 className="theme-title">Elegí tu Temática</h1>
         <div className="theme-cards">
-          <div 
-            className="theme-card fox-card" 
+          <div
+            className="theme-card fox-card"
             onClick={() => { if (activePasswordTheme !== 'fox') setActivePasswordTheme('fox'); }}
             style={{ cursor: activePasswordTheme === 'fox' ? 'default' : 'pointer', padding: activePasswordTheme === 'fox' ? '0' : '' }}
           >
@@ -741,17 +665,12 @@ function App() {
                 </div>
               </>
             ) : (
-              <PasswordForm 
-                expectedPassword="eldelfox1122" 
-                themeName="fox" 
-                onCancel={() => setActivePasswordTheme(null)} 
-                onSuccess={handleThemeLoginSuccess} 
-              />
+              <PasswordForm expectedPassword="eldelfox1122" themeName="fox" onCancel={() => setActivePasswordTheme(null)} onSuccess={handleThemeLoginSuccess} />
             )}
           </div>
-          
-          <div 
-            className="theme-card chona-card" 
+
+          <div
+            className="theme-card chona-card"
             onClick={() => { if (activePasswordTheme !== 'chona') setActivePasswordTheme('chona'); }}
             style={{ cursor: activePasswordTheme === 'chona' ? 'default' : 'pointer', padding: activePasswordTheme === 'chona' ? '0' : '' }}
           >
@@ -763,17 +682,12 @@ function App() {
                 </div>
               </>
             ) : (
-              <PasswordForm 
-                expectedPassword="chona1122" 
-                themeName="chona" 
-                onCancel={() => setActivePasswordTheme(null)} 
-                onSuccess={handleThemeLoginSuccess} 
-              />
+              <PasswordForm expectedPassword="chona1122" themeName="chona" onCancel={() => setActivePasswordTheme(null)} onSuccess={handleThemeLoginSuccess} />
             )}
           </div>
 
-          <div 
-            className="theme-card pato-card" 
+          <div
+            className="theme-card pato-card"
             onClick={() => { if (activePasswordTheme !== 'pato') setActivePasswordTheme('pato'); }}
             style={{ cursor: activePasswordTheme === 'pato' ? 'default' : 'pointer', padding: activePasswordTheme === 'pato' ? '0' : '' }}
           >
@@ -785,47 +699,34 @@ function App() {
                 </div>
               </>
             ) : (
-              <PasswordForm 
-                expectedPassword="pato1212" 
-                themeName="pato" 
-                onCancel={() => setActivePasswordTheme(null)} 
-                onSuccess={handleThemeLoginSuccess} 
-              />
+              <PasswordForm expectedPassword="pato1212" themeName="pato" onCancel={() => setActivePasswordTheme(null)} onSuccess={handleThemeLoginSuccess} />
             )}
           </div>
 
-          <div 
-              className="theme-card jack-card" 
-              onClick={() => { if (activePasswordTheme !== 'jack') setActivePasswordTheme('jack'); }}
-              style={{ cursor: activePasswordTheme === 'jack' ? 'default' : 'pointer', padding: activePasswordTheme === 'jack' ? '0' : '' }}
-            >
-              {activePasswordTheme !== 'jack' ? (
-                <>
-                  <h2 className="jack-text">JACK</h2>
-                  <div className="theme-preview">
-                    <div className="jack-svg-preview" style={{ width: '120px', height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', filter: 'drop-shadow(0 0 15px rgba(0,243,255,0.6))' }}>
-                        <text x="50" y="85" textAnchor="middle" fill="#0b0f19" stroke="#00f3ff" strokeWidth="4" fontSize="100" fontFamily="'Anton', sans-serif" fontStyle="italic">
-                          J
-                        </text>
-                        <text x="50" y="85" textAnchor="middle" fill="#111" fontSize="100" fontFamily="'Anton', sans-serif" fontStyle="italic">
-                          J
-                        </text>
-                      </svg>
-                    </div>
+          <div
+            className="theme-card jack-card"
+            onClick={() => { if (activePasswordTheme !== 'jack') setActivePasswordTheme('jack'); }}
+            style={{ cursor: activePasswordTheme === 'jack' ? 'default' : 'pointer', padding: activePasswordTheme === 'jack' ? '0' : '' }}
+          >
+            {activePasswordTheme !== 'jack' ? (
+              <>
+                <h2 className="jack-text">JACK</h2>
+                <div className="theme-preview">
+                  <div className="jack-svg-preview" style={{ width: '120px', height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', filter: 'drop-shadow(0 0 15px rgba(0,243,255,0.6))' }}>
+                      <text x="50" y="85" textAnchor="middle" fill="#0b0f19" stroke="#00f3ff" strokeWidth="4" fontSize="100" fontFamily="'Anton', sans-serif" fontStyle="italic">J</text>
+                      <text x="50" y="85" textAnchor="middle" fill="#111" fontSize="100" fontFamily="'Anton', sans-serif" fontStyle="italic">J</text>
+                    </svg>
                   </div>
-                </>
-              ) : (
-                <PasswordForm 
-                  expectedPassword="jack1122" 
-                  themeName="jack" 
-                  onCancel={() => setActivePasswordTheme(null)} 
-                  onSuccess={handleThemeLoginSuccess} 
-                />
-              )}
-            </div>
-          <div 
-            className="theme-card joquer-card" 
+                </div>
+              </>
+            ) : (
+              <PasswordForm expectedPassword="jack1122" themeName="jack" onCancel={() => setActivePasswordTheme(null)} onSuccess={handleThemeLoginSuccess} />
+            )}
+          </div>
+
+          <div
+            className="theme-card joquer-card"
             onClick={() => { if (activePasswordTheme !== 'joquer') setActivePasswordTheme('joquer'); }}
             style={{ cursor: activePasswordTheme === 'joquer' ? 'default' : 'pointer', padding: activePasswordTheme === 'joquer' ? '0' : '' }}
           >
@@ -837,12 +738,7 @@ function App() {
                 </div>
               </>
             ) : (
-              <PasswordForm 
-                expectedPassword="joquertincho1122" 
-                themeName="joquer" 
-                onCancel={() => setActivePasswordTheme(null)} 
-                onSuccess={handleThemeLoginSuccess} 
-              />
+              <PasswordForm expectedPassword="joquertincho1122" themeName="joquer" onCancel={() => setActivePasswordTheme(null)} onSuccess={handleThemeLoginSuccess} />
             )}
           </div>
         </div>
@@ -859,61 +755,52 @@ function App() {
       {appTheme === 'jack' && <ConstellationBackground />}
       {appTheme === 'joquer' && <JoquerBackground />}
       <div className="top-bar" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-        
-        {/* Control de Volumen Global */}
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.4)', padding: '5px 15px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)' }}>
           <Volume2 size={18} color="#fff" />
-          <input 
-            type="range" 
-            min="0" 
-            max="1" 
-            step="0.05" 
-            value={globalVolume}
+          <input
+            type="range" min="0" max="1" step="0.05" value={globalVolume}
             onChange={(e) => setGlobalVolume(parseFloat(e.target.value))}
             style={{ width: '80px', cursor: 'pointer' }}
             title={`Volumen: ${Math.round(globalVolume * 100)}%`}
           />
         </div>
 
-        {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack') && (
+        {['joquer', 'fox', 'chona', 'pato', 'jack'].includes(appTheme) && (
           <div className="settings-menu-container">
-            <button 
-                className="settings-btn" 
-                style={{ backgroundColor: isSplitMode ? 'rgba(255,255,255,0.2)' : '' }}
-                onClick={() => setIsSplitMode(!isSplitMode)}
-                title="Separar Pantalla"
-              >
-                <Columns size={24} />
-              </button>
-              <button 
-              className="settings-btn" 
+            <button
+              className="settings-btn"
+              style={{ backgroundColor: isSplitMode ? 'rgba(255,255,255,0.2)' : '' }}
+              onClick={() => setIsSplitMode(!isSplitMode)}
+              title="Separar Pantalla"
+            >
+              <Columns size={24} />
+            </button>
+            <button
+              className="settings-btn"
               style={{ backgroundColor: isWidgetsOpen ? 'rgba(255,255,255,0.2)' : '' }}
               onClick={() => setIsWidgetsOpen(!isWidgetsOpen)}
               title="Widgets"
             >
               <LayoutDashboard size={24} />
             </button>
-            
+
             {isWidgetsOpen && (
               <div className="settings-dropdown" style={{ width: '300px', right: '0', cursor: 'default' }}>
                 <div style={{ padding: '10px' }}>
-                  
-                  {/* Timer Widget */}
                   <div style={{ marginBottom: '20px' }}>
                     <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 10px 0', fontSize: '1rem', color: '#fff' }}>
                       <Clock size={16} /> Temporizador
                     </h3>
                     {!isTimerActive ? (
                       <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                        <input 
-                          type="number" 
-                          min="1"
-                          value={timerInput}
+                        <input
+                          type="number" min="1" value={timerInput}
                           onChange={(e) => setTimerInput(Number(e.target.value))}
                           style={{ width: '60px', padding: '5px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: '#fff' }}
                         />
                         <span style={{ color: '#fff', fontSize: '0.9rem' }}>min</span>
-                        <button 
+                        <button
                           className="action-btn"
                           onClick={() => { setTimerSeconds(timerInput * 60); setIsTimerActive(true); }}
                           style={{ background: '#28a745', padding: '5px 15px', color: '#fff', display: 'flex', alignItems: 'center', gap: '5px', flex: 1, justifyContent: 'center' }}
@@ -926,7 +813,7 @@ function App() {
                         <div style={{ flex: 1, fontSize: '1.5rem', fontWeight: 'bold', color: '#fff', textAlign: 'center', background: 'rgba(0,0,0,0.3)', borderRadius: '4px', padding: '5px' }}>
                           {formatTime(timerSeconds)}
                         </div>
-                        <button 
+                        <button
                           className="action-btn"
                           onClick={() => setIsTimerActive(false)}
                           style={{ background: '#dc3545', padding: '5px 15px', color: '#fff', display: 'flex', alignItems: 'center', gap: '5px' }}
@@ -936,43 +823,39 @@ function App() {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="dropdown-divider"></div>
-                  
-                  {/* Notes Widget */}
+
                   <div style={{ marginTop: '10px' }}>
                     <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 10px 0', fontSize: '1rem', color: '#fff' }}>
                       <FileText size={16} /> Notas
                     </h3>
-                    <textarea 
+                    <textarea
                       value={notesText}
                       onChange={(e) => setNotesText(e.target.value)}
                       placeholder="Escribe tus notas aquí..."
                       style={{ width: '100%', height: '120px', padding: '10px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.3)', color: '#fff', resize: 'vertical', fontFamily: 'inherit' }}
                     />
                   </div>
-                  
                 </div>
               </div>
             )}
           </div>
         )}
+
         <div className="settings-menu-container">
-          <button 
-            className="settings-btn" 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
+          <button className="settings-btn" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <Settings size={24} />
           </button>
-          
+
           {isMenuOpen && (
             <div className="settings-dropdown">
               <button className="dropdown-action-btn" onClick={() => { setThemeSelected(false); setIsMenuOpen(false); }} style={{ display: 'flex', alignItems: 'center' }}>
                 <Palette size={16} style={{ marginRight: '8px' }} /> Cambiar Tema
               </button>
-              
+
               <div className="dropdown-divider"></div>
-              
+
               <p>OTROS MODOS</p>
               {!isRouletteMode ? (
                 <>
@@ -992,7 +875,7 @@ function App() {
               )}
 
               <div className="dropdown-divider"></div>
-              
+
               <p>FORMATO TORNEO</p>
               {!isTournamentMode ? (
                 <div className="tournament-sizes">
@@ -1009,6 +892,7 @@ function App() {
           )}
         </div>
       </div>
+
       <div className="header">
         <Logo appTheme={appTheme} />
         <p>Sorteos en tiempo real con el chat de Kick</p>
@@ -1020,244 +904,171 @@ function App() {
         <>
           <div className={`main-layout ${isSplitMode ? 'split-mode' : ''}`}>
             <div className="glass-panel setup-panel">
-            <div className="input-group">
-              <label>ID de Chatroom de Kick</label>
-              <input 
-                type="text" 
-                placeholder="Ej: 1234567" 
-                value={channel} 
-                onChange={(e) => setChannel(e.target.value)}
-                disabled={isListening}
-              />
-              <details className="id-help-details">
-                <summary>ℹ️ ¿Cómo encontrar tu ID?</summary>
-                <div className="id-help-content">
-                  <ol>
-                    <li>Abre el navegador web.</li>
-                    <li>Visita <a href="https://kick.com/api/v2/channels/TU_CANAL" target="_blank" rel="noreferrer" style={{color: '#ff2a2a'}}>kick.com/api/v2/channels/TU_CANAL</a> (reemplaza TU_CANAL con tu usuario).</li>
-                    <li>Verás código. Presiona <strong>Ctrl + F</strong> y busca la palabra <code>chatroom</code>.</li>
-                    <li>Allí verás algo como <code>"chatroom":&#123;"id": 1234567&#125;</code>.</li>
-                    <li>Copia <strong>SOLO el número</strong> y pégalo aquí.</li>
-                  </ol>
-                </div>
-              </details>
-            </div>
-            
-            {(appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack') && (
+
               <div className="input-group">
-                <label>Tiempo Límite de Respuesta (segundos)</label>
-                  <input 
-                    type="number" 
-                    min="5" 
-                    value={verificationTimeLimit} 
+                <label>Canal de Kick (Nombre de Usuario)</label>
+                <input
+                  type="text" placeholder="Ej: eldelfox" value={channel}
+                  onChange={(e) => setChannel(e.target.value)} disabled={isListening}
+                />
+                <details className="id-help-details">
+                  <summary>ℹ️ ¿Cómo ingresar tu canal?</summary>
+                  <div className="id-help-content">
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#ccc' }}>
+                      Escribe el nombre de usuario exactamente como aparece en la URL de Kick.<br /><br />
+                      Ejemplo: Si tu canal es <strong>kick.com/eldelfox</strong>, escribe solamente <strong>eldelfox</strong>.
+                    </p>
+                  </div>
+                </details>
+              </div>
+
+              {['joquer', 'fox', 'chona', 'pato', 'jack'].includes(appTheme) && (
+                <div className="input-group">
+                  <label>Tiempo Límite de Respuesta (segundos)</label>
+                  <input
+                    type="number" min="5" value={verificationTimeLimit}
                     onChange={(e) => {
                       const val = e.target.value;
                       setVerificationTimeLimit(val === '' ? '' : parseInt(val));
                     }}
-                    onBlur={() => {
-                      if (verificationTimeLimit === '' || verificationTimeLimit < 5) {
-                        setVerificationTimeLimit(30);
-                      }
-                    }}
+                    onBlur={() => { if (verificationTimeLimit === '' || verificationTimeLimit < 5) setVerificationTimeLimit(30); }}
                     disabled={isListening}
                   />
-              </div>
-            )}
+                </div>
+              )}
 
-            <div className="input-group">
-              <label htmlFor="keyword">Palabra Clave</label>
-              <input
-                id="keyword"
-                type="text"
-                placeholder="Ej. !sorteo"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                disabled={isListening}
-              />
-            </div>
-
-            {appTheme !== 'ninguno' && (
-            <div className="input-group">
-              <label>Limpieza Automática de Inactivos</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <input 
-                  type="checkbox" 
-                  checked={isActiveModeEnabled}
-                  onChange={(e) => setIsActiveModeEnabled(e.target.checked)}
-                  style={{ width: 'auto' }}
-                  disabled={isListening}
+              <div className="input-group">
+                <label htmlFor="keyword">Palabra Clave</label>
+                <input
+                  id="keyword" type="text" placeholder="Ej. !sorteo"
+                  value={keyword} onChange={(e) => setKeyword(e.target.value)} disabled={isListening}
                 />
-                <span style={{ fontSize: '0.9rem', color: '#fff' }}>Eliminar si no escriben en</span>
-                <input 
-                  type="number" 
-                  value={activeTimeLimit}
-                  onChange={(e) => setActiveTimeLimit(e.target.value)}
-                  min="1"
-                  style={{ width: '60px', padding: '5px', backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', borderRadius: '4px' }}
-                  disabled={!isActiveModeEnabled || isListening}
-                />
-                <span style={{ fontSize: '0.9rem', color: '#fff' }}>min</span>
               </div>
-            </div>
-            )}
 
-            <div className="input-group">
-              <label>Ventaja para Suscriptores (Multiplicador)</label>
-              <div className="multiplier-options">
-                <button 
-                  className={`multiplier-btn ${subMultiplier === 1 ? 'active' : ''}`}
-                  onClick={() => setSubMultiplier(1)}
-                  disabled={isListening}
-                >x1</button>
-                <button 
-                  className={`multiplier-btn ${subMultiplier === 2 ? 'active' : ''}`}
-                  onClick={() => setSubMultiplier(2)}
-                  disabled={isListening}
-                >x2</button>
-                <button 
-                  className={`multiplier-btn ${subMultiplier === 3 ? 'active' : ''}`}
-                  onClick={() => setSubMultiplier(3)}
-                  disabled={isListening}
-                >x3</button>
-                <button 
-                  className={`multiplier-btn ${subMultiplier === 5 ? 'active' : ''}`}
-                  onClick={() => setSubMultiplier(5)}
-                  disabled={isListening}
-                >x5</button>
-                <button 
-                  className={`multiplier-btn ${subMultiplier === 0 ? 'active' : ''}`}
-                  onClick={() => setSubMultiplier(0)}
-                  disabled={isListening}
-                >x0 (Excluir)</button>
+              <div className="input-group">
+                <label>Limpieza Automática de Inactivos</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <input
+                    type="checkbox" checked={isActiveModeEnabled}
+                    onChange={(e) => setIsActiveModeEnabled(e.target.checked)}
+                    style={{ width: 'auto' }} disabled={isListening}
+                  />
+                  <span style={{ fontSize: '0.9rem', color: '#fff' }}>Eliminar si no escriben en</span>
+                  <input
+                    type="number" value={activeTimeLimit} onChange={(e) => setActiveTimeLimit(e.target.value)} min="1"
+                    style={{ width: '60px', padding: '5px', backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', borderRadius: '4px' }}
+                    disabled={!isActiveModeEnabled || isListening}
+                  />
+                  <span style={{ fontSize: '0.9rem', color: '#fff' }}>min</span>
+                </div>
               </div>
-            </div>
 
-            {error && <p style={{ color: '#ff4444', fontSize: '0.9rem', textAlign: 'center' }}>{error}</p>}
-            {isListening && <p style={{ color: 'var(--primary-color)', fontSize: '1rem', textAlign: 'center', fontWeight: '600' }}><CheckCircle2 size={18} style={{ verticalAlign: 'text-bottom', marginRight: '6px' }} /> ¡Conectado al chat de {channel}!</p>}
+              <div className="input-group">
+                <label>Ventaja para Suscriptores (Multiplicador)</label>
+                <div className="multiplier-options">
+                  <button className={`multiplier-btn ${subMultiplier === 1 ? 'active' : ''}`} onClick={() => setSubMultiplier(1)} disabled={isListening}>x1</button>
+                  <button className={`multiplier-btn ${subMultiplier === 2 ? 'active' : ''}`} onClick={() => setSubMultiplier(2)} disabled={isListening}>x2</button>
+                  <button className={`multiplier-btn ${subMultiplier === 3 ? 'active' : ''}`} onClick={() => setSubMultiplier(3)} disabled={isListening}>x3</button>
+                  <button className={`multiplier-btn ${subMultiplier === 5 ? 'active' : ''}`} onClick={() => setSubMultiplier(5)} disabled={isListening}>x5</button>
+                  <button className={`multiplier-btn ${subMultiplier === 0 ? 'active' : ''}`} onClick={() => setSubMultiplier(0)} disabled={isListening}>x0 (Excluir)</button>
+                </div>
+              </div>
 
-            {!isListening ? (
-              <button className="btn" onClick={handleStart}>
-                Conectar y Escuchar
-              </button>
-            ) : (
-              <button className="btn btn-secondary" onClick={handleStop}>
-                Detener Sorteo
-              </button>
-            )}
-            
-            {(participants.length > 0 || winners.length > 0) && (
-              <button 
-                className="btn btn-secondary" 
-                style={{ borderColor: 'rgba(255, 68, 68, 0.5)', color: '#ff4444' }} 
-                onClick={resetGiveaway}
-              >
-                Reiniciar Sorteo (Borrar Todo)
-              </button>
-            )}
-          </div>
+              {error && <p style={{ color: '#ff4444', fontSize: '0.9rem', textAlign: 'center' }}>{error}</p>}
+              {isListening && <p style={{ color: 'var(--primary-color)', fontSize: '1rem', textAlign: 'center', fontWeight: '600' }}><CheckCircle2 size={18} style={{ verticalAlign: 'text-bottom', marginRight: '6px' }} /> ¡Conectado al chat de {channel}!</p>}
 
-                    {isSplitMode && (
-            <div className="split-middle-column" style={{ flexDirection: 'column', gap: '20px' }}>
-              <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-                {renderWinnerVerificationPanel()}
-              </div>
-              <button 
-                className="btn" 
-                style={{ width: '100%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ff4757', color: 'white', fontWeight: 'bold', border: 'none', padding: '1rem', borderRadius: '8px', fontSize: '1.2rem', cursor: 'pointer', boxShadow: '0 0 15px rgba(255, 71, 87, 0.4)' }}
-                onClick={drawWinner}
-                disabled={participants.length === 0}
-              >
-                DRAW WINNER / SORTEAR <Gift size={24} style={{ marginLeft: '12px' }} />
-              </button>
-            </div>
-          )}
-          <div className="content-grid">
-            <div className="glass-panel">
-              <div className="list-header">
-                <h2>Participantes</h2>
-                <span className="badge">{participants.length}</span>
-              </div>
-              
-              <div className="participants-list">
-                {participants.length === 0 ? (
-                  <div className="empty-state">
-                    Esperando a que los espectadores escriban la palabra clave...
-                  </div>
-                ) : (
-                  participants.map((p, index) => {
-                    const age = Math.round((Date.now() - (p.lastActiveAt || Date.now())) / 1000);
-                    return (
-                      <div key={p.id || index} className={`participant-item ${p.isSubscriber ? 'is-sub' : ''}`}>
-                        <span style={{ display: 'flex', alignItems: 'center' }}>
-                          {p.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}
-                          {p.username} 
-                        </span>
-                        <button 
-                          className="action-btn" 
-                          onClick={() => removeParticipant(index)}
-                          title="Eliminar participante"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    )})
-                )}
-              </div>
-              
-              {!isSplitMode && !(appTheme === 'joquer' && showWinnerVerification) && (
-                <button 
-                  className="btn" 
-                  style={{ width: '100%', marginTop: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  onClick={drawWinner}
-                  disabled={participants.length === 0}
-                >
-                  Sortear Ganador <Gift size={20} style={{ marginLeft: '8px' }} />
+              {!isListening ? (
+                <button className="btn" onClick={handleStart}>Conectar y Escuchar</button>
+              ) : (
+                <button className="btn btn-secondary" onClick={handleStop}>Detener Sorteo</button>
+              )}
+
+              {(participants.length > 0 || winners.length > 0) && (
+                <button className="btn btn-secondary" style={{ borderColor: 'rgba(255, 68, 68, 0.5)', color: '#ff4444' }} onClick={resetGiveaway}>
+                  Reiniciar Sorteo (Borrar Todo)
                 </button>
               )}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                    <div className="glass-panel">
-                      <div className="list-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <h2>Ganadores</h2>
-                          <span className="badge">{winners.filter(w => w.verificationStatus === 'success').length}</span>
-                        </div>
-                        {winners.length > 0 && (appTheme === 'joquer' || appTheme === 'fox' || appTheme === 'chona' || appTheme === 'pato' || appTheme === 'jack') && (
-                          <button 
-                            className="action-btn" 
-                            onClick={downloadWinnersText}
-                            title="Descargar listado en TXT"
-                            style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '5px 10px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem', color: '#fff' }}
-                          >
-                            <Download size={14} /> TXT
-                          </button>
-                        )}
+            {isSplitMode && (
+              <div className="split-middle-column" style={{ flexDirection: 'column', gap: '20px' }}>
+                <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                  {renderWinnerVerificationPanel()}
+                </div>
+                <button
+                  className="btn"
+                  style={{ width: '100%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ff4757', color: 'white', fontWeight: 'bold', border: 'none', padding: '1rem', borderRadius: '8px', fontSize: '1.2rem', cursor: 'pointer', boxShadow: '0 0 15px rgba(255, 71, 87, 0.4)' }}
+                  onClick={drawWinner}
+                  disabled={participants.length === 0}
+                >
+                  DRAW WINNER / SORTEAR <Gift size={24} style={{ marginLeft: '12px' }} />
+                </button>
+              </div>
+            )}
+
+            <div className="content-grid">
+              <div className="glass-panel">
+                <div className="list-header">
+                  <h2>Participantes</h2>
+                  <span className="badge">{participants.length}</span>
+                </div>
+
+                <div className="participants-list">
+                  {participants.length === 0 ? (
+                    <div className="empty-state">Esperando a que los espectadores escriban la palabra clave...</div>
+                  ) : (
+                    participants.map((p, index) => (
+                      <div key={p.id || index} className={`participant-item ${p.isSubscriber ? 'is-sub' : ''}`}>
+                        <span style={{ display: 'flex', alignItems: 'center' }}>
+                          {p.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}
+                          {p.username}
+                        </span>
+                        <button className="action-btn" onClick={() => removeParticipant(index)} title="Eliminar participante">
+                          <Trash2 size={16} />
+                        </button>
                       </div>
-                    
-                    <div className="participants-list">
-                      {winners.length === 0 ? (
-                        <div className="empty-state">
-                          Aún no hay ganadores.
-                        </div>
-                      ) : (
-                        winners.map((w, index) => (
-                          <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''} ${w.verificationStatus ? 'winner-' + w.verificationStatus : ''}`}>
-                            <div className="winner-number">{index + 1}</div>
-                            <span style={{ display: 'flex', alignItems: 'center' }}>{w.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}{w.username}</span>
-                            <button 
-                              className="action-btn" 
-                              onClick={() => moveWinnerToParticipants(index)}
-                              title="Volver a los participantes"
-                            >
-                              <RotateCcw size={16} />
-                            </button>
-                          </div>
-                        ))
-                      )}
+                    ))
+                  )}
+                </div>
+
+                {!isSplitMode && !(appTheme === 'joquer' && showWinnerVerification) && (
+                  <button className="btn" style={{ width: '100%', marginTop: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={drawWinner} disabled={participants.length === 0}>
+                    Sortear Ganador <Gift size={20} style={{ marginLeft: '8px' }} />
+                  </button>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                <div className="glass-panel">
+                  <div className="list-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <h2>Ganadores</h2>
+                      <span className="badge">{winners.filter(w => w.verificationStatus === 'success').length}</span>
                     </div>
+                    {winners.length > 0 && ['joquer', 'fox', 'chona', 'pato', 'jack'].includes(appTheme) && (
+                      <button className="action-btn" onClick={downloadWinnersText} title="Descargar listado en TXT" style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '5px 10px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem', color: '#fff' }}>
+                        <Download size={14} /> TXT
+                      </button>
+                    )}
                   </div>
-                  
+
+                  <div className="participants-list">
+                    {winners.length === 0 ? (
+                      <div className="empty-state">Aún no hay ganadores.</div>
+                    ) : (
+                      winners.map((w, index) => (
+                        <div key={`win-${w.id || index}`} className={`winner-item ${w.isSubscriber ? 'is-sub-winner' : ''} ${w.verificationStatus ? 'winner-' + w.verificationStatus : ''}`}>
+                          <div className="winner-number">{index + 1}</div>
+                          <span style={{ display: 'flex', alignItems: 'center' }}>{w.isSubscriber && <Star size={14} fill="#f9b233" color="#f9b233" style={{ marginRight: '6px' }} />}{w.username}</span>
+                          <button className="action-btn" onClick={() => moveWinnerToParticipants(index)} title="Volver a los participantes">
+                            <RotateCcw size={16} />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
                 {isTournamentMode && (
                   <div className="glass-panel tournament-panel">
                     <div className="list-header">
@@ -1266,43 +1077,37 @@ function App() {
                         Llenar Llaves <Dices size={20} style={{ marginLeft: '8px' }} />
                       </button>
                     </div>
-                    <p style={{fontSize: '0.9rem', color: '#ccc', marginBottom: '1rem'}}>
-                      Haz clic en el participante que quieres que avance a la siguiente ronda.
-                    </p>
+                    <p style={{ fontSize: '0.9rem', color: '#ccc', marginBottom: '1rem' }}>Haz clic en el participante que quieres que avance a la siguiente ronda.</p>
                   </div>
                 )}
-            </div>
-          </div>
-          
-          {isTournamentMode && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-              {tournamentBracket.length > 0 && 
-               tournamentBracket[0].some(m => m.player1 || m.player2) && 
-               !tournamentBracket[0].some(m => m.winner) &&
-               (!tournamentBracket[1] || !tournamentBracket[1].some(m => m.player1 || m.player2)) && (
-                <button className="btn btn-secondary" onClick={shuffleBracket} style={{ marginBottom: '1rem', width: 'auto', padding: '10px 20px', fontSize: '1.1rem', display: 'flex', alignItems: 'center' }}>
-                  Mezclar Llaves <Shuffle size={20} style={{ marginLeft: '8px' }} />
-                </button>
-              )}
-              <TournamentBracket 
-                appTheme={appTheme}
-                bracket={tournamentBracket} 
-                onAdvance={advanceTournament} 
-                onUndoAdvance={undoTournamentAdvance}
-                onUpdatePlayer={updateTournamentPlayer} 
-              />
-            </div>
-          )}
-
-          {/* Overlay de la animación del ganador */}
-          {activeWinner && !showWinnerVerification && (
-            <div className="winner-overlay">
-              <div className="neon-winner-text">
-                {activeWinner.username}
               </div>
             </div>
-          )}
 
+            {isTournamentMode && (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                {tournamentBracket.length > 0 &&
+                  tournamentBracket[0].some(m => m.player1 || m.player2) &&
+                  !tournamentBracket[0].some(m => m.winner) &&
+                  (!tournamentBracket[1] || !tournamentBracket[1].some(m => m.player1 || m.player2)) && (
+                    <button className="btn btn-secondary" onClick={shuffleBracket} style={{ marginBottom: '1rem', width: 'auto', padding: '10px 20px', fontSize: '1.1rem', display: 'flex', alignItems: 'center' }}>
+                      Mezclar Llaves <Shuffle size={20} style={{ marginLeft: '8px' }} />
+                    </button>
+                  )}
+                <TournamentBracket
+                  appTheme={appTheme}
+                  bracket={tournamentBracket}
+                  onAdvance={advanceTournament}
+                  onUndoAdvance={undoTournamentAdvance}
+                  onUpdatePlayer={updateTournamentPlayer}
+                />
+              </div>
+            )}
+
+            {activeWinner && !showWinnerVerification && (
+              <div className="winner-overlay">
+                <div className="neon-winner-text">{activeWinner.username}</div>
+              </div>
+            )}
           </div>
           {!isSplitMode && renderWinnerVerificationPanel()}
         </>
@@ -1314,4 +1119,3 @@ function App() {
 }
 
 export default App;
-

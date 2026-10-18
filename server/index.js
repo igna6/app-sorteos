@@ -6,130 +6,140 @@ const { KickConnection } = require('./kick');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: '*',
+    methods: ['GET', 'POST']
   }
 });
 
-// Store connections per socket ID
-const clientConnections = new Map();
+// ============================================
+// CONEXIÓN AL CHAT (CENTRIFUGO / KICK.JS)
+// ============================================
+const activeSockets = new Map();
 
 io.on('connection', (socket) => {
-  console.log('A client connected:', socket.id);
+  console.log('Cliente conectado con Socket ID:', socket.id);
 
-  socket.on('start_listening', ({ roomId, keyword }) => {
-    console.log(`Starting to listen on room ${roomId} for keyword: ${keyword} [Socket: ${socket.id}]`);
-    
-    // Si este socket ya tenia una conexion, la desconectamos
-    if (clientConnections.has(socket.id)) {
+  socket.on('start_listening', async (payload = {}) => {
+    const inputChannel = String(payload.roomId || '').trim();
+    const keyword = typeof payload.keyword === 'string' ? payload.keyword.trim().toLowerCase() : '';
+
+    if (!inputChannel) {
+      socket.emit('listening_started', { success: false, error: 'Falta el nombre o ID del canal.' });
+      return;
+    }
+
+    if (activeSockets.has(socket.id)) {
+      try { activeSockets.get(socket.id).disconnect(); } catch (e) { }
+      activeSockets.delete(socket.id);
+    }
+
+    let chatroomId = inputChannel;
+    let channelId = null;
+
+    if (isNaN(inputChannel)) {
+      console.log(`Buscando ID numérico para el streamer: ${inputChannel}...`);
       try {
-        clientConnections.get(socket.id).kickClient.disconnect();
-      } catch (e) {
-        console.error("Error disconnecting previous client", e);
+        const res = await fetch(`https://kick.com/api/v2/channels/${inputChannel}`, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          }
+        });
+        if (!res.ok) throw new Error('Canal no encontrado');
+        const data = await res.json();
+        chatroomId = data.chatroom.id;
+        channelId = data.id;
+        console.log(`ID encontrado correctamente: ${chatroomId}`);
+      } catch (err) {
+        console.error("Error buscando el canal:", err.message);
+        socket.emit('listening_started', { success: false, error: 'No se pudo encontrar el ID del canal. Escribe el número manualmente.' });
+        return;
       }
     }
 
-    const currentWord = keyword.trim().toLowerCase();
+    // Kick ya no usa Pusher: el chat va por Centrifugo. kick.js se encarga del handshake
+    // (negociacion, token, socket, suscripcion, pings y renovacion de token).
+    const kick = new KickConnection(chatroomId, { channelId });
 
-    // Iniciar KickLive Connector con el ID
-    const kickClient = new KickConnection(roomId);
-    
-    // Guardar estado del cliente
-    clientConnections.set(socket.id, {
-      kickClient,
-      currentWord,
-      currentChannel: roomId
-    });
+    kick.on('chatMessage', (chatData) => {
+      try {
+        const msgId = chatData.id;
+        const content = chatData.content;
+        const sender = chatData.sender;
 
-    kickClient.on('chatMessage', (message) => {
-      const content = message.content.trim();
-      const lowerContent = content.toLowerCase();
-      
-      // Emit every message for verification feature only to THIS socket
-      socket.emit('chat_message', {
-        id: message.id,
-        username: message.sender.username,
-        content: content,
-        timestamp: message.createdAt
-      });
-      
-      // Si el mensaje contiene la palabra clave (o si no hay palabra clave requerida)
-      const connectionData = clientConnections.get(socket.id);
-      if (connectionData && (connectionData.currentWord === '' || lowerContent.includes(connectionData.currentWord))) {
-        
-        // Detectar si el usuario es suscriptor o VIP/fundador
-        let isSubscriber = false;
-        if (message.sender.identity && Array.isArray(message.sender.identity.badges)) {
-          console.log(`[DEBUG] Badges para ${message.sender.username}:`, JSON.stringify(message.sender.identity.badges));
-          isSubscriber = message.sender.identity.badges.some(badge => 
-            badge.type && badge.type.toLowerCase().includes('sub')
-          );
+        if (!sender || !content) return;
+
+        const username = sender.username || 'Usuario';
+        const userId = sender.id;
+        const badges = sender.identity?.badges || [];
+        const isSubscriber = badges.some(b => String(b?.type || '').toLowerCase().includes('sub'));
+
+        console.log(`[Chat en vivo] ${username}: ${content}`);
+
+        socket.emit('chat_message', {
+          id: msgId,
+          username,
+          content,
+          timestamp: chatData.created_at || chatData.createdAt || new Date().toISOString()
+        });
+
+        const matchesKeyword = keyword === '' || content.toLowerCase().includes(keyword);
+        if (matchesKeyword) {
+          console.log(`[SORTEO] Participante válido: ${username}`);
+          socket.emit('participant_joined', { id: userId, username, isSubscriber });
         }
-
-        // Emitimos al frontend que alguien ingreso la palabra, solo a ESTE socket
-        socket.emit('participant_joined', {
-          id: message.sender.id,
-          username: message.sender.username,
-          isSubscriber: isSubscriber
-        });
+      } catch (err) {
+        console.error('[Kick] Error procesando mensaje:', err.message);
       }
     });
 
-    kickClient.on('connected', () => {
-      console.log(`Successfully connected to room ${roomId}`);
-      socket.emit('listening_started', { success: true, channel: roomId });
+    // IMPORTANTE: sin un listener de 'error', un error posterior tumbaria todo el proceso.
+    kick.on('error', (err) => {
+      console.error('[Kick] Error:', err && err.message ? err.message : err);
     });
 
-    kickClient.on('error', (err) => {
-      console.error(`Error connecting to Kick room ${roomId}:`, err);
-      socket.emit('listening_started', { success: false, error: err.message });
+    kick.on('disconnected', () => {
+      console.log(`[Kick] Conexión cerrada para Chatroom ${chatroomId}`);
     });
 
-    // Conectar
-    try {
-      const connectPromise = kickClient.connect();
-      if (connectPromise && typeof connectPromise.catch === 'function') {
-        connectPromise.catch((err) => {
-          console.error(`Promise rejection connecting to Kick room ${roomId}:`, err);
-          socket.emit('listening_started', { success: false, error: typeof err === 'string' ? err : (err.message || 'Streamer is offline or error connecting') });
+    activeSockets.set(socket.id, kick);
+
+    kick.connect()
+      .then(() => {
+        console.log(`[Kick] Suscrito al Chatroom ${chatroomId} con éxito. ¡Listo para leer mensajes!`);
+        socket.emit('listening_started', { success: true, channel: inputChannel });
+      })
+      .catch((err) => {
+        console.error('[Kick] No se pudo conectar al chat:', err && err.message ? err.message : err);
+        if (activeSockets.get(socket.id) === kick) activeSockets.delete(socket.id);
+        socket.emit('listening_started', {
+          success: false,
+          error: 'No se pudo conectar al chat de Kick: ' + (err && err.message ? err.message : 'error desconocido')
         });
-      }
-    } catch (err) {
-      console.error(`Error connecting to Kick room ${roomId}:`, err);
-      socket.emit('listening_started', { success: false, error: err.message || err });
-    }
+      });
   });
 
   socket.on('stop_listening', () => {
-    if (clientConnections.has(socket.id)) {
-      console.log(`Stopping Kick listener for socket ${socket.id}...`);
-      try {
-         clientConnections.get(socket.id).kickClient.disconnect();
-      } catch (e) {
-        // ignore
-      }
-      clientConnections.delete(socket.id);
+    if (activeSockets.has(socket.id)) {
+      try { activeSockets.get(socket.id).disconnect(); } catch (e) { }
+      activeSockets.delete(socket.id);
+      console.log(`[Kick] Escucha detenida manualmente.`);
     }
   });
 
   socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
-    if (clientConnections.has(socket.id)) {
-      try {
-         clientConnections.get(socket.id).kickClient.disconnect();
-      } catch (e) {
-        // ignore
-      }
-      clientConnections.delete(socket.id);
+    if (activeSockets.has(socket.id)) {
+      try { activeSockets.get(socket.id).disconnect(); } catch (e) { }
+      activeSockets.delete(socket.id);
     }
   });
 });
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Servidor de Sorteos (Motor Centrifugo) iniciado en el puerto ${PORT}.`);
 });
