@@ -16,6 +16,23 @@ const io = new Server(server, {
   }
 });
 
+// Endpoint de salud / ping para monitor externo o auto-keepalive
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
+// Auto-ping opcional si se define RENDER_EXTERNAL_URL en el entorno de Render
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
+if (RENDER_URL) {
+  const pingUrl = `${RENDER_URL.replace(/\/$/, '')}/ping`;
+  console.log(`[KeepAlive] Auto-ping configurado hacia: ${pingUrl}`);
+  setInterval(() => {
+    fetch(pingUrl)
+      .then(() => console.log('[KeepAlive] Ping ejecutado exitosamente'))
+      .catch((err) => console.log('[KeepAlive] Error en auto-ping:', err.message));
+  }, 10 * 60 * 1000); // Cada 10 minutos (Render duerme a los 15 min)
+}
+
 // ============================================
 // CONEXIÓN AL CHAT (CENTRIFUGO / KICK.JS)
 // ============================================
