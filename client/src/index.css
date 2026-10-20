@@ -1033,3 +1033,50 @@ html.pato-active body::after {
   flex: 1;
 }
 
+/* Kick Emotes & Verification Chat */
+.kick-chat-emote {
+  height: 28px;
+  width: auto;
+  max-width: 56px;
+  max-height: 28px;
+  vertical-align: middle;
+  object-fit: contain;
+  margin: -3px 3px 0 3px;
+  display: inline-block;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.kick-chat-emote-fallback {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: monospace;
+  margin: 0 2px;
+}
+
+.chat-messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.chat-messages-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.chat-messages-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+

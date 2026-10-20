@@ -58,6 +58,51 @@ const PasswordForm = ({ expectedPassword, themeName, onCancel, onSuccess }) => {
   );
 };
 
+const KickEmote = ({ id, name }) => {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return <span className="kick-chat-emote-fallback">:{name}:</span>;
+  }
+
+  return (
+    <img
+      src={`https://files.kick.com/emotes/${id}/fullsize`}
+      alt={name}
+      title={name}
+      className="kick-chat-emote"
+      loading="lazy"
+      onError={() => setHasError(true)}
+    />
+  );
+};
+
+const renderMessageContent = (content) => {
+  if (typeof content !== 'string') return content;
+  const regex = /\[emote:(\d+):([^\]]+)\]/g;
+  const elements = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(content)) !== null) {
+    if (match.index > lastIndex) {
+      elements.push(content.slice(lastIndex, match.index));
+    }
+    const emoteId = match[1];
+    const emoteName = match[2];
+    elements.push(
+      <KickEmote key={`emote-${emoteId}-${match.index}`} id={emoteId} name={emoteName} />
+    );
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < content.length) {
+    elements.push(content.slice(lastIndex));
+  }
+
+  return elements.length > 0 ? elements : content;
+};
+
 function App() {
   const [channel, setChannel] = useState('');
   const [keyword, setKeyword] = useState('');
@@ -90,6 +135,13 @@ function App() {
   const activeWinnerRef = useRef(null);
   const verificationTimerRef = useRef(null);
   const stopwatchRef = useRef(0);
+  const chatContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [winnerMessages]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -295,7 +347,7 @@ function App() {
           updated[idx] = { ...updated[idx], lastActiveAt: Date.now() };
           return updated;
         }
-        const isAlreadyWinner = winnersRef.current.some((w) => w.username.toLowerCase() === user.username.toLowerCase());
+        const isAlreadyWinner = winnersRef.current.some((w) => w.username.toLowerCase() === user.username.toLowerCase() && w.verificationStatus === 'success');
         if (isAlreadyWinner) return prev;
         return [...prev, { ...user, lastActiveAt: Date.now() }];
       });
@@ -307,18 +359,20 @@ function App() {
   }, []);
 
   const handleStart = () => {
-    if (!channel) {
+    const cleanChannel = channel ? channel.trim() : '';
+    const cleanKeyword = keyword ? keyword.trim() : '';
+    if (!cleanChannel) {
       setError('Por favor, ingresa el ID del chatroom');
       return;
     }
-    if (!isActiveModeEnabled && !keyword) {
+    if (!isActiveModeEnabled && !cleanKeyword) {
       setError('Por favor, ingresa la palabra clave');
       return;
     }
     setError('');
     socketRef.current.emit('start_listening', {
-      roomId: channel,
-      keyword: (isActiveModeEnabled && !keyword) ? '' : keyword
+      roomId: cleanChannel,
+      keyword: (isActiveModeEnabled && !cleanKeyword) ? '' : cleanKeyword
     });
   };
 
@@ -610,12 +664,23 @@ function App() {
               {!activeWinner ? 'Inicia un sorteo para el chat de validación' : isWinnerPresent === 'success' ? '✔️ ¡GANADOR PRESENTE A TIEMPO!' : isWinnerPresent === 'failed' ? '❌ ¡RESPONDIÓ TARDE!' : `Esperando respuesta... ${verificationStopwatch}s / ${verificationTimeLimit}s`}
             </div>
 
-            <div className="chat-messages-container" style={{
-              background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '1rem',
-              flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem',
-              border: '1px solid rgba(255,255,255,0.1)',
-              cursor: 'auto'
-            }}>
+            <div
+              ref={chatContainerRef}
+              className="chat-messages-container"
+              style={{
+                background: 'rgba(0,0,0,0.4)',
+                borderRadius: '8px',
+                padding: '0.8rem',
+                flex: 1,
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+                border: '1px solid rgba(255,255,255,0.1)',
+                cursor: 'auto'
+              }}
+            >
               {!activeWinner ? (
                 <div style={{ color: '#444', textAlign: 'center', marginTop: 'auto', marginBottom: 'auto' }}>
                   Esperando el sorteo...
@@ -626,9 +691,21 @@ function App() {
                 </div>
               ) : (
                 winnerMessages.map((msg, idx) => (
-                  <div key={idx} style={{ background: 'rgba(255,255,255,0.1)', padding: '0.8rem', borderRadius: '8px', color: '#fff' }}>
-                    <span style={{ fontWeight: 'bold', color: '#a855f7' }}>{msg.username}: </span>
-                    <span>{msg.content}</span>
+                  <div
+                    key={msg.id || idx}
+                    style={{
+                      background: 'rgba(255,255,255,0.08)',
+                      padding: '0.65rem 0.8rem',
+                      borderRadius: '8px',
+                      color: '#fff',
+                      wordBreak: 'break-word',
+                      overflowWrap: 'anywhere',
+                      lineHeight: '1.45',
+                      fontSize: '0.95rem'
+                    }}
+                  >
+                    <span style={{ fontWeight: 'bold', color: '#a855f7', marginRight: '6px' }}>{msg.username}: </span>
+                    <span style={{ verticalAlign: 'middle' }}>{renderMessageContent(msg.content)}</span>
                   </div>
                 ))
               )}

@@ -118,6 +118,7 @@ class KickConnection extends events.EventEmitter {
     this._closing = false;
     this._timer = null;
     this._refreshTimer = null;
+    this._reconnectTimer = null;
     this._resolve = null;
     this._reject = null;
   }
@@ -232,8 +233,12 @@ class KickConnection extends events.EventEmitter {
       clearTimeout(this._refreshTimer);
       if (!this._settled && !this._closing) {
         this._fail(new Error(`La conexion con Kick se cerro antes de confirmar la suscripcion (codigo ${code}).`));
+        return;
       }
       this.emit(Events.Disconnected, undefined);
+      if (this._settled && !this._closing) {
+        this._scheduleReconnect();
+      }
     });
   }
 
@@ -308,12 +313,13 @@ class KickConnection extends events.EventEmitter {
   }
 
   _markSubscribed() {
-    if (this._settled) return;
-    this._settled = true;
     clearTimeout(this._timer);
     console.log(`Subscribed to chatrooms.${this.roomId}.v2`);
     this.emit(Events.Connected, { roomID: this.roomId });
-    if (this._resolve) this._resolve({ roomID: this.roomId });
+    if (!this._settled) {
+      this._settled = true;
+      if (this._resolve) this._resolve({ roomID: this.roomId });
+    }
   }
 
   _fail(err) {
@@ -333,9 +339,27 @@ class KickConnection extends events.EventEmitter {
     }
   }
 
+  _scheduleReconnect() {
+    if (this._closing) return;
+    clearTimeout(this._reconnectTimer);
+    this._reconnectTimer = setTimeout(async () => {
+      if (this._closing) return;
+      console.log(`[Kick] Intentando reconectar al chatroom ${this.roomId}...`);
+      try {
+        await this._start();
+      } catch (err) {
+        console.error('[Kick] Falló la reconexión:', err.message);
+        if (!this._closing) {
+          this._scheduleReconnect();
+        }
+      }
+    }, 2500);
+  }
+
   disconnect() {
     clearTimeout(this._timer);
     clearTimeout(this._refreshTimer);
+    clearTimeout(this._reconnectTimer);
     this._closing = true;
     if (this.websocket) {
       console.log('Disconnecting WebSocket...');
@@ -350,33 +374,55 @@ class KickConnection extends events.EventEmitter {
 
   _handlePush(push) {
     try {
-      const payload = push.pub && push.pub.data;
-      if (payload === undefined) {
+      const pubs = [];
+      if (push.pub) pubs.push(push.pub);
+      if (Array.isArray(push.pubs)) pubs.push(...push.pubs);
+
+      if (pubs.length === 0) {
         debug('push sin datos:', push);
         return;
       }
 
-      let p = payload;
-      if (typeof p === 'string') p = JSON.parse(p);
-      if (!p || typeof p !== 'object') return;
+      for (const publication of pubs) {
+        const payload = publication.data;
+        if (payload === undefined) continue;
 
-      let eventName = null;
-      let data = p;
+        let p = payload;
+        if (typeof p === 'string') {
+          try {
+            p = JSON.parse(p);
+          } catch (e) {
+            continue;
+          }
+        }
+        if (!p || typeof p !== 'object') continue;
 
-      if (typeof p.event === 'string') {
-        // Mismo sobre que Pusher: { event: "App\\Events\\ChatMessageEvent", data: "<json>" }
-        eventName = p.event.split('\\').pop();
-        data = typeof p.data === 'string' ? JSON.parse(p.data) : p.data;
-      } else if (p.sender && p.content !== undefined) {
-        // Mensaje de chat publicado sin sobre.
-        eventName = 'ChatMessageEvent';
+        let eventName = null;
+        let data = p;
+
+        if (typeof p.event === 'string') {
+          // Mismo sobre que Pusher: { event: "App\\Events\\ChatMessageEvent", data: "<json>" }
+          eventName = p.event.split('\\').pop();
+          if (typeof p.data === 'string') {
+            try {
+              data = JSON.parse(p.data);
+            } catch (e) {
+              data = p.data;
+            }
+          } else {
+            data = p.data;
+          }
+        } else if (p.sender && p.content !== undefined) {
+          // Mensaje de chat publicado sin sobre.
+          eventName = 'ChatMessageEvent';
+        }
+
+        if (!eventName) {
+          debug('publicacion sin evento reconocible:', publication);
+          continue;
+        }
+        this._emitEvent(eventName, data, push);
       }
-
-      if (!eventName) {
-        debug('publicacion sin evento reconocible:', push);
-        return;
-      }
-      this._emitEvent(eventName, data, push);
     } catch (e) {
       this.emit(Events.Error, e);
     }

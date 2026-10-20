@@ -30,7 +30,38 @@ if (RENDER_URL) {
     fetch(pingUrl)
       .then(() => console.log('[KeepAlive] Ping ejecutado exitosamente'))
       .catch((err) => console.log('[KeepAlive] Error en auto-ping:', err.message));
-  }, 10 * 60 * 1000); // Cada 10 minutos (Render duerme a los 15 min)
+  }, 10 * 60 * 1000); // Cada 10 minutos
+}
+
+// Helper para normalización flexible de texto
+function normalizeText(text) {
+  if (typeof text !== 'string') return '';
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Quita tildes
+    .toLowerCase()
+    .trim();
+}
+
+// Verificación ultra-flexible de palabra clave
+function checkKeywordMatch(content, keyword) {
+  if (!keyword || keyword.trim() === '') return true;
+
+  const cleanContent = normalizeText(content);
+  const cleanKeyword = normalizeText(keyword);
+
+  if (!cleanKeyword) return true;
+
+  // 1. Coincidencia directa normalizada (ej: "sorteo" dentro de "¡quiero entrar al sorteo!")
+  if (cleanContent.includes(cleanKeyword)) return true;
+
+  // 2. Si la palabra clave tiene prefijos como "!" (ej: "!sorteo"), probar la palabra limpia "sorteo"
+  const cleanWordOnly = cleanKeyword.replace(/^[^a-z0-9]+/i, '').trim();
+  if (cleanWordOnly.length > 0 && cleanContent.includes(cleanWordOnly)) {
+    return true;
+  }
+
+  return false;
 }
 
 // ============================================
@@ -43,7 +74,7 @@ io.on('connection', (socket) => {
 
   socket.on('start_listening', async (payload = {}) => {
     const inputChannel = String(payload.roomId || '').trim();
-    const keyword = typeof payload.keyword === 'string' ? payload.keyword.trim().toLowerCase() : '';
+    const keyword = typeof payload.keyword === 'string' ? payload.keyword.trim() : '';
 
     if (!inputChannel) {
       socket.emit('listening_started', { success: false, error: 'Falta el nombre o ID del canal.' });
@@ -78,12 +109,12 @@ io.on('connection', (socket) => {
       }
     }
 
-    // Kick ya no usa Pusher: el chat va por Centrifugo. kick.js se encarga del handshake
-    // (negociacion, token, socket, suscripcion, pings y renovacion de token).
+    // Instancia de KickConnection de tu archivo kick.js
     const kick = new KickConnection(chatroomId, { channelId });
 
     kick.on('chatMessage', (chatData) => {
       try {
+        if (!chatData) return;
         const msgId = chatData.id;
         const content = chatData.content;
         const sender = chatData.sender;
@@ -104,7 +135,8 @@ io.on('connection', (socket) => {
           timestamp: chatData.created_at || chatData.createdAt || new Date().toISOString()
         });
 
-        const matchesKeyword = keyword === '' || content.toLowerCase().includes(keyword);
+        // Verificación permissiva de la palabra clave
+        const matchesKeyword = checkKeywordMatch(content, keyword);
         if (matchesKeyword) {
           console.log(`[SORTEO] Participante válido: ${username}`);
           socket.emit('participant_joined', { id: userId, username, isSubscriber });
@@ -114,13 +146,18 @@ io.on('connection', (socket) => {
       }
     });
 
-    // IMPORTANTE: sin un listener de 'error', un error posterior tumbaria todo el proceso.
     kick.on('error', (err) => {
       console.error('[Kick] Error:', err && err.message ? err.message : err);
     });
 
+    kick.on('connected', () => {
+      console.log(`[Kick] Conexión activa para Chatroom ${chatroomId}`);
+      socket.emit('kick_status', { status: 'connected' });
+    });
+
     kick.on('disconnected', () => {
-      console.log(`[Kick] Conexión cerrada para Chatroom ${chatroomId}`);
+      console.log(`[Kick] Conexión interrumpida para Chatroom ${chatroomId}. Esperando reconexión...`);
+      socket.emit('kick_status', { status: 'reconnecting' });
     });
 
     activeSockets.set(socket.id, kick);
